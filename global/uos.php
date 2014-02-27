@@ -1,21 +1,18 @@
 <?php 
+  error_reporting(E_ALL);
+  ini_set('display_errors','On');
+
 include_once "./core/core.php";
 include_once UOS_CONFIG_FILE;
 include_once "./core/input.php";
 
-//$type = 'node_device';
+// Turn on error reporting
+//if ($uos->config->showerrors) {
+  error_reporting(E_ALL);
+  ini_set('display_errors','On');
+//}
 
-//$fieldtypename = 'field_text';
-//$field = new $fieldtypename();
-//$field = new field_gid();
-//$field = new field_number();
-//print_r($field);
 
-$uos->title = 'UniverseOS';
-
-//$uos->user->title = 'Julian Thompson';
-//addoutput('input/', $uos_input);
-//print_r($uos->config->data);die();
 
 foreach($uos->config->data as $key=>$propertyarray) {
 	$type = isset($propertyarray->type)?$propertyarray->type:'StdClass';
@@ -23,7 +20,7 @@ foreach($uos->config->data as $key=>$propertyarray) {
 	addoutput('body/', new $type($propertyarray));
 }
 
-//$entity->content['body'][1]->children[] = $entity->content['body'][0];
+//print_r($uos->output);die();
 
 
 
@@ -53,11 +50,11 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 		<title><?php print $title;?></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-		<?php foreach($uos->output->content['resources']['script'] as $script) : ?>
+		<?php foreach($uos->output['resources']['script'] as $script) : ?>
 		<script src="<?php print $script;?>"></script>		
 		<?php endforeach; ?>
 		
-		<?php foreach($uos->output->content['resources']['style'] as $stylesheet) : ?>
+		<?php foreach($uos->output['resources']['style'] as $stylesheet) : ?>
 		<link rel="stylesheet" href="<?php print $stylesheet;?>"></link>		
 		<?php endforeach; ?>		
 
@@ -94,7 +91,7 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 			<?php print render($uos->input);?>
 			<h2><i class="fa fa-sign-in"></i> Log</h2>
 			<div id="inputmessages">
-			<?php print render($uos->output->content['log']); ?>
+			<?php print render($uos->output['log']); ?>
 			</div>
 			<h2><i class="fa fa-sign-in"></i> Universe Config ($uos->config)</h2>
 			<div id="uosobject">
@@ -103,7 +100,7 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 		</div>		
 		
 		<div id="container">
-		<?php print render($uos->output->content['body']);?>
+		<?php print render($uos->output['body']);?>
 		</div>
 		
 	</body>
@@ -111,6 +108,7 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 </html>
 
 <pre>
+
 <?php
 $relationship = new relationship();
 print_r($relationship->__gettabledefinition());
@@ -125,3 +123,17 @@ print_r($relationship->__gettabledefinition());
 //print_r($uos->universe->getentities(array(
 //	type => 'node%'
 //)));
+//$type = 'node_device';
+
+//$fieldtypename = 'field_text';
+//$field = new $fieldtypename();
+//$field = new field_gid();
+//$field = new field_number();
+//print_r($field);
+
+
+
+//$uos->user->title = 'Julian Thompson';
+//addoutput('input/', $uos_input);
+//print_r($uos->config->data);die();
+//$entity->content['body'][1]->children[] = $entity->content['body'][0];

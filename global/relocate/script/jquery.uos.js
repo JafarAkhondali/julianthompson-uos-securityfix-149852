@@ -662,4 +662,8 @@ Array.prototype.inArray = function(comparer) {
     return false; 
 }; 
 
+function filtermessages(tag) {
+
+}
+
 

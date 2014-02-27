@@ -64,11 +64,20 @@ $uos->input = new StdClass();
 $uos->input->parameters = array();
 
 $uos->output = new StdClass();
-$uos->output->content = array();
+$uos->output = array();
+//$uos->output->content = array();
 
 $uos->config = new StdClass();
 
 $uos->config->debugmode = FALSE;
+$uos->config->showerrors = FALSE;
+$uos->config->types = Array();
+
+$uos->title = 'UniverseOS';
+
+
+
+
 
 
 

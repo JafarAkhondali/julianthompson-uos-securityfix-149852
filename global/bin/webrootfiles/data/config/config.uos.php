@@ -3,18 +3,13 @@
 // Universe OS Configuration file
 // Ammend as required
 
-// Turn on error reporting
-
-// error_reporting(E_ALL);
-// ini_set('display_errors','On');
-
 // Takes the global universe database from Virtual host file in format :
 // SetEnv UOS_DATABASE    mysql://root:xxxx@localhost/uos
 // But the value can be coded here 
 
 $uos->config->globaldbstring = UOS_DATABASE;
-
 $uos->config->debugmode = FALSE;
+$uos->config->showerrors = TRUE;
 
 
 // These items are only temporary dummy items to get us started

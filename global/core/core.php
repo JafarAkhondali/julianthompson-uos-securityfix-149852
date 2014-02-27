@@ -202,19 +202,30 @@ function find_display_file($entity, $filetype='template', $extension='html.php')
 /*old functions */
 
 
-function addoutput($path,$content=FALSE,$attributes=array()) {
+function addoutputold($path,$content=FALSE,$attributes=array()) {
   global $uos;
   
   if (empty($content)) return;
   
   $output = &$uos->output->content;
   $outputpath = outputarraypath($path);
-   
+
+  @eval ( $outputpath . '= $content;' );
+}
+
+function addoutput($path,$content=FALSE,$attributes=array()) {
+  global $uos;
+  
+  if (empty($content)) return;
+  
+  $output = &$uos->output;
+  $outputpath = outputarraypath($path);
+  //print_r($outputpath);die();
   @eval ( $outputpath . '= $content;' );
 }
 
 
-function outputarraypath($path) {
+function outputarraypathold($path) {
   if (empty($path)) return '$uos->output->content';
   $path = trim($path);
   $pathexploded = explode('/',$path);
@@ -224,6 +235,20 @@ function outputarraypath($path) {
   //$append = (substr($path,-1)=='/')?'[]':'';
   //$path = trim($path,'/');  
   $arraypath = '$uos->output->content[' . implode('][',$pathexploded) . ']';
+  return $arraypath;
+}
+
+function outputarraypath($path) {
+  if (empty($path)) return '$uos->output';
+  //if (empty($path)) return '$uos->output';
+  $path = trim($path);
+  $pathexploded = explode('/',$path);
+  foreach($pathexploded as &$pathelement) {
+    if (!empty($pathelement)) $pathelement = '\''.$pathelement.'\'';
+  }
+  //$append = (substr($path,-1)=='/')?'[]':'';
+  //$path = trim($path,'/');  
+  $arraypath = '$uos->output[' . implode('][',$pathexploded) . ']';
   return $arraypath;
 }
 
@@ -279,14 +304,14 @@ function getcallerinfo() {
 
 function universe_shutdown() { 
 
-  global $__universe_input, $__universe_output;
+  global $uos;
 
   $error = error_get_last();
   if ($error) {
   	addoutput('content/',$error);
   } 
   
-  //print render($__universe_output->);
+  //print render($uos->output);
   
 }
 

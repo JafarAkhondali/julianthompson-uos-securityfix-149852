@@ -37,7 +37,7 @@ class entity {
 		      $this->properties[$fieldname]->value = $fieldvalue;
 		    } else {
 		    	$this->addproperty($fieldname,'Field',array(
-		    		value => $fieldvalue
+		    		'value' => $fieldvalue
 		    	));
 		    }
 			} catch (Exception $e) {
@@ -133,14 +133,20 @@ class entity {
   }
   
   public function getactions() {
+  
   	global $uos;
-  	$entityclass = get_class($this);
   	
-  	if (!isset($uos->config->types[$entityclass]->actions)) {
-  		if (!isset($uos->config->types)) $uos->config->types = Array();
-  		if (!isset($uos->config->types[$entityclass])) $uos->config->types[$entityclass] = new StdClass();  		
-			$uos->config->types[$entityclass]->actions = Array();
+  	$entityclass = get_class($this);
+
+  	if (!isset($uos->config->types[$entityclass]->actions)) {		
+  	
+  		if (!isset($uos->config->types[$entityclass])) {
+  			$uos->config->types[$entityclass] = new StdClass();  
+  		}
+  	
+			$actions = Array();
 	  	$classes = entity_class_tree($this,TRUE);
+	  	
 	  	//trace($classes);
 	  	foreach($classes as $class) {
 	  		$path = classtopath($class) . 'actions.' . $class . '/';
@@ -148,11 +154,12 @@ class entity {
 	  		$actionfiles = file_list($path, 'action\..*\.php');
 	  		foreach ($actionfiles as $actionfile) {
 	  			$actionname = substr($actionfile,7,-4);
-	  			$uos->config->types[$entityclass]->actions[$actionname][$class] = $path.$actionfile;
+	  			$actions[$actionname][$class] = $path.$actionfile;
 	  		}
 	  	}
+	  	$uos->config->types[$entityclass]->actions = $actions;
 	    $this->actions = &$uos->config->types[$entityclass]->actions;
-	    //trace($this->actions);
+	    if ($entityclass=='node_person') trace($this->actions);
 		}
     return $this->actions;
   }
@@ -190,8 +197,11 @@ class entity {
   
   public function callaction($action,$parameters=NULL) {
   	global $uos;
+  	$result = NULL;
     $this->getactions();
-    if ($this->actions[$action]) {
+    //print_r($this->actions[$action]);
+    //print_r(gettype($this));
+    if (isset($this->actions[$action])) {
     
       //$response->found = TRUE;
       //trace("this->fireevent(".$action.','.print_r($parameters,TRUE). "," . UNIVERSE_EVENT_POST . ")");
@@ -218,7 +228,6 @@ class entity {
 		      } catch (Exception $e) {
 		      	die('failed includes');
 		        //$result = 'error';//$e;
-		        $result = NULL;
 		      }
 	      }
       }
