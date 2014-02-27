@@ -40,7 +40,7 @@ define( 'UOS_DATA_CONFIG',			UOS_DATA . 'config/');
 
 
 // Universe config file
-define( 'UOS_CONFIG_FILE',			UOS_DATA_CONFIG . 'config.php');
+define( 'UOS_CONFIG_FILE',			UOS_DATA_CONFIG . 'config.uos.php');
 
 
 // Universe Base Class
@@ -51,6 +51,8 @@ define( 'UOS_DATABASE',					getenv('UOS_DATABASE'));
 define( 'LOGTOSTD',						TRUE);
 
 
+// Set up the default UOS structure
+
 $uos = new StdClass();
 
 $uos->logtoscreen = FALSE;
@@ -58,10 +60,15 @@ $uos->logtoscreen = FALSE;
 $uos->actions = array();
 
 $uos->input = new StdClass(); 
-//$uos->input->settings = $settings;
 
-//$uos->input = new stdClass();
 $uos->input->parameters = array();
+
+$uos->output = new StdClass();
+$uos->output->content = array();
+
+$uos->config = new StdClass();
+
+$uos->config->debugmode = FALSE;
 
 
 

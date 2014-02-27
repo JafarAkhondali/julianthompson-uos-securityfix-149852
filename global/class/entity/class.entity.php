@@ -135,8 +135,11 @@ class entity {
   public function getactions() {
   	global $uos;
   	$entityclass = get_class($this);
-  	if (!isset($uos->actions[$entityclass])) {
-			$uos->actions[$entityclass] = Array();
+  	
+  	if (!isset($uos->config->types[$entityclass]->actions)) {
+  		if (!isset($uos->config->types)) $uos->config->types = Array();
+  		if (!isset($uos->config->types[$entityclass])) $uos->config->types[$entityclass] = new StdClass();  		
+			$uos->config->types[$entityclass]->actions = Array();
 	  	$classes = entity_class_tree($this,TRUE);
 	  	//trace($classes);
 	  	foreach($classes as $class) {
@@ -145,13 +148,13 @@ class entity {
 	  		$actionfiles = file_list($path, 'action\..*\.php');
 	  		foreach ($actionfiles as $actionfile) {
 	  			$actionname = substr($actionfile,7,-4);
-	  			$uos->actions[$entityclass][$actionname][$class] = $path.$actionfile;
+	  			$uos->config->types[$entityclass]->actions[$actionname][$class] = $path.$actionfile;
 	  		}
 	  	}
-	    $this->actions = &$uos->actions[$entityclass];
+	    $this->actions = &$uos->config->types[$entityclass]->actions;
 	    //trace($this->actions);
 		}
-    return $uos->actions[$entityclass];
+    return $this->actions;
   }
   
   

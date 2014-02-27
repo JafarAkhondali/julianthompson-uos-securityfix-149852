@@ -17,9 +17,11 @@ UNIVERSEDATAPATH=$UNIVERSEPATH/data
 UNIVERSECACHEPATH=$UNIVERSEPATH/data
 UNIVERSESETTINGSFILE=$UNIVERSEDATAPATH/settings.
 UNIVERSEGLOBALLINK=$UNIVERSEPATH/global
-INSTALLROOTFILES=$INSTALLSCRIPTPATH/installrootfiles/
+INSTALLROOTFILES=$INSTALLSCRIPTPATH/webrootfiles/
 INSTALLPERMISSIONS=775
 INSTALLOWNERS=julian:wheel
+FAVICONPATH=$UNIVERSEPATH/favicon.ico
+FAVICONGLOBALTARGET=$UNIVERSEGLOBALLINK/favicon.ico
 
 
 cd $TARGETPATH
@@ -40,6 +42,7 @@ then
   mkdir $UNIVERSEPATH
 else 
   echo "Universe folder exists : $UNIVERSEPATH"
+  exit 1
 fi
 echo
 
@@ -60,6 +63,8 @@ if [ ! \( -d "${UNIVERSECACHEPATH}" \) ]
 then
   echo "Creating cache folder : $UNIVERSECACHEPATH"
   mkdir $UNIVERSECACHEPATH
+  mkdir $UNIVERSECACHEPATH/private
+  mkdir $UNIVERSECACHEPATH/public
 else 
   echo "Cache folder exists : $UNIVERSECACHEPATH"
 fi
@@ -79,6 +84,13 @@ else
 	fi
 fi
 echo 
+
+if [ ! \( -f "${FAVICONPATH}" \) ] && [ ! \( -L "${FAVICONPATH}" \) ] 
+then
+	ln -s $FAVICONGLOBALTARGET $FAVICONPATH 
+fi
+
+
 
 echo "Copying core files from : $INSTALLROOTFILES"
 cp -Rf $INSTALLROOTFILES $UNIVERSEPATH/

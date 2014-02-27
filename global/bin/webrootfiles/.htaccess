@@ -1,0 +1,41 @@
+ErrorDocument 400 /global/uos.php
+ErrorDocument 401 /global/uos.php
+ErrorDocument 403 /global/uos.php
+ErrorDocument 404 /global/uos.php
+ErrorDocument 500 /global/uos.php
+
+# Don't show directory listings for URLs which map to a directory.
+Options -Indexes
+
+# Follow symbolic links in this directory.
+Options +FollowSymLinks
+
+# Set the default handler.
+DirectoryIndex  index.php index.html /global/uos.php
+
+
+##<Directory "/">
+##  Options +FollowSymLinks
+##  AllowOverride All
+##  Order allow,deny
+##  Allow from all
+##</Directory>
+
+##<Directory "/data">
+##  Order allow,deny
+##  Deny from all
+##</Directory>
+
+##<Directory "/cache">
+##  Order allow,deny
+##  Deny from all
+##</Directory>
+
+##<Directory "/global/class">
+##  Order allow,deny
+##  Deny from all
+##</Directory>
+
+## SetEnv UOS_DATABASE mysql://root:creatorpassword@localhost/universe
+## php_flag display_errors On 
+## php_value date.timezone Europe/London 

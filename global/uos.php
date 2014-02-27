@@ -15,9 +15,9 @@ $uos->title = 'UniverseOS';
 
 //$uos->user->title = 'Julian Thompson';
 //addoutput('input/', $uos_input);
+//print_r($uos->config->data);die();
 
-
-foreach($nodes as $key=>$propertyarray) {
+foreach($uos->config->data as $key=>$propertyarray) {
 	$type = isset($propertyarray->type)?$propertyarray->type:'StdClass';
 	//$entity->content['body'][] = new $type($propertyarray);
 	addoutput('body/', new $type($propertyarray));
@@ -53,11 +53,11 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 		<title><?php print $title;?></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-		<?php foreach($uos_output->content['resources']['script'] as $script) : ?>
+		<?php foreach($uos->output->content['resources']['script'] as $script) : ?>
 		<script src="<?php print $script;?>"></script>		
 		<?php endforeach; ?>
 		
-		<?php foreach($uos_output->content['resources']['style'] as $stylesheet) : ?>
+		<?php foreach($uos->output->content['resources']['style'] as $stylesheet) : ?>
 		<link rel="stylesheet" href="<?php print $stylesheet;?>"></link>		
 		<?php endforeach; ?>		
 
@@ -94,12 +94,16 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 			<?php print render($uos->input);?>
 			<h2><i class="fa fa-sign-in"></i> Log</h2>
 			<div id="inputmessages">
-			<?php print render($uos_output->content['log']); ?>
+			<?php print render($uos->output->content['log']); ?>
+			</div>
+			<h2><i class="fa fa-sign-in"></i> Universe Config ($uos->config)</h2>
+			<div id="uosobject">
+			<?php print render($uos->config);?>
 			</div>
 		</div>		
 		
 		<div id="container">
-		<?php print render($uos_output->content['body']);?>
+		<?php print render($uos->output->content['body']);?>
 		</div>
 		
 	</body>

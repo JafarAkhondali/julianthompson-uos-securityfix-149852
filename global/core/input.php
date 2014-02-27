@@ -12,7 +12,8 @@ if (isset($argv)) {
   session_save_path('/tmp');
 
 } elseif (isset($_SERVER['REQUEST_URI'])) {
-	$uos->input->server = $_SERVER;
+	//Only enable for debug
+	if ($uos->config->debugmode) $uos->input->server = $_SERVER;  
 	$uos->input->servername = $_SERVER['SERVER_NAME'];
   $uos->input->commandtype = 'GET';
   $uos->input->url = trim($_SERVER['REQUEST_URI'],'/');

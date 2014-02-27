@@ -5,13 +5,6 @@ include "core/const.php";
 register_shutdown_function('universe_shutdown');
 //set_error_handler('handleError');
 
-$uos_output = new StdClass();
-$uos_output->content = array();
-
-
-//print_r($uosy);
-
-//%^[1-9][0-9]{9}$%
 
 function __autoload($classname='') {
   $classpath = getclassfile($classname);
@@ -23,7 +16,7 @@ function __autoload($classname='') {
 }
 
 function newentity($constructor) {
-	
+	// To do (Do we want this)
 }
 
 
@@ -101,12 +94,12 @@ function format_match($search,$text) {
 
 
 function get_type_data($machinename) {
-	global $universetypes;
+	global $uos;
 
-	if (isset($universetypes[$machinename])) {
-		return $universetypes[$machinename];
+	if (isset($uos->config->types[$machinename])) {
+		return $uos->config->types[$machinename];
 	}
-	return $universetypes['node'];
+	return $uos->config->types['node'];
 }
 
 
@@ -210,11 +203,11 @@ function find_display_file($entity, $filetype='template', $extension='html.php')
 
 
 function addoutput($path,$content=FALSE,$attributes=array()) {
-  global $uos_output;
+  global $uos;
   
   if (empty($content)) return;
   
-  $output = &$uos_output->content;
+  $output = &$uos->output->content;
   $outputpath = outputarraypath($path);
    
   @eval ( $outputpath . '= $content;' );
@@ -222,7 +215,7 @@ function addoutput($path,$content=FALSE,$attributes=array()) {
 
 
 function outputarraypath($path) {
-  if (empty($path)) return '$uos_output->content';
+  if (empty($path)) return '$uos->output->content';
   $path = trim($path);
   $pathexploded = explode('/',$path);
   foreach($pathexploded as &$pathelement) {
@@ -230,7 +223,7 @@ function outputarraypath($path) {
   }
   //$append = (substr($path,-1)=='/')?'[]':'';
   //$path = trim($path,'/');  
-  $arraypath = '$uos_output->content[' . implode('][',$pathexploded) . ']';
+  $arraypath = '$uos->output->content[' . implode('][',$pathexploded) . ']';
   return $arraypath;
 }
 
