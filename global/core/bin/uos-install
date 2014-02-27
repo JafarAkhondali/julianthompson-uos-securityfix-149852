@@ -1,0 +1,93 @@
+#!/bin/bash
+# Usage 
+# cd www/sites/dev/uos1-001-dev/
+# sudo /www/codebases/uos/live/global/bin/installuniverse [universename]
+
+((!$#)) && echo No arugments supplied! && exit 1
+
+UNIVERSENAME=$1
+TARGETPATH=$(pwd)
+ABSOLUTE_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/`basename "${BASH_SOURCE[0]}"`
+INSTALLSCRIPTPATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
+INSTALLSCRIPT=$INSTALLSCRIPTPATH/`basename "${BASH_SOURCE[0]}"`
+UNIVERSECODEBASEPATH="$INSTALLSCRIPTPATH.."
+UNIVERSECODEBASEPATH="$(cd ${UNIVERSECODEBASEPATH%/*}; pwd)"
+UNIVERSEPATH=$UNIVERSENAME
+UNIVERSEDATAPATH=$UNIVERSEPATH/data
+UNIVERSECACHEPATH=$UNIVERSEPATH/data
+UNIVERSESETTINGSFILE=$UNIVERSEDATAPATH/settings.
+UNIVERSEGLOBALLINK=$UNIVERSEPATH/global
+INSTALLROOTFILES=$INSTALLSCRIPTPATH/installrootfiles/
+INSTALLPERMISSIONS=775
+INSTALLOWNERS=julian:wheel
+
+
+cd $TARGETPATH
+
+echo "Creating Universe"
+echo "new node_universe($UNIVERSENAME)"
+echo "Target path : $TARGETPATH"
+echo "Install script : $INSTALLSCRIPT"
+echo "Install script path : $INSTALLSCRIPTPATH"
+echo "Codebase path : $UNIVERSECODEBASEPATH"
+echo
+
+
+#if universe folder doesn't exist
+if [ ! \( -d "${UNIVERSEPATH}" \) ]
+then
+  echo "Creating universe folder : $UNIVERSEPATH"
+  mkdir $UNIVERSEPATH
+else 
+  echo "Universe folder exists : $UNIVERSEPATH"
+fi
+echo
+
+
+#if data folder doesn't exist
+if [ ! \( -d "${UNIVERSEDATAPATH}" \) ]
+then
+  echo "Creating data folder : $UNIVERSEDATAPATH"
+  mkdir $UNIVERSEDATAPATH
+else 
+  echo "Cache folder exists : $UNIVERSECACHEPATH"
+fi
+echo
+
+
+#if cache folder doesn't exist
+if [ ! \( -d "${UNIVERSECACHEPATH}" \) ]
+then
+  echo "Creating cache folder : $UNIVERSECACHEPATH"
+  mkdir $UNIVERSECACHEPATH
+else 
+  echo "Cache folder exists : $UNIVERSECACHEPATH"
+fi
+echo 
+
+
+#if nothing exists where symlink should go
+if [ ! \( -f "${UNIVERSEGLOBALLINK}" \) ] && [ ! \( -L "${UNIVERSEGLOBALLINK}" \) ] 
+then
+	echo "Creating symbolic link to codebase : $UNIVERSEGLOBALLINK -> $UNIVERSECODEBASEPATH"
+	ln -s $UNIVERSECODEBASEPATH $UNIVERSEGLOBALLINK
+else
+  echo "Codebase link exists : $UNIVERSEGLOBALLINK"
+	if [ ! \( -L "${UNIVERSEGLOBALLINK}" \) ]
+	then
+		echo "Not symbolic link (did you want this?)"
+	fi
+fi
+echo 
+
+echo "Copying core files from : $INSTALLROOTFILES"
+cp -Rf $INSTALLROOTFILES $UNIVERSEPATH/
+
+
+echo "Set permissions"
+chmod -R $INSTALLPERMISSIONS $UNIVERSEPATH
+chown -R $INSTALLOWNERS $UNIVERSEPATH
+chmod -h $INSTALLPERMISSIONS $UNIVERSEGLOBALLINK
+chown -h $INSTALLOWNERS $UNIVERSEGLOBALLINK
+
+#echo "Create settings file : $UNIVERSESETTINGSFILE"
