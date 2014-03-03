@@ -102,7 +102,7 @@ body.alt-pressed #universetoolbar ul#universe-actions li.alt-keystatus {
 
 
 #input {
-	display:block;
+	display:none;
 	background-color: rgba(255,255,255,0.7);
   position: fixed;
   right:10px;
@@ -151,15 +151,16 @@ body.alt-pressed #universetoolbar ul#universe-actions li.alt-keystatus {
 }
 
 
-#input:hover {
+#input.opened {
 	opacity: 1;
 	left:10px;
 	width: auto;
 	height: auto;
 	bottom: 10px;
-	top: 10px;
+	top: 75px;
 	background-color: rgba(255,255,255,1);
 	overflow: scroll;
+	display:block;
 }
 
 #input div.node{
@@ -553,4 +554,30 @@ div.node .header i.children-count {
 	z-index: 15;
 	left: 40px;
 	top: 40px;	
+}
+
+li.status-refreshing {
+	display:none;
+}
+
+.uos-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.65);
+	background-color: rgba(41,71,99,0.65);
+	z-index: 1000;
+	color: white;
+	font-size:30px;
+	text-align: center;
+}
+
+.uos-overlay i {
+	margin: auto;
+	xwidth:150px;
+	xheight:150px;
+	font-size: 100px;
+	text-align: center;
 }

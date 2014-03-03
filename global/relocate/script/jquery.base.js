@@ -39,4 +39,6 @@ $(document).ready(function() {
   	this.addEventListener('click', handleNodeClick, false);
   	//$(this).bind("contextmenu",function(e){return false;});
 	});
+	
+	universeos.load();
 });

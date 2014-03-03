@@ -65,12 +65,14 @@ $uos->input->parameters = array();
 
 $uos->output = new StdClass();
 $uos->output = array();
-//$uos->output->content = array();
+
+$uos->output['log'] = array();
 
 $uos->config = new StdClass();
 
 $uos->config->debugmode = FALSE;
 $uos->config->showerrors = FALSE;
+$uos->config->traceon = FALSE;
 $uos->config->types = Array();
 
 $uos->title = 'UniverseOS';

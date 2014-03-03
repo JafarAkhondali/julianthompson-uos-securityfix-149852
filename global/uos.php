@@ -1,43 +1,56 @@
 <?php 
-  error_reporting(E_ALL);
-  ini_set('display_errors','On');
+
+error_reporting(E_ALL);
+ini_set('display_errors','On');
 
 include_once "./core/core.php";
 include_once UOS_CONFIG_FILE;
 include_once "./core/input.php";
 
 // Turn on error reporting
-//if ($uos->config->showerrors) {
+if ($uos->config->showerrors) {
   error_reporting(E_ALL);
   ini_set('display_errors','On');
-//}
+}
 
 
 
-foreach($uos->config->data as $key=>$propertyarray) {
-	$type = isset($propertyarray->type)?$propertyarray->type:'StdClass';
-	//$entity->content['body'][] = new $type($propertyarray);
-	addoutput('body/', new $type($propertyarray));
+foreach($uos->config->data->entities as $guid=>$propertyobject) {
+
+	$entity = fetchentity($guid);
+	//$type = isset($propertyobject->type)?$propertyobject->type:'StdClass';
+	//$entity = new $type($propertyobject);
+	//foreach($childlist as $key) {
+	//	$entity->children[] = ;
+	//}
+	if ($entity) addoutput('body/', $entity);
 }
 
 //print_r($uos->output);die();
 
 
 
-addoutput('resources/script/', "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js");
-addoutput('resources/script/', "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js");
+//addoutput('resources/script/', "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js");
+//addoutput('resources/script/', "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js");
+addoutput('resources/script/', "/global/library/jquery/1.9.1/jquery.min.js");
+addoutput('resources/script/', "/global/library/jqueryui/1.10.2/jquery-ui.min.js");
+
 addoutput('resources/script/', "/global/library/jquery.hotkeys/default.jquery.hotkeys.js");
 addoutput('resources/script/', "/global/library/jquery.growl/javascripts/jquery.growl.js");
 addoutput('resources/script/', "/global/library/jquery.growl/javascripts/jquery.growl.js");
 addoutput('resources/script/', "/global/displays/entity/class.entity.js");
 addoutput('resources/script/', "/global/relocate/script/jquery.uos.js");
 addoutput('resources/script/', "/global/relocate/script/jquery.base.js");
-addoutput('resources/script/', "http://mrdoob.github.io/three.js/build/three.min.js");
-addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/libs/tween.min.js");
-addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/controls/TrackballControls.js");
-addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/renderers/CSS3DRenderer.js");
-
-addoutput('resources/style/', "http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
+//addoutput('resources/script/', "http://mrdoob.github.io/three.js/build/three.min.js");
+//addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/libs/tween.min.js");
+//addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/controls/TrackballControls.js");
+//addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/renderers/CSS3DRenderer.js");
+addoutput('resources/script/', "/global/library/mrdoob-three.js/build/three.min.js");
+addoutput('resources/script/', "/global/library/mrdoob-three.js/examples/js/libs/tween.min.js");
+addoutput('resources/script/', "/global/library/mrdoob-three.js/examples/js/controls/TrackballControls.js");
+addoutput('resources/script/', "/global/library/mrdoob-three.js/examples/js/renderers/CSS3DRenderer.js");
+//addoutput('resources/style/', "http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
+addoutput('resources/style/', "/global/library/font-awesome/css/font-awesome.css");
 addoutput('resources/style/', "/global/library/jquery.growl/stylesheets/jquery.growl.css");
 addoutput('resources/style/', "/global/relocate/style/uos.css");
 
@@ -47,7 +60,7 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 <html>
 
 	<head>
-		<title><?php print $title;?></title>
+		<title><?php print $uos->title;?></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
 		<?php foreach($uos->output['resources']['script'] as $script) : ?>
@@ -110,8 +123,8 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 <pre>
 
 <?php
-$relationship = new relationship();
-print_r($relationship->__gettabledefinition());
+//$relationship = new relationship();
+//print_r($relationship->__gettabledefinition());
 //$db = $uos->universe->connect();
 //$uos->logtoscreen = TRUE;
 //print_r($uos->universe);
