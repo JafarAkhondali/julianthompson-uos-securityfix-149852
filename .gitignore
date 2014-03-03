@@ -1,2 +1,4 @@
 # Ignore libraries that contain generated content.
 global/library/test
+data/
+cache/

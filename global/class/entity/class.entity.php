@@ -2,22 +2,21 @@
 //abstract 
 class entity {
 	
-	private $attributes = array();
-	public	$properties = array();
+	private 	$attributes = array();
+	public		$properties = array();
 	
 	//public	$__log = array();
-	public	$displaymode = '';
-	private 	$parent = null;
-	public $children = array();
-	public	$actions = array();
-	public $scope = null;
+	public		$displaymode = '';
+	private		$parent = null;
+	public		$children = array();
+	public		$actions = null;
+	public 		$scope = null;
 	
 	function __construct($initializer=null) {
-		//trace('created entity');
-		//die('xxx');
+
 		$this->callaction('build');
 		// call build object here - create fields
-	  //$this->getactions();
+		
 		$initializer = format_initializer($initializer);
 		//print_r($initializer);
 		//populate fields 
@@ -36,7 +35,7 @@ class entity {
 		      //$this->trace('__setpropertyvalue ('.$propertyname.') : '.$value);
 		      $this->properties[$fieldname]->value = $fieldvalue;
 		    } else {
-		    	$this->addproperty($fieldname,'Field',array(
+		    	$this->addproperty($fieldname,'field',array(
 		    		'value' => $fieldvalue
 		    	));
 		    }
@@ -83,7 +82,7 @@ class entity {
   	*/
   	//print_r($message);
   }
-
+/*
   
   final protected function addaction($methodname) {
     $parentclasses = $this->getparentclasses();
@@ -108,17 +107,7 @@ class entity {
     //$this->trace($this);
     return $output;
   }
-  
-  
-  final public function classpathtree($pathsuffix) {
-  	$paths = array();
-  	$classes = entity_class_tree($this,TRUE);
-  	foreach($classes as $class) {
-  		$paths[$class] = classtopath($class) . 'actions.' . $class . '/';
-  	}
-  	return $paths;
-  }
-  
+
   public function actiontopath($action) {
     trace('actiontopath','dev');
     //trace('class'.get_class($this),'dev');
@@ -130,37 +119,51 @@ class entity {
     }
     return NULL;
     //return getfirstfile($paths);
+  }  
+  
+*/  
+  
+  final public function classpathtree($pathsuffix) {
+  	$paths = array();
+  	$classes = entity_class_tree($this,TRUE);
+  	foreach($classes as $class) {
+  		$paths[$class] = classtopath($class) . 'actions.' . $class . '/';
+  	}
+  	return $paths;
   }
+  
+
   
   public function getactions() {
   
   	global $uos;
-  	
-  	$entityclass = get_class($this);
-
-  	if (!isset($uos->config->types[$entityclass]->actions)) {		
-  	
+	$entityclass = get_class($this);
+  	trace('looking for actions for : '.$entityclass,'jmt');
+  	if (is_null($this->actions)) {		
+		trace('finding actions for : '.$entityclass,'jmt');
   		if (!isset($uos->config->types[$entityclass])) {
   			$uos->config->types[$entityclass] = new StdClass();  
   		}
-  	
+		
+		if (!isset($uos->config->types[$entityclass]->actions)) {
+		
 			$actions = Array();
-	  	$classes = entity_class_tree($this,TRUE);
-	  	
-	  	//trace($classes);
-	  	foreach($classes as $class) {
-	  		$path = classtopath($class) . 'actions.' . $class . '/';
-	  		trace($path);
-	  		$actionfiles = file_list($path, 'action\..*\.php');
-	  		foreach ($actionfiles as $actionfile) {
-	  			$actionname = substr($actionfile,7,-4);
-	  			$actions[$actionname][$class] = $path.$actionfile;
-	  		}
-	  	}
-	  	$uos->config->types[$entityclass]->actions = $actions;
-	    $this->actions = &$uos->config->types[$entityclass]->actions;
-	    if ($entityclass=='node_person') trace($this->actions);
+			$classes = entity_class_tree($this,TRUE);
+			
+			//trace($classes);
+			foreach($classes as $class) {
+				$path = classtopath($class) . 'actions.' . $class . '/';
+				trace('found action : '.$path,'jmt');
+				$actionfiles = file_list($path, 'action\..*\.php');
+				foreach ($actionfiles as $actionfile) {
+					$actionname = substr($actionfile,7,-4);
+					$actions[$actionname][$class] = $path.$actionfile;
+				}
+			}
+			$uos->config->types[$entityclass]->actions = $actions;
 		}
+	    $this->actions = &$uos->config->types[$entityclass]->actions;
+	}
     return $this->actions;
   }
   
@@ -198,9 +201,13 @@ class entity {
   public function callaction($action,$parameters=NULL) {
   	global $uos;
   	$result = NULL;
+	if (get_class($this)=='node_person') $uos->config->logging = TRUE;
     $this->getactions();
     //print_r($this->actions[$action]);
     //print_r(gettype($this));
+	trace(get_class($this),'jmt');
+	//trace($this->title,'jmt');
+	trace(empty($this->actions)?'EMPTYACTONS':'','jmt');
     if (isset($this->actions[$action])) {
     
       //$response->found = TRUE;
@@ -244,6 +251,7 @@ class entity {
     } else {
       //$response->error = TRUE;
     }
+	$uos->config->logging = FALSE;
     
     return $result;
   }

@@ -78,23 +78,30 @@ var universeos = {
 			jQuery('#universe-actions').append($control);
 			//alert('xx');
 		});
-		jQuery('#universe-actions').append('<li class="km shift-keystatus">Shift</li><li class="km ctrl-keystatus">Ctrl</li><li class="km meta-keystatus">Meta</li><li class="km alt-keystatus">Alt</li><li><i class="fa fa-refresh fa-spin"></i></li>')
+		jQuery('#universe-actions').append('<li class="km shift-keystatus">Shift</li><li class="km ctrl-keystatus">Ctrl</li><li class="km meta-keystatus">Meta</li><li class="km alt-keystatus">Alt</li>');
+		//jQuery('#universe-actions').append('<li class="status-refreshing"><i class="fa fa-refresh fa-spin"></i></li>');
+		//jQuery('#universe-actions').append('<li class="action-input"><i class="fa fa-sign-in"></i></li>');
 	},
 	
 	getActions: function (e) {
 		var actions = new Array();
-		jQuery('div.node.selected').each(function(e) {
-			var actionstring = jQuery(this).data('actions');
-			actionnames = actionstring.split(',');
-			jQuery.each(actionnames, function(index,actionname) {
-				if (universeos.node.hasAction(actionname)) {
-					if (!actions.inArray(universeos.node.actions[actionname])) {
-						//universeos.log(universeos.node.actions[actionname]);
-						actions.push(universeos.node.actions[actionname]);
+		// if no selection
+		if (jQuery('div.node.selected').length>0) {
+			jQuery('div.node.selected').each(function(e) {
+				var actionstring = jQuery(this).data('actions');
+				actionnames = actionstring.split(',');
+				jQuery.each(actionnames, function(index,actionname) {
+					if (universeos.node.hasAction(actionname)) {
+						if (!actions.inArray(universeos.node.actions[actionname])) {
+							//universeos.log(universeos.node.actions[actionname]);
+							actions.push(universeos.node.actions[actionname]);
+						}
 					}
-				}
+				});
 			});
-		});
+		} else {
+			actions = universeos.global.actions;
+		}
 		//console.log(actions);
 		return actions;
 	},
@@ -120,7 +127,21 @@ var universeos = {
 		} while (fileSizeInBytes > 1024);
 		
 		return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
-	} 
+	},
+	
+	overlay: function(toggle) {
+		if (toggle) {
+			var $overlay = jQuery('<div class="uos-overlay"><i class="fa fa-refresh fa-spin"></i><div class="message">Updating</div></div>');
+			jQuery('body').append($overlay);
+		} else {
+			jQuery('div.uos-overlay').remove();
+		}
+	},
+	
+	load : function() {
+		universeos.buildToolbar();
+		filtermessages('jmt');
+	}
 }
 
 //var uos = universeos;
@@ -372,6 +393,27 @@ universeos.node_device = {
 
 };
 
+universeos.global = {
+
+	hasAction: function (actionname) {
+		return (universeos.global.actions[actionname])?true:false;
+	},
+	
+	actions: {
+		add : {
+			title : 'Add',		
+			icon : 'fa-plus-circle'	
+		},
+		trace : {
+			title : 'Trace',
+			icon : 'fa-sign-in',
+			action : function() {
+				jQuery('#input').toggleClass('opened');
+			}
+		},
+	}
+};
+
 
 var dragSrcEl = null;
 
@@ -620,7 +662,7 @@ function handleNodeClick(e) {
 	//jQuery(this).toggleClass('selected');
 	}
 	e.preventDefault();
-	event.stopPropagation();
+	e.stopPropagation();
 	//return false;
 }
 
@@ -663,7 +705,22 @@ Array.prototype.inArray = function(comparer) {
 }; 
 
 function filtermessages(tag) {
-
+  var count = 0;
+  jQuery('#inputmessages > ul > li').each(function() {
+	$tagfieldvalue = $(this).find('tr.key-tags .fieldvalue');
+	//console.log($tagfieldvalue.text());
+	//console.log($(this).attr('id'));
+	if (tag!="" && $tagfieldvalue.text().indexOf(tag) < 0) {
+		//$(this).css( "background-color", "red" );
+		$(this).slideUp();
+		count++;
+	} else {
+		$(this).slideDown();
+		//$(this).css( "background-color", "green" );
+	}
+  });
+  return count;
 }
+
 
 

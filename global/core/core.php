@@ -15,8 +15,33 @@ function __autoload($classname='') {
   }
 }
 
-function newentity($constructor) {
-	// To do (Do we want this)
+function fetchentity($guid) {
+	global $uos;
+
+	if (!isset($uos->instances[$guid])) {
+		//pretend to load from db
+		if (isset($uos->config->data->entities[$guid])) {
+			$propertyobject = $uos->config->data->entities[$guid];
+			$type = isset($propertyobject->type)?$propertyobject->type:'StdClass';
+			$entity = new $type($propertyobject);	
+			fetchentitychildren($entity);
+			$uos->instances[$guid] = $entity;
+		}
+	} else {
+		$entity = $uos->instances[$guid];
+	}
+	return $uos->instances[$guid];
+}
+
+function fetchentitychildren($entity) {
+	global $uos;
+	$entityguid = $entity->guid->value;
+	if (isset($uos->config->data->children[$entityguid])) {
+		$childguids = $uos->config->data->children[$entityguid];
+		foreach($childguids as $childguid) {
+			$entity->children[] = fetchentity($childguid);
+		}
+	}
 }
 
 
@@ -119,6 +144,8 @@ function get_instance_id($entity) {
 
 function render($entity, $format='html') {
   
+  if (empty($entity)) return '';
+  
   $classes = entity_class_tree($entity,TRUE);
   
   //print_r($classes);
@@ -132,10 +159,13 @@ function render($entity, $format='html') {
   //trace($preprocessfile);
 
   $preprocessfile = find_display_file($entity, 'process', 'php');
+  
   //die($preprocessfiles);
   $preprocessed = array();
   $templatefile = find_display_file($entity, 'template', $format.'.php');
 
+  $entitywrapperfile = find_display_file($entity, 'wrapper', 'php');
+  
   //need to cater for multiple preprocess from node down
   if ($preprocessfile) {
 	  try {
@@ -263,6 +293,7 @@ function trace($message, $tags=NULL) {
   } else {
     $time = microtime()-$starttime;
   }
+  if (!$uos->config->logging) return;
   
   $logitem = new StdClass();
   
@@ -286,8 +317,7 @@ function trace($message, $tags=NULL) {
   //$index = count($log)-1;
   //print_r($logitem);
   if ($uos->logtoscreen) {
-  	print 'xxx';
-  	print_r($logitem);
+  	print render($logitem);
   }
   addoutput('log/', $logitem);
 }
