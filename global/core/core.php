@@ -1,6 +1,6 @@
 <?php
 
-include "core/const.php";
+include "core/globals.php";
 
 register_shutdown_function('universe_shutdown');
 //set_error_handler('handleError');

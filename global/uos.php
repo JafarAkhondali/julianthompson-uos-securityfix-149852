@@ -1,18 +1,6 @@
 <?php 
 
-error_reporting(E_ALL);
-ini_set('display_errors','On');
-
 include_once "./core/core.php";
-include_once UOS_CONFIG_FILE;
-include_once "./core/input.php";
-
-// Turn on error reporting
-if ($uos->config->showerrors) {
-  error_reporting(E_ALL);
-  ini_set('display_errors','On');
-}
-
 
 
 foreach($uos->config->data->entities as $guid=>$propertyobject) {
