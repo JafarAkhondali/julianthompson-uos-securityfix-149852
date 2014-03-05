@@ -15,7 +15,7 @@ foreach($uos->config->data->entities as $guid=>$propertyobject) {
 
 
 // compress output
-ob_start("ob_gzhandler");
+//ob_start("ob_gzhandler");
 
 ?>
 <!-- UniverseOS-->

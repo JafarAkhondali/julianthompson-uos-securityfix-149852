@@ -155,10 +155,23 @@ function class_tree($entity,$reverse=FALSE) {
 }
 
 
+// Input : Path - Output : $path + '/' + $pathext + '/'
+function addtopath($path,$pathext) {
+	return $path . $pathext . '/';
+}
+
+
 function render($entity, object $formatoverride=NULL) {
 	global $uos;
 	
 	$content = '';
+	
+	$activerenderer = UOS_DEFAULT_DISPLAY;
+	
+	$activerendererpath = addtopath(UOS_DISPLAYS,$activerenderer);
+	
+	//print_r($activerenderer);
+	//print_r($activerendererpath);die();
 	
 	$format = $uos->request->outputformat;
 	//$classtree = class_tree($entity);
@@ -166,13 +179,17 @@ function render($entity, object $formatoverride=NULL) {
   if (empty($entity)) return '';
 
 	$classes = class_tree($entity);
-	$filesearchpaths = find_element_paths(UOS_DISPLAYS, $entity, TRUE);
+	
+	$filesearchpaths = find_element_paths($activerendererpath, $entity, TRUE);
 	
 	$uos->render->renderindex++;
 	
 	array_push($uos->render->renderpath,$classes[0]);
 	 
   $rendersettings = array(
+  	'activerenderer' => $activerenderer,
+  	
+  	'activerendererpath' => $activerendererpath,
 
 		'filesearchpaths' => $filesearchpaths,
 		
@@ -284,7 +301,7 @@ function find_display_file($entity, $filetype='template', $extension='html.php')
   // node
   
   while(!empty($classtree)) {
-    $path = UOS_DISPLAYS . implode('/',$classtree) . '/';
+    $path = UOS_DEFAULT_DISPLAY . implode('/',$classtree) . '/';
     $class = array_pop($classtree);
     $file = $path . $filetype . '.' . $class . $extension; 
     //$paths[] = $file;
@@ -295,12 +312,12 @@ function find_display_file($entity, $filetype='template', $extension='html.php')
   } 
   
   // default template
-  return UOS_DISPLAYS . $filetype . $extension;
+  return UOS_DEFAULT_DISPLAY . $filetype . $extension;
 }
 
 function find_element_paths($rootpath,$entity,$reverse=FALSE) {
 	$paths = array();
-	$currentpath = $rootpath;
+	$currentpath = $rootpath.'elements/';
 	array_push($paths, $currentpath);
 	$classtree = class_tree($entity,TRUE);
 	foreach($classtree as $leaf) { 

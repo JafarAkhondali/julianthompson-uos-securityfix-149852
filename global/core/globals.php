@@ -24,7 +24,11 @@ define( 'UOS_CLASSES',         UOS_GLOBAL . 'class/');
 
 
 // Displays folder
-define( 'UOS_DISPLAYS',        UOS_GLOBAL . 'display/');
+define( 'UOS_DISPLAYS',        UOS_GLOBAL . 'displays/');
+
+
+// Default display 
+define( 'UOS_DEFAULT_DISPLAY', 'default');
 
 
 // Data folder
