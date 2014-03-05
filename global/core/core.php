@@ -1,6 +1,6 @@
 <?php
 
-include "core/globals.php";
+include_once "core/globals.php";
 
 register_shutdown_function('universe_shutdown');
 //set_error_handler('handleError');
@@ -124,48 +124,107 @@ function get_type_data($machinename) {
 	if (isset($uos->config->types[$machinename])) {
 		return $uos->config->types[$machinename];
 	}
-	return $uos->config->types['node'];
+	return $uos->config->types['unknown'];
 }
 
 
-function get_instance_id($entity) {
+function get_instance_id($id) {
 	static $instances = array();
 		
-
-	$id = gettype($entity);	
-	
 	if (!isset($instances[$id])) {
 		$instances[$id] = 0;
 	}
 	$instances[$id]++;
-	return $id . '_' . $instances[$id];
+	return 'uos_' . $id . '_' . $instances[$id];
+}
+
+//function render_as($entity, )
+
+function class_tree($entity,$reverse=FALSE) {
+	$tree = array();
+	if (is_object($entity)) {
+  	$currentclass = get_class($entity); 
+    do {
+      $tree[] = strtolower($currentclass);
+    } while($currentclass = get_parent_class($currentclass));		
+    //$tree[] = 'object';
+	} else {
+		$tree[] = gettype($entity);	
+	}
+	return ($reverse) ? array_reverse($tree) : $tree;
 }
 
 
-function render($entity, $format='html') {
+function render($entity, object $formatoverride=NULL) {
+	global $uos;
+	
+	$content = '';
+	
+	$format = $uos->request->outputformat;
+	//$classtree = class_tree($entity);
   
   if (empty($entity)) return '';
+
+	$classes = class_tree($entity);
+	$filesearchpaths = find_element_paths(UOS_DISPLAYS, $entity, TRUE);
+	
+	$uos->render->renderindex++;
+	
+	array_push($uos->render->renderpath,$classes[0]);
+	 
+  $rendersettings = array(
+
+		'filesearchpaths' => $filesearchpaths,
+		
+		'preprocessfile' => find_element_file($filesearchpaths,"preprocess.${format}.php"),
+		
+		'templatefile' => find_element_file($filesearchpaths, "template.${format}.php"),
+		
+		'wrapperfile' => find_element_file($filesearchpaths, "wrapper.${format}.php"),  
+		
+		'classtree' => $classes,
+		
+		'classtreestring' => 'uos-element '.implode(' ',array_reverse($classes)),
+		
+		'entitytype' => $classes[0],
+		
+		'callerinfo' => getcallerinfo(),
+		
+		'typeinfo'=> get_type_data($classes[0]),
+		
+		'instanceid' => get_instance_id($classes[0]),
+		
+		'childcount' => 0,
+		
+		//'entity' => $entity,
+		
+		'isuosentity' => is_universe_entity($entity),
+		
+		//'title' => is_universe_entity($entity)?$entity->title->value:$classes[0],
+		
+		'displaymode' => 'default',
+		
+		'renderindex' => &$uos->render->renderindex,
+		
+		'renderpath' => &$uos->render->renderpath,
+		
+		
+  );
   
-  $classes = entity_class_tree($entity,TRUE);
+  // decide on one of these strategies
+  $render = (object) $rendersettings;
   
-  //print_r($classes);
+  if (is_subclass_of($render,'node')) { 
+  	$render->title = $entity->title->value;
+  } else {
+  	$render->title = $classes[0];
+  }
   
-  $entitytype = $classes[0];
-  
-  $callerinfo = getcallerinfo();
-  
-  $instanceid = get_instance_id($entity);
+  extract($rendersettings,EXTR_OVERWRITE);
   
   //trace($preprocessfile);
-
-  $preprocessfile = find_display_file($entity, 'process', 'php');
-  
-  //die($preprocessfiles);
   $preprocessed = array();
-  $templatefile = find_display_file($entity, 'template', $format.'.php');
 
-  $entitywrapperfile = find_display_file($entity, 'wrapper', 'php');
-  
   //need to cater for multiple preprocess from node down
   if ($preprocessfile) {
 	  try {
@@ -174,12 +233,9 @@ function render($entity, $format='html') {
 	  } catch (Exception $e) {
 	    trace('Caught exception: '.  $e->getMessage());
 	  }  
-	  $preprocessed[] = $preprocessfile;
+	  //$preprocessed[] = $preprocessfile;
   }
   
-  
-
-
   if ($templatefile) {
 	  //trace('Including template file - '.$templatefile);
 	  ob_start();
@@ -190,11 +246,24 @@ function render($entity, $format='html') {
 	    trace('Caught exception: '.  $e->getMessage());
 	  }
 	  ob_end_clean();
+	  
+	  if ($wrapperfile) {
+		  ob_start();
+		  try {
+		    include $wrapperfile;
+		  	$content = ob_get_contents();
+		  } catch (Exception $e) {
+		    trace('Caught exception: '.  $e->getMessage());
+		  }
+		  ob_end_clean();  	
+	  }	  
 
   } else {
   	$content = '<div class="error">entity render error</div>';
   }
-
+  
+  //$content .= print_r($rendersettings,TRUE);
+  
   return $content;
 }
 
@@ -228,6 +297,29 @@ function find_display_file($entity, $filetype='template', $extension='html.php')
   // default template
   return UOS_DISPLAYS . $filetype . $extension;
 }
+
+function find_element_paths($rootpath,$entity,$reverse=FALSE) {
+	$paths = array();
+	$currentpath = $rootpath;
+	array_push($paths, $currentpath);
+	$classtree = class_tree($entity,TRUE);
+	foreach($classtree as $leaf) { 
+		$currentpath .= $leaf . '/'; 
+	  array_push($paths, $currentpath) ; 
+	}		
+	return ($reverse) ? array_reverse($paths) : $paths;
+}
+
+function find_element_file($patharray,$filename) {
+  foreach($patharray as $path) {
+    $file = $path . $filename;
+    if (file_exists($file)) {
+      return $file;
+    }
+  }
+  return NULL;
+}
+
 
 /*old functions */
 
@@ -316,7 +408,7 @@ function trace($message, $tags=NULL) {
   //$message = new node((array) $logitem);
   //$index = count($log)-1;
   //print_r($logitem);
-  if ($uos->logtoscreen) {
+  if ($uos->config->logtostdout) {
   	print render($logitem);
   }
   addoutput('log/', $logitem);
@@ -374,6 +466,53 @@ function file_list($path, $expression='.*', $dotfolders=FALSE) {
     //trace('Cannot find path :'.$path,'file_list');
   }
   return $filearray;
+}
+
+
+function find_files($path, $regexp, $casesensitive=TRUE) {
+	$matchedfiles = Array();
+	if (is_dir($path)) {
+		$handler = opendir($path);
+		$regexp = "/^{$regexp}$/" . ($casesensitive?'':'i');
+		while ($file = readdir($handler)) {
+		  if ($file !== "." && $file !== "..") {
+		    if (preg_match($regexp, $file, $name) > 0) {
+		    	$matchedfiles[] = $path.$name[0];
+		    	//echo "${regexp} : " . (isset($name[0]) ? $name[0] : 'No match') . "\n\n";
+		    }
+		  }
+		}
+		closedir($handler);
+	}
+	return empty($matchedfiles)?UOS_ERROR_NOT_FOUND:$matchedfiles;
+}
+
+
+function UrlToQueryArray($query) {
+    $queryParts = explode('&', $query);
+   
+    $params = array();
+    foreach ($queryParts as $param) {
+        $item = explode('=', $param);
+        $params[$item[0]] = $item[1];
+    }
+   
+    return $params;
+}
+
+
+function useLibrary($librarystr) {
+	//how do we deal with sublibraries
+	//$explodedstr = explode('/', trim($librarystr,'/'));
+	
+	$files = find_files(UOS_LIBRARY. $librarystr . '/','.*\.uos.php', FALSE);
+	if (!empty($files)) {
+		foreach($files as $file) {
+			include $file;
+		}	
+		return TRUE;
+	}
+	return FALSE;
 }
 
 

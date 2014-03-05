@@ -1,2 +1,0 @@
-<?php
-$entity->title = 'preprocessed '.$entity->title;

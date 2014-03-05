@@ -2,6 +2,10 @@
 var universeos = {
 
 	//dragSrcEl = null;
+	
+	addelement: function(id,config) {
+		uos.log('uos.addelement',id, config);
+	},
 
   log: function() {
   		if (console && console.log) {
@@ -144,7 +148,7 @@ var universeos = {
 	}
 }
 
-//var uos = universeos;
+var uos = universeos;
 
 universeos.node = {
 
@@ -661,8 +665,12 @@ function handleNodeClick(e) {
 		}
 	//jQuery(this).toggleClass('selected');
 	}
-	e.preventDefault();
-	e.stopPropagation();
+	if (e.preventDefault) {
+		e.preventDefault();
+	}
+	if (e.stopPropagation) {
+		e.stopPropagation();
+	}
 	//return false;
 }
 

@@ -132,7 +132,7 @@ function handleDragEnter(e) {
   if ($(this)[0] != $(dragSrcEl)[0]) {
 	  //this.classList.add('over');
 	  e.preventDefault();
-	  
+	  //e.stopPropagation();
 	  //if ($(this)[0] != $(e.target)[0]) {
 	  	//$(this).addClass('dragging-hover-target');
 	  	$(this).addClass('dragging-target');
@@ -146,6 +146,7 @@ function handleDragLeave(e) {
   //universeos.log('leave',$(this).attr('title'));
   //this.classList.remove('over');  
   //$(this).removeClass('dragging-hover-target');
+  e.stopPropagation();
   $(this).removeClass('dragging-target');
 }
 
@@ -196,6 +197,7 @@ function handleDragEnd(e) {
   // this/e.target is the source node.
 	universeos.log('DragEnd');
   //$('.node').removeClass('over');
+  jQuery('div.node').removeClass('dragging-target');
   jQuery('#universe-drag-helper').remove();
 }
 
