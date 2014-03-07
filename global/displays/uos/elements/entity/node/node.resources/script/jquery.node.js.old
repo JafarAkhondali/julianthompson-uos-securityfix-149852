@@ -39,14 +39,8 @@
 //alert(student1 instanceof Person); // true 
 //alert(student1 instanceof Student); // true
 
-uos = {};
 
-uos.classes = {};
-uos.log = [];
-uos.libraries = {};
-
-uos.classes.entity = function() {};
-
+/*
 uos.classes.entity.prototype.walk = function() {
   alert ('I am walking!');
 }
@@ -59,27 +53,56 @@ uos.classes.node = function() {
 	uos.classes.entity.call(this);
 };
 
+
+
+*/
 // inherit entity
-uos.classes.node.prototype = new uos.classes.entity();
+//uos.classes.node = function() {
+//	uos.classes.entity.call(this);
+//};
+
+//uos.classes.node.prototype = new uos.classes.entity();
 
 // correct the constructor pointer because it points to Person
-uos.classes.node.prototype.constructor = uos.classes.node;
+//uos.classes.node.prototype.constructor = uos.classes.node;
 
-// replace the sayHello method
-uos.classes.node.prototype.sayHello = function(){
-  alert('hi, I am a student');
+// add / replace the sayHello method
+//uos.classes.node.prototype.sayHello = function(){
+//  alert('hi, I am a student');
+//}
+
+// add /replace sayGoodBye method
+//uos.classes.node.prototype.sayGoodBye = function(){
+//  alert('goodBye');
+//}
+
+uos.classes.node = function(initobj) {
+	uos.log('node class',initobj);
+	this.data = {};
+	this.elementid = '';
+	//uos.classes.entity.call(this);
+	//this.actions.reload.handler = function(data) {
+	//	uos.log('bitchin',data);
+	//};
+	/*
+	this.actions.init.handler = function(data) {
+		uos.log('init bitchin',data);
+	};
+	*/
 }
 
-// add sayGoodBye method
-uos.classes.node.prototype.sayGoodBye = function(){
-  alert('goodBye');
-}
+uos.classes.node.prototype = new uos.classes.entity();
+uos.classes.node.prototype.constructor = new uos.classes.entity;
 
-//var student1 = new uos.classes.node();
-//student1.sayHello();
-//student1.walk();
-//student1.sayGoodBye();
 
-// check inheritance
-//alert(student1 instanceof uos.classes.entity); // true 
-//alert(student1 instanceof uos.classes.node); // true
+
+
+/*
+var test1 = new uos.classes.entity(4);
+
+test1.callaction('reload');
+
+var test2 = new uos.classes.node(8);
+test2.callaction('reload');
+test1.callaction('reload');
+*/

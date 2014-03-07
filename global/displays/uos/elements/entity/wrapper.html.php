@@ -1,5 +1,4 @@
-<!-- start wrapper.html.php -->
-<div id="<?php print $instanceid;?>" class="<?php print $render->classtreestring;?>" data-type="<?php print $render->entitytype;?>" data-display="<?php print $render->displaymode;?>" data-actions="add,displayup,displaydown,edit,remove,save,cancel" data-accept="*" data-childcount="<?php print $render->childcount;?>">
+<<?php print $render->wrapperelement;?> <?php print DISPLAY_attributestostring($render->attributes);?>>
 <div class="uos-header">
 	<div class="field-icon">
 		<span class="fa-stack fa-lg">
@@ -14,9 +13,4 @@
 	</div>
 </div>
 <?php print $content;?>
-</div>
-<script>uos.addelement('#<?php print $instanceid;?>',<?php print json_encode($render);?>);</script>
-<pre>
-<?php //print_r($render);?>
-</pre>
-<!-- end wrapper.html.php -->
+</<?php print $render->wrapperelement;?>>

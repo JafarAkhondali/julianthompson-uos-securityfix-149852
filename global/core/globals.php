@@ -11,12 +11,15 @@ define( 'UOS_SUBPATH',					'');
 define( 'UOS_ROOT',            ( $_SERVER['DOCUMENT_ROOT'] . '/' . UOS_SUBPATH ));
 
 
+define( 'UOS_GLOBAL_URL',			'/global/');
+
+
 // Global folder
-define( 'UOS_GLOBAL',					UOS_ROOT. 'global/');
+define( 'UOS_GLOBAL',					UOS_ROOT . 'global/');
 
 
 // Library folder
-define( 'UOS_LIBRARY',         UOS_GLOBAL . 'library/');
+define( 'UOS_LIBRARIES',      UOS_GLOBAL . 'libraries/');
 
 
 // Classes folder
@@ -25,6 +28,9 @@ define( 'UOS_CLASSES',         UOS_GLOBAL . 'class/');
 
 // Displays folder
 define( 'UOS_DISPLAYS',        UOS_GLOBAL . 'displays/');
+
+// Displays folder
+define( 'UOS_DISPLAYS_URL',    UOS_GLOBAL_URL . 'displays/');
 
 
 // Default display 
@@ -98,16 +104,12 @@ $uos->output = array();
 
 $uos->output['log'] = array();
 
-$uos->render = new StdClass();
-$uos->render->renderindex = 0;
-$uos->render->renderpath = array();
-
 $uos->title = 'UniverseOS';
 
 // To test Browser Capabilities
 useLibrary('browscap-php');
 //namespace uos\library
-//require UOS_LIBRARY.'browscap-php/src/phpbrowscap/Browscap.php';
+//require UOS_LIBRARIES.'browscap-php/src/phpbrowscap/Browscap.php';
 //use phpbrowscap\Browscap;
 //$browsercapabilities = new phpbrowscap\Browscap(UOS_TEMPORARY);
 $browsercapabilities = new phpbrowscap\Browscap(UOS_TEMPORARY);
@@ -202,18 +204,6 @@ if (empty($uos->request->target)) {
 session_start();
 $uos->request->sessionid = session_id();
 $uos->request->session = &$_SESSION;
-
-
-$uos->universe = new node_universe(array(
-	'dbconnector' => UOS_DATABASE,
-	'title' => 'UniverseOS'
-));
-
-
-$uos->request->target = new entity(array(
-	'universename'=>'julian',
-	'guid'=>'1234567'
-));
  
 
 
