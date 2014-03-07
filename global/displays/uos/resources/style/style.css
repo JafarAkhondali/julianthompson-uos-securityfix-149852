@@ -559,6 +559,14 @@ div.node .uos-header i.children-count {
 	top: 40px;	
 }
 
+div.node.three-d .uos-header i.children-count {
+	padding: 10px 20px;
+	border-radius: 50%;
+	font-size: 50px;
+	left: 115px;
+	top: 178px;
+}
+
 li.status-refreshing {
 	display:none;
 }
