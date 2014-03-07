@@ -112,7 +112,7 @@ useLibrary('browscap-php');
 //require UOS_LIBRARIES.'browscap-php/src/phpbrowscap/Browscap.php';
 //use phpbrowscap\Browscap;
 //$browsercapabilities = new phpbrowscap\Browscap(UOS_TEMPORARY);
-$browsercapabilities = new phpbrowscap\Browscap(UOS_TEMPORARY);
+//$browsercapabilities = new phpbrowscap\Browscap(UOS_TEMPORARY);
 
 
 
