@@ -1,5 +1,5 @@
 <?php
-include_once UOS_LIBRARY . "adodb/adodb5/adodb.inc.php";
+include_once UOS_LIBRARIES . "adodb/adodb5/adodb.inc.php";
 # node_universe class definition file
 class node_universe extends node {
 

@@ -1,6 +1,15 @@
 // Universe / Node functions
 
+
+
 $(document).ready(function() {
+
+	//console.log(uos.elements);
+	jQuery.each(uos.elements, function(index,element) {
+		var elementId = '#'+index;
+		$element = jQuery(elementId);	
+		uos.processelement($element);	
+	});
 
 	//$(document).bind('keydown', 'Ctrl+s', saveChanges);
 	
@@ -17,15 +26,15 @@ $(document).ready(function() {
 	$(document).bind('keydown', 'ctrl+c', handleCopy);
 
   $(window).focus(function() {
-      universeos.log('Focus');
+      uos.log('Focus');
   });
 
   $(window).blur(function() {
-      universeos.log('Blur');
+      uos.log('Blur');
   });
   
  	$(window).resize(function() {
-      universeos.log('Resize');
+      uos.log('Resize');
   });
   
 	$('.node').each(function() {
@@ -40,5 +49,10 @@ $(document).ready(function() {
   	//$(this).bind("contextmenu",function(e){return false;});
 	});
 	
-	universeos.load();
+	uos.load();
 });
+
+
+var toType = function(obj) {
+  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+}

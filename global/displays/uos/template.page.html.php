@@ -1,36 +1,7 @@
-<?php
-//print_r($uos->output);die();
-
-
-
-//addoutput('resources/script/', "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js");
-//addoutput('resources/script/', "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js");
-addoutput('resources/script/', "/global/library/jquery/1.9.1/jquery.min.js");
-addoutput('resources/script/', "/global/library/jqueryui/1.10.2/jquery-ui.min.js");
-
-addoutput('resources/script/', "/global/library/jquery.hotkeys/default.jquery.hotkeys.js");
-addoutput('resources/script/', "/global/library/jquery.growl/javascripts/jquery.growl.js");
-addoutput('resources/script/', "/global/library/jquery.growl/javascripts/jquery.growl.js");
-addoutput('resources/script/', "/global/displays/entity/class.entity.js");
-addoutput('resources/script/', "/global/relocate/script/jquery.uos.js");
-addoutput('resources/script/', "/global/relocate/script/jquery.base.js");
-//addoutput('resources/script/', "http://mrdoob.github.io/three.js/build/three.min.js");
-//addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/libs/tween.min.js");
-//addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/controls/TrackballControls.js");
-//addoutput('resources/script/', "http://mrdoob.github.io/three.js/examples/js/renderers/CSS3DRenderer.js");
-addoutput('resources/script/', "/global/library/mrdoob-three.js/build/three.min.js");
-addoutput('resources/script/', "/global/library/mrdoob-three.js/examples/js/libs/tween.min.js");
-addoutput('resources/script/', "/global/library/mrdoob-three.js/examples/js/controls/TrackballControls.js");
-addoutput('resources/script/', "/global/library/mrdoob-three.js/examples/js/renderers/CSS3DRenderer.js");
-//addoutput('resources/style/', "http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
-addoutput('resources/style/', "/global/library/font-awesome/css/font-awesome.css");
-addoutput('resources/style/', "/global/library/jquery.growl/stylesheets/jquery.growl.css");
-addoutput('resources/style/', "/global/relocate/style/uos.css");
-
-//print_r($uos->universe->getactions());
-
-?>
 <!-- UniverseOS-->
+<!-- 
+<?php print_r($uos->request);?>
+-->
 <html>
 
 	<head>
@@ -72,6 +43,10 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 
 			</ul>
 		</div>
+		
+		<div id="container">
+		<?php print render($uos->output['body']);?>
+		</div>
 
 		<div id="input">
 			<h2><i class="fa fa-sign-in"></i> Request</h2>
@@ -84,18 +59,15 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 			<div id="uosobject">
 			<?php print render($uos->config);?>
 			</div>
-		</div>		
-		
-		<div id="container">
-		<?php print render($uos->output['body']);?>
-		</div>
+		</div>	
 		
 	</body>
 
 </html>
 
-<pre>
-
+<script>
+uos.elements = <?php print json_encode($uos->output['resources']['json']);?>;
+</script>
 <?php
 //$relationship = new relationship();
 //print_r($relationship->__gettabledefinition());
@@ -122,5 +94,5 @@ addoutput('resources/style/', "/global/relocate/style/uos.css");
 
 //$uos->user->title = 'Julian Thompson';
 //addoutput('input/', $uos_input);
-print_r($uos->output);
+//print_r($uos->output);
 //$entity->content['body'][1]->children[] = $entity->content['body'][0];

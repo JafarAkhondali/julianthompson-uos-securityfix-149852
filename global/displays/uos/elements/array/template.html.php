@@ -1,9 +1,5 @@
-<!-- Array xxx start -->
 <?php $indexes = 1;?>
-<ul class="array <?php print implode(' ',$classes);?>" data-type="array">
 <?php foreach ($entity as $index => $subentity) : ?>
-	<li class="array-row" id="array-<?php print $index;?>-row-<?php print $indexes;?>"><?php print render($subentity);?></li>
+	<?php print render($subentity);?>
 	<?php $indexes++;?>
 <?php endforeach; ?>
-</ul>
-<!-- Array xxx end -->
