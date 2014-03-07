@@ -24,6 +24,18 @@ uos.settings = {};
 
 
 
+uos.toggleinput = function() {
+	jQuery('#input').toggleClass('opened');
+}
+
+uos.threeDim = function() {
+	//uos.log(uos.getSelectedTitles());	
+	//$elements = uos.getSelectedElements();
+	$universeelement = jQuery(UOS_ELEMENT_CLASS).first();
+
+	uos_three($universeelement);	
+}
+
 
 // when we've sorted actions remove this?
 uos.global = {
@@ -40,12 +52,20 @@ uos.global = {
 		trace : {
 			title : 'Trace',
 			icon : 'fa-sign-in',
-			action : function() {
-				jQuery('#input').toggleClass('opened');
-			}
+			handler : uos.toggleinput
+		},
+		threed : {
+			title : '3D',
+			icon : 'fa-globe',
+			handler : uos.threeDim
+		},
+		user : {
+			title : 'User',
+			icon : 'fa-user',
 		},
 	}
 };
+
 
 uos.processelement = function($element,data) {
 		
@@ -162,7 +182,7 @@ uos.buildToolbar = function() {
 	uos.log('Build Toolbar');
 	var toolbar = '';
 	var actions = uos.getActions();	
-	//console.log(actions,'xxxxxxx');
+	console.log(actions,'xxxxxxx');
 	
 	// clear existing actions from toolbar
 	jQuery('#universe-actions').empty();
@@ -259,11 +279,14 @@ uos.getActionsOLD = function (e) {
 
 
 uos.toolbarAction = function (action) {
-	uos.log('Calling action : ' + action.title + ' on :');
-	uos.log(uos.getSelectedTitles());	
-	$elements = uos.getSelectedElements();
-	
-	uos_three($elements);
+	uos.log('Calling action : ', action);
+
+	if (action.handler) {
+		action.handler();
+	} else {
+
+	}
+
 	//jQuery('div.node.selected').each(function(e) {
 	//	
 	//});
@@ -301,7 +324,6 @@ uos.load  = function() {
 	uos.buildToolbar();
 	filtermessages('error');
 };
-
 
 
 
@@ -618,4 +640,4 @@ function filtermessages(tag) {
 
 
 // remove when we've updated all the variables
-var universeos = uos;
+//var universeos = uos;

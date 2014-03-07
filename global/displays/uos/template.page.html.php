@@ -35,12 +35,8 @@
 					<h1><?php print $uos->title;?></h1>
 					<div class="field field-tags"><ul><li><i class="fa fa-circle"></i> Work</li><li><i class="fa fa-circle"></i> Policy Connect</li></ul></div>
 				</li>
-				<li id="universe-user">
-					<i class="fa fa-user fa-stack-1x"></i>
-				</li>
 			</ul>
 			<ul id="universe-actions">
-
 			</ul>
 		</div>
 		

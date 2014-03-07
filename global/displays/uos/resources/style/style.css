@@ -15,7 +15,7 @@ body {
 	display:block;
 	background-color: rgba(41,71,99,0.94);
   position: fixed;
-  height: 65px;
+	padding: 10px 5px;
   top: 0;
   width: 100%;
   z-index: 100;
@@ -72,7 +72,7 @@ body.alt-pressed #universetoolbar ul#universe-actions li.alt-keystatus {
 }
 
 #container {
-	margin-top: 75px;
+	margin-top: 95px;
 }
 
 #universetoolbar h1 {
@@ -562,7 +562,7 @@ div.node .uos-header i.children-count {
 div.node.three-d .uos-header i.children-count {
 	padding: 10px 20px;
 	border-radius: 50%;
-	font-size: 50px;
+	font-size: 40px;
 	left: 115px;
 	top: 93px;
 }
