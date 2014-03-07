@@ -34,9 +34,12 @@ addoutput('resources/style/', "/global/libraries/font-awesome/css/font-awesome.c
 //addoutput('resources/script/', $render->activerendererurl."resources/script/classextend.js");
 addoutput('resources/script/', $render->rendererurl."resources/script/jquery.uos.js");
 addoutput('resources/script/', $render->rendererurl."resources/script/jquery.base.js");
+addoutput('resources/script/', $render->rendererurl."resources/script/jquery.uos.three.js");
 addoutput('resources/script/', $render->rendererurl."elements/entity/entity.resources/script/jquery.entity.js");
 addoutput('resources/script/', $render->rendererurl."elements/entity/field/field.resources/script/jquery.field.js");
 addoutput('resources/script/', $render->rendererurl."elements/entity/node/node.resources/script/jquery.node.js");
+addoutput('resources/script/', $render->rendererurl."elements/entity/node/node_device/node_device.resources/script/jquery.node_device.js");
+
 addoutput('resources/style/', $render->rendererurl."resources/style/style.css");
 
 //print_r($uos->universe->getactions());

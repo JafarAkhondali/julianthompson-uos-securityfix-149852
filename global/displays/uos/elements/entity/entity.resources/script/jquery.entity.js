@@ -40,12 +40,17 @@ uos.types['entity'].actions = {
 	save : {
 		title : 'Save',		
 		icon : 'fa-check'					
+	},
+	threed : {
+		title : '3D display',
+		icon : 'fa-globe',
+		handler : uos_three
 	}
 };
 
 
 function uostype_entity_initialize($element,data) {
-	$element.css('border','3px solid red');
+	//$element.css('border','3px solid red');
 	uos.log('uostype_entity_initialize',$element.attr('id'),data);
 }		
 	

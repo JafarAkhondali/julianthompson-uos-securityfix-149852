@@ -94,7 +94,7 @@ uos.addBehaviours = function($element) {
 		}
 	}
 	$element.data('uos-actions',elementactions);
-	uos.log('addBehaviours', uostype, elementactions);
+	//uos.log('addBehaviours', uostype, elementactions);
 };
 
 uos.addActions = function($element) {
@@ -106,6 +106,14 @@ uos.log = function() {
 		console.log(arguments);
 	}
 };
+
+uos.getChildElements = function($element) {
+	return jQuery($element).find(UOS_ELEMENT_CLASS);	
+}
+
+uos.getAllChildEntities = function($element) {
+	return jQuery($element).find(UOS_ELEMENT_CLASS + '.node');	
+}
 
 uos.selectElement = function($element, multiple) {
 	uos.log($element.attr('title') + ' selected');
@@ -166,7 +174,7 @@ uos.buildToolbar = function() {
 		$control.attr('title',action.title);
 		$control.addClass('fa');
 		$control.click(function () {
-			uos.callAction(action);
+			uos.toolbarAction(action);
 		});
 		$control.addClass(action.icon);
 		$control = $control.wrap('<li></li>').parent();
@@ -180,8 +188,46 @@ uos.buildToolbar = function() {
 	//jQuery('#universe-actions').append('<li class="action-input"><i class="fa fa-sign-in"></i></li>');
 };
 	
-	
+
+
 uos.getActions = function (e) {
+		var actions = null;
+		// if no selection
+		$selectedElements = uos.getSelectedElements();
+			
+		if ((elementcount = jQuery($selectedElements).length)>0) {
+		
+			jQuery($selectedElements).each(function(e) {
+				var elementactions = $(this).data('uos-actions');
+				console.log(elementactions);
+				if (actions==null) {
+					actions = elementactions;
+				} else {
+					actions = uos.getActionIntersection(actions, elementactions);
+				}
+			});
+		} else {
+			actions = uos.global.actions;
+		}
+		//console.log(actions);
+		return actions;
+};
+
+uos.getActionIntersection = function(d1,d2) {
+	var matches = {};
+  for(var aindex in d2) {
+  	// if index in both - clone to matches
+		if (d1[aindex]) {
+			matches[aindex] = jQuery.extend({}, d[aindex]);
+			matches[aindex].handler = null;
+		}
+	}
+	console.log(matches);
+	return matches;
+}
+
+	
+uos.getActionsOLD = function (e) {
 		var actions = new Array();
 		// if no selection
 		$selectedElements = uos.getSelectedElements();
@@ -212,16 +258,20 @@ uos.getActions = function (e) {
 };
 
 
-uos.callAction = function (action) {
+uos.toolbarAction = function (action) {
 	uos.log('Calling action : ' + action.title + ' on :');
-	jQuery('div.node.selected').each(function(e) {
-		uos.log($(this).attr('title') + ' ');			
-	});
-	if (action.action) {
-		action.action(jQuery('div.node.selected'));
-	} else {
-		uos.log('Action not found.');
-	}
+	uos.log(uos.getSelectedTitles());	
+	$elements = uos.getSelectedElements();
+	
+	uos_three($elements);
+	//jQuery('div.node.selected').each(function(e) {
+	//	
+	//});
+	//if (action.action) {
+	//	action.action(jQuery('div.node.selected'));
+	//} else {
+	//	uos.log('Action not found.');
+	//}
 };
 
 
@@ -492,7 +542,7 @@ function handleNodeClick(e) {
 			if (!isMetaHeld()) {
 				uos.deselectAllElements();
 			}
-			uos.deselectElements(jQuery(this),isMetaHeld());
+			uos.deselectElement(jQuery(this),isMetaHeld());
 		} else {
 			if (!isMetaHeld()) {
 				uos.deselectAllElements();
