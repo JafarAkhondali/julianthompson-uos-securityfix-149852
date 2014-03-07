@@ -144,7 +144,7 @@ if (isset($argv)) {
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
 	}
-	$uos->request->browser = $browsercapabilities->getBrowser(null, true);
+	//$uos->request->browser = $browsercapabilities->getBrowser(null, true);
 }
 
 if (!empty($_POST)) {
