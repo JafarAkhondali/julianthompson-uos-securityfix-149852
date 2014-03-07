@@ -107,7 +107,7 @@ $uos->output['log'] = array();
 $uos->title = 'UniverseOS';
 
 // To test Browser Capabilities
-useLibrary('browscap-php');
+//useLibrary('browscap-php');
 //namespace uos\library
 //require UOS_LIBRARIES.'browscap-php/src/phpbrowscap/Browscap.php';
 //use phpbrowscap\Browscap;
