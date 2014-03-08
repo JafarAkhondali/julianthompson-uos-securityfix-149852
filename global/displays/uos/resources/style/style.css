@@ -598,7 +598,6 @@ div.node > ul > li > div.field.locked {
 } 
 
 
-
-color: rgba(0,0,0,0.6);
-font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-font-size: 13px;
+body.uos-toolbar-active div#universetoolbar #universe-details {
+	display: none;
+}

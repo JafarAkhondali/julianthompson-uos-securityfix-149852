@@ -226,8 +226,10 @@ uos.getActions = function (e) {
 					actions = uos.getActionIntersection(actions, elementactions);
 				}
 			});
+			jQuery('body').addClass('uos-toolbar-active');
 		} else {
 			actions = uos.global.actions;
+			jQuery('body').removeClass('uos-toolbar-active');
 		}
 		//console.log(actions);
 		return actions;
