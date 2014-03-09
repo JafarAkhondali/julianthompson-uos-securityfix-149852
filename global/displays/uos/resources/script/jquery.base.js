@@ -8,7 +8,7 @@ $(document).ready(function() {
 	jQuery.each(uos.elements, function(index,element) {
 		var elementId = '#'+index;
 		$element = jQuery(elementId);	
-		uos.processelement($element);	
+		if ($element.length>0) uos.processelement($element);	
 	});
 
 	//$(document).bind('keydown', 'Ctrl+s', saveChanges);

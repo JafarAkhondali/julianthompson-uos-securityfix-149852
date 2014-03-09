@@ -324,7 +324,7 @@ uos.overlay = function(toggle) {
 
 uos.load  = function() {
 	uos.buildToolbar();
-	filtermessages('error');
+	filtermessages('jmt');
 };
 
 
@@ -624,18 +624,18 @@ Array.prototype.inArray = function(comparer) {
 
 function filtermessages(tag) {
   var count = 0;
-  jQuery('#inputmessages > ul > li').each(function() {
-	$tagfieldvalue = $(this).find('tr.key-tags .fieldvalue');
-	//console.log($tagfieldvalue.text());
-	//console.log($(this).attr('id'));
-	if (tag!="" && $tagfieldvalue.text().indexOf(tag) < 0) {
-		//$(this).css( "background-color", "red" );
-		$(this).slideUp();
-		count++;
-	} else {
-		$(this).slideDown();
-		//$(this).css( "background-color", "green" );
-	}
+  jQuery('#inputmessages > .array > table').each(function() {
+		$tagfieldvalue = $(this).find('tr.key-tags .fieldvalue');
+		//console.log($tagfieldvalue.text());
+		//console.log($(this).attr('id'));
+		if (tag!="" && $tagfieldvalue.text().indexOf(tag) < 0) {
+			//$(this).css( "background-color", "red" );
+			$(this).slideUp();
+			count++;
+		} else {
+			$(this).slideDown();
+			//$(this).css( "background-color", "green" );
+		}
   });
   return count;
 }
