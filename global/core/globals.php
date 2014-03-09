@@ -236,8 +236,8 @@ $uos->request->sessionid = session_id();
 $uos->request->session = &$_SESSION;
 
 
-print_r($uos->request);
-die();
+//print_r($uos->request);
+//die();
 
 
 
