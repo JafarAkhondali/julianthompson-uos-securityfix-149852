@@ -17,6 +17,8 @@ define( 'UOS_SUBPATH',					'');
 // Command line - Move command line stuff to one place
 if (isset($argv)) {
  	$cliargs = (json_decode($argv[1]));
+ 	//print_r($argv[1]);die();
+ 	//print_r($cliargs);die();
  	//print_r($cliargs);
  	//die();
 	define( 'UOS_ROOT',            ( $cliargs->documentroot . '/' . UOS_SUBPATH ));
@@ -138,18 +140,18 @@ $uos->title = 'UniverseOS';
 // Command Line
 if (isset($argv)) {
 
-	parse_str(trim($argv[1]),$cliargs);
+ 	$cliargs = (json_decode($argv[1]));
   $uos->request->commandtype = 'CLI';
-  $uos->request->sessionid = isset($argv[2])?session_id($argv[2]):session_id();
-  //$uos->request->urlpath = (count($argv)>1)?trim($argv[1],'\''):"";
-  $uos->request->url = trim($cliargs['CLI_REQUEST']);
-	$parsedurl = parse_url($uos->request->url);
-	//$uos->request->urlparsed = $parsedurl;
-  $uos->request->argv = $argv;
+  $uos->request->sessionid = $cliargs->sessionid;//isset($cliargs->sessionid)?session_id($cliargs->sessionid):session_id();
+	$parsedurl = parse_url(trim($cliargs->url,'/'));
+  $uos->request->url = $parsedurl['path'];
+	if(!empty($parsedurl['query'])) {
+		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
+	}
   session_save_path('/tmp');
 	$uos->request->outputformat = 'cli';
   
-// Apache
+// Webserver
 } elseif (isset($_SERVER['REQUEST_URI'])) {
 	//Only enable for debug
 	if ($uos->config->debugmode) $uos->request->servervars = $_SERVER;  
@@ -177,21 +179,21 @@ if (isset($argv)) {
 		$uos->request->parameters = $uos->request->parameters + $_POST;
 	}
 	$uos->request->outputformat = 'html';
-	
+
+	if(!empty($_FILES)) {
+		$uos->request->files = $_FILES;
+	}	
 	//$uos->request->browser = $browsercapabilities->getBrowser(null, true);
   //$uos->request->urlpath = trim($_SERVER['REQUEST_URI'],'/');
 	//$uos->request->urlparsed = $parsedurl;
   //$uos->request->urlexploded = explode('/',$uos->request->urlpath);  
   //$uos->request->serverrequest = $_REQUEST;
 	//$uos->request->urlparsed = $parsedurl;
+	
+
 }
 
-
-
-if(!empty($_FILES)) {
-	$uos->request->files = $_FILES;
-}
-
+/*
 $explodedurl = pathinfo($uos->request->request);
 
 
@@ -218,7 +220,7 @@ if (!isset($explodedurl['dirname'])) {
 	
 	$uos->request->outputtransport = empty($actionurlex) ? null : array_shift($actionurlex);
 }
-
+*/
 //$uos->request->eu = $explodedurl;
 //$splitbasename = explode('.',$explodedurl['filename']);
 
@@ -229,15 +231,13 @@ if (!isset($explodedurl['dirname'])) {
 //render($universe);die();
 
 //$uos->request->username = $_SERVER['PHP_AUTH_USER'];
-
 session_start();
 $uos->request->sessionid = session_id();
 $uos->request->session = &$_SESSION;
 
-print_r($cliargs);
+
 print_r($uos->request);
-//die();  
- 
+die();
 
 
 
