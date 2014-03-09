@@ -23,11 +23,14 @@ uosbasedir=$(uosfindbase)
 cd $uosbasedir/global/
 uosbasephp=$uosbasedir/global/uos.php
 #echo $uosbasephp
-url=$(printf '%q' $1)
-session=123456789
+#echo "'$1'"
+#url=$(printf '%q' $1)
+#url="/one/two?dgdfgdfg"
+sessionid=2e56bc6c16f8dff1f29fb163d33c8d5a
 docroot=$(printf '%q' $uosbasedir)
 
-request=$(printf '{"url":"%s","documentroot":"%s","sessionid":"%s"}' "$url" "$uosbasedir" "$session")
+#request=$(printf '{"url":"%s","documentroot":"%s","sessionid":"%s"}' "$url" "$uosbasedir" "$session")
+request=$(printf '{"url":"%b","documentroot":"%s","sessionid":"%s"}' "$1" "$uosbasedir" "$sessionid")
 
 
 case "$1" in
