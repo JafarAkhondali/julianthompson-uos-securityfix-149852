@@ -19,6 +19,12 @@ function uosfindbase {
 }
 
 uosbasedir=$(uosfindbase)
+
+if [ $uosbasedir == 0 ]; then
+	echo "Universe not found"
+	exit 0
+fi
+
 #echo $uosbasedir
 cd $uosbasedir/global/
 uosbasephp=$uosbasedir/global/uos.php
@@ -26,7 +32,7 @@ uosbasephp=$uosbasedir/global/uos.php
 #echo "'$1'"
 #url=$(printf '%q' $1)
 #url="/one/two?dgdfgdfg"
-sessionid=2e56bc6c16f8dff1f29fb163d33c8d5a
+sessionid='2e56bc6c16f8dff1f29fb163d33c8d5a'
 docroot=$(printf '%q' $uosbasedir)
 
 #request=$(printf '{"url":"%s","documentroot":"%s","sessionid":"%s"}' "$url" "$uosbasedir" "$session")
