@@ -7,8 +7,22 @@
 //define( 'UOS_SUBPATH',					'global/admin/dragdrop/');
 define( 'UOS_SUBPATH',					'');
 
+// Command line - Move command line stuff to one place
+if (isset($argv)) {
+ 	//print_r($argv[1]); 	
+ 	//print "-1-";
+ 	//print_r(json_decode($argv[1]));
+ 	//die();
+	parse_str(trim($argv[1]),$cliargs);
+	//print_r($argv[1]);
+	//print_r($cliargs);die();
+	define( 'UOS_ROOT',            ( $cliargs['DOCUMENT_ROOT'] . '/' . UOS_SUBPATH ));
 // Universe root
-define( 'UOS_ROOT',            ( $_SERVER['DOCUMENT_ROOT'] . '/' . UOS_SUBPATH ));
+} else {
+	define( 'UOS_ROOT',            ( $_SERVER['DOCUMENT_ROOT'] . '/' . UOS_SUBPATH ));
+}
+
+//echo (UOS_ROOT);die();
 
 
 define( 'UOS_GLOBAL_URL',			'/global/');
@@ -121,39 +135,55 @@ $uos->title = 'UniverseOS';
 // Command Line
 if (isset($argv)) {
 
+	parse_str(trim($argv[1]),$cliargs);
   $uos->request->commandtype = 'CLI';
   $uos->request->sessionid = isset($argv[2])?session_id($argv[2]):session_id();
-  $uos->request->url = (count($argv)>1)?trim($argv[1],'\''):"";
+  //$uos->request->urlpath = (count($argv)>1)?trim($argv[1],'\''):"";
+  $uos->request->url = trim($cliargs['CLI_REQUEST']);
 	$parsedurl = parse_url($uos->request->url);
 	//$uos->request->urlparsed = $parsedurl;
   $uos->request->argv = $argv;
   session_save_path('/tmp');
-
+	$uos->request->outputformat = 'cli';
+  
+// Apache
 } elseif (isset($_SERVER['REQUEST_URI'])) {
 	//Only enable for debug
-	if ($uos->config->debugmode) $uos->request->server = $_SERVER;  
-	$uos->request->servername = $_SERVER['SERVER_NAME'];
-  $uos->request->commandtype = 'GET';
-  $uos->request->url = trim($_SERVER['REQUEST_URI'],'/');
-  $uos->request->serverrequest = $_REQUEST;
+	if ($uos->config->debugmode) $uos->request->servervars = $_SERVER;  
+	
 	$parsedurl = parse_url($_SERVER['REQUEST_URI']);
-	//$uos->request->urlparsed = $parsedurl;
-	if (isset($parsedurl['path'])) {
-		$uos->request->request = trim($parsedurl['path'],'/');
-	}
+	$uos->request->parsedurl = $parsedurl;
+  $uos->request->commandtype = 'GET';
+  $uos->request->port = $_SERVER['SERVER_PORT'];
+  $uos->request->ssl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false; 
+  $uos->request->urlprotocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https" : "http"; 
+	$uos->request->urlhostname = $_SERVER['SERVER_NAME'];
+
+	$uos->request->url = trim($parsedurl['path'],'/');
+	$uos->request->urlfull = $uos->request->urlprotocol .'://'. $uos->request->urlhostname . '/' . $uos->request->url;
+	
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
 	}
+	if (isset($parsedurl['path'])) {
+		$uos->request->request = trim($parsedurl['path'],'/');
+	}
+	//Overwrite get variables with posted
+	if (!empty($_POST)) {
+	  $uos->request->commandtype = 'POST';
+		$uos->request->parameters = $uos->request->parameters + $_POST;
+	}
+	$uos->request->outputformat = 'html';
+	
 	//$uos->request->browser = $browsercapabilities->getBrowser(null, true);
+  //$uos->request->urlpath = trim($_SERVER['REQUEST_URI'],'/');
+	//$uos->request->urlparsed = $parsedurl;
+  //$uos->request->urlexploded = explode('/',$uos->request->urlpath);  
+  //$uos->request->serverrequest = $_REQUEST;
+	//$uos->request->urlparsed = $parsedurl;
 }
 
-if (!empty($_POST)) {
-  $uos->request->commandtype = 'POST';
-  //if posted get command from url
-  $uos->request->url = trim($_SERVER['REQUEST_URI'],'/');
-  //print_r($_SERVER);
-	$uos->request->parameters = $uos->request->parameters + $_POST;
-}
+
 
 if(!empty($_FILES)) {
 	$uos->request->files = $_FILES;
@@ -161,8 +191,8 @@ if(!empty($_FILES)) {
 
 $explodedurl = pathinfo($uos->request->request);
 
-$uos->request->outputformat = 'html';
-$uos->request->outputclass = null;
+
+$uos->request->outputdisplay = null;
 $uos->request->outputtransport = null;
 
 if (!isset($explodedurl['dirname'])) {
@@ -195,15 +225,15 @@ if (!isset($explodedurl['dirname'])) {
 
 //render($universe);die();
 
-if (empty($uos->request->target)) {
-	//$uos->request->target = $universe;
-}
-
 //$uos->request->username = $_SERVER['PHP_AUTH_USER'];
 
 session_start();
 $uos->request->sessionid = session_id();
 $uos->request->session = &$_SESSION;
+
+//print_r($cliargs);
+//print_r($uos->request);
+//die();  
  
 
 

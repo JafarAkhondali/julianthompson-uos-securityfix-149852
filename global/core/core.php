@@ -15,7 +15,7 @@ function __autoload($classname='') {
   }
 }
 
-function fetch($target,$action='view') {
+function fetch($target) {
 	global $uos;
 
 	fetchentitychildren($target);
@@ -583,11 +583,10 @@ function find_files($path, $regexp, $casesensitive=TRUE) {
 
 function UrlToQueryArray($query) {
     $queryParts = explode('&', $query);
-   
     $params = array();
     foreach ($queryParts as $param) {
         $item = explode('=', $param);
-        $params[$item[0]] = $item[1];
+        $params[$item[0]] = isset($item[1])?$item[1]:'';
     }
    
     return $params;

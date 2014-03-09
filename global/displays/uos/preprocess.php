@@ -40,6 +40,6 @@ addoutput('resources/script/', $render->rendererurl."elements/entity/field/field
 addoutput('resources/script/', $render->rendererurl."elements/entity/node/node.resources/script/jquery.node.js");
 addoutput('resources/script/', $render->rendererurl."elements/entity/node/node_device/node_device.resources/script/jquery.node_device.js");
 
-addoutput('resources/style/', $render->rendererurl."resources/style/style.css");
+addoutput('resources/style/', $render->rendererurl."resources/style/style.uos.css");
 
 //print_r($uos->universe->getactions());

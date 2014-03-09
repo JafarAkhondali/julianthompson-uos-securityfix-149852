@@ -1,0 +1,52 @@
+#!/bin/bash
+
+function uosfindbase {
+	curr=`pwd`
+	file_name=global/uos.php
+	#echo "Current directory: $curr"
+	while [ "$curr" != "/" ]; do
+		#echo "Processing: $curr"
+		file="$curr/$file_name"
+		if [ -f "$file" ]; then
+			echo $curr
+			#cd "$curr"
+			#"$@"
+			exit
+		fi
+		curr="`dirname \"$curr\"`"
+	done
+	echo 0
+}
+
+uosbasedir=$(uosfindbase)
+#echo $uosbasedir
+cd $uosbasedir/global/
+uosbasephp=$uosbasedir/global/uos.php
+#echo $uosbasephp
+url=$(printf '%q' $1)
+session=123456789
+docroot=$(printf '%q' $uosbasedir)
+
+request=$(printf '{URL:"%s",DOCUMENT_ROOT:"%s",SESSION:"%s"}' "$url" "$uosbasedir" "$session")
+
+
+#request='{\"url\":\"$url\",\"path\":\"$docroot\",\"session\":$session}'
+#request={"url":"dfgdfgdf?dfdfg=dfgd&ddfgdf=dfgdfdf&sdfsdf","path":"xxxx\/dsfsdf","session":12345}
+#request="\"url\":\"$1\""
+#request="$request|||DOCUMENT_ROOT=$uosbasedir"
+#request="$request|||SESSION_ID=123456789"
+#request="first=value&arr[]=foo+bar&arr[]=baz"
+
+
+case "$1" in
+
+'install')  
+    echo "Install UniverseOS $1"
+    ;;
+
+*) 
+   result=$(php -f $uosbasephp -- $request)
+   echo $result
+   ;;
+
+esac
