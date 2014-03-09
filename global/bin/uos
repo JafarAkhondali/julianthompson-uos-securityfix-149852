@@ -27,15 +27,7 @@ url=$(printf '%q' $1)
 session=123456789
 docroot=$(printf '%q' $uosbasedir)
 
-request=$(printf '{URL:"%s",DOCUMENT_ROOT:"%s",SESSION:"%s"}' "$url" "$uosbasedir" "$session")
-
-
-#request='{\"url\":\"$url\",\"path\":\"$docroot\",\"session\":$session}'
-#request={"url":"dfgdfgdf?dfdfg=dfgd&ddfgdf=dfgdfdf&sdfsdf","path":"xxxx\/dsfsdf","session":12345}
-#request="\"url\":\"$1\""
-#request="$request|||DOCUMENT_ROOT=$uosbasedir"
-#request="$request|||SESSION_ID=123456789"
-#request="first=value&arr[]=foo+bar&arr[]=baz"
+request=$(printf '{"url":"%s","documentroot":"%s","sessionid":"%s"}' "$url" "$uosbasedir" "$session")
 
 
 case "$1" in

@@ -7,16 +7,19 @@
 //define( 'UOS_SUBPATH',					'global/admin/dragdrop/');
 define( 'UOS_SUBPATH',					'');
 
+//$x= new StdClass();
+//$x->URL = '/werewr/sdfsdfsd/sdfsdf';
+//$x->DOCUMENT_ROOT = '/sdfsdf/sdf/sdfs';
+//$x->SESSION= 344567897654345;
+//print_r(json_encode($x));
+//die();
+
 // Command line - Move command line stuff to one place
 if (isset($argv)) {
- 	//print_r($argv[1]); 	
- 	//print "-1-";
- 	//print_r(json_decode($argv[1]));
+ 	$cliargs = (json_decode($argv[1]));
+ 	//print_r($cliargs);
  	//die();
-	parse_str(trim($argv[1]),$cliargs);
-	//print_r($argv[1]);
-	//print_r($cliargs);die();
-	define( 'UOS_ROOT',            ( $cliargs['DOCUMENT_ROOT'] . '/' . UOS_SUBPATH ));
+	define( 'UOS_ROOT',            ( $cliargs->documentroot . '/' . UOS_SUBPATH ));
 // Universe root
 } else {
 	define( 'UOS_ROOT',            ( $_SERVER['DOCUMENT_ROOT'] . '/' . UOS_SUBPATH ));
@@ -231,8 +234,8 @@ session_start();
 $uos->request->sessionid = session_id();
 $uos->request->session = &$_SESSION;
 
-//print_r($cliargs);
-//print_r($uos->request);
+print_r($cliargs);
+print_r($uos->request);
 //die();  
  
 
