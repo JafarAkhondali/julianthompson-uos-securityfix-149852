@@ -11,6 +11,7 @@ function __autoload($classname='') {
   if (file_exists($classpath)) {
     require_once $classpath;     
   } else {
+    print_r(debug_backtrace());
     die('__autoload : missing class file - ' . $classname . '(' .$classpath . ')');
   }
 }
@@ -227,8 +228,9 @@ function render($entity, object $formatoverride=NULL) {
 	$render->elementid = $render->instanceid. '__' . round((time() + microtime(true)) * 1000);
 		
 	$render->childcount = 0;
-		
-	$render->isuosentity = is_universe_entity($entity);
+	
+	//if we use this autoload is called which crashes the system for string types
+	//$render->isuosentity = is_universe_entity($entity);
 		
 	$render->displaymode = 'default';
 		
@@ -332,10 +334,12 @@ function startrender() {
 	$render->index = 0;
 	$render->depth = 0;
 	$render->renderpath = array();
+	$render->format = $uos->request->outputformat;
+	$format = $render->format;
 	
 	include $render->rendererpath . "display.uos.php";
-	include $render->rendererpath . "preprocess.php";
-	include $render->rendererpath . "template.page.html.php";
+	include $render->rendererpath . "preprocess.".$format.".php";
+	include $render->rendererpath . "template.page.".$format.".php";
 
 }
 
