@@ -46,8 +46,10 @@ case "$1" in
     ;;
 
 *) 
-   result=$(php -f $uosbasephp -- $request)
-   echo $result
+   php -f $uosbasephp -- $request
+   #result=$(php -f $uosbasephp -- $request)
+   #echo -e $result
+   #echo printf $result
    ;;
 
 esac
