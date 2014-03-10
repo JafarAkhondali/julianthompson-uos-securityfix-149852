@@ -240,7 +240,7 @@ uos.getActionIntersection = function(d1,d2) {
   for(var aindex in d2) {
   	// if index in both - clone to matches
 		if (d1[aindex]) {
-			matches[aindex] = jQuery.extend({}, d[aindex]);
+			matches[aindex] = jQuery.extend({}, d2[aindex]);
 			matches[aindex].handler = null;
 		}
 	}
