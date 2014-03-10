@@ -81,6 +81,10 @@ define( 'UOS_BASE_CLASS',      'entity');
 // Get Database from Virtual host / htaccess file
 define( 'UOS_DATABASE',					getenv('UOS_DATABASE'));
 
+define(	'UOS_REQUEST_TYPE_CLI',		'cli');
+define(	'UOS_REQUEST_TYPE_GET',		'get');
+define(	'UOS_REQUEST_TYPE_POST',	'post');
+
 define(	'UOS_ERROR_NOT_FOUND',	NULL);
 
 
@@ -136,12 +140,14 @@ $uos->title = 'UniverseOS';
 
 
 // Build Input parameters
+$uos->request->outputdisplay = null;
+$uos->request->outputformat = null;
 
 // Command Line
 if (isset($argv)) {
 
  	$cliargs = (json_decode($argv[1]));
-  $uos->request->commandtype = 'CLI';
+  $uos->request->type = UOS_REQUEST_TYPE_CLI;
   $uos->request->sessionid = $cliargs->sessionid;//isset($cliargs->sessionid)?session_id($cliargs->sessionid):session_id();
 	$parsedurl = parse_url(trim($cliargs->url,'/'));
   $uos->request->url = $parsedurl['path'];
@@ -153,12 +159,14 @@ if (isset($argv)) {
   
 // Webserver
 } elseif (isset($_SERVER['REQUEST_URI'])) {
-	//Only enable for debug
+
+  $uos->request->commandtype = UOS_REQUEST_TYPE_GET;
+  
+	//Only enable for debug  
 	if ($uos->config->debugmode) $uos->request->servervars = $_SERVER;  
 	
 	$parsedurl = parse_url($_SERVER['REQUEST_URI']);
 	$uos->request->parsedurl = $parsedurl;
-  $uos->request->commandtype = 'GET';
   $uos->request->port = $_SERVER['SERVER_PORT'];
   $uos->request->ssl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false; 
   $uos->request->urlprotocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https" : "http"; 
@@ -170,12 +178,10 @@ if (isset($argv)) {
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
 	}
-	if (isset($parsedurl['path'])) {
-		$uos->request->request = trim($parsedurl['path'],'/');
-	}
+	
 	//Overwrite get variables with posted
 	if (!empty($_POST)) {
-	  $uos->request->commandtype = 'POST';
+	  $uos->request->commandtype = UOS_REQUEST_TYPE_POST;
 		$uos->request->parameters = $uos->request->parameters + $_POST;
 	}
 	$uos->request->outputformat = 'html';
@@ -189,16 +195,21 @@ if (isset($argv)) {
   //$uos->request->urlexploded = explode('/',$uos->request->urlpath);  
   //$uos->request->serverrequest = $_REQUEST;
 	//$uos->request->urlparsed = $parsedurl;
-	
-
 }
 
+
+$uos->request->explodedurl = explode('.',$uos->request->url,2);
+$uos->request->displaymode = 'default';
+@list($requeststring, $outputstring) = $uos->request->explodedurl;
+@list($uos->request->target, $uos->request->action) = array_reverse(explode(':',$requeststring));
+@list($uos->request->outputformat, $uos->request->displaymode) = array_reverse(explode('.',$outputstring));
+
+//$explodeddisplay = explode('.',)
 /*
-$explodedurl = pathinfo($uos->request->request);
 
 
-$uos->request->outputdisplay = null;
-$uos->request->outputtransport = null;
+
+
 
 if (!isset($explodedurl['dirname'])) {
 	$uos->request->universename = 'global';

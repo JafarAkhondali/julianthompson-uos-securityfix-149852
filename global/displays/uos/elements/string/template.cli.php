@@ -1,1 +1,1 @@
-<?php print_r($entity);?>
+<?php print $entity;?>

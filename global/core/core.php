@@ -177,7 +177,7 @@ function addtopath($path,$pathext) {
 }
 
 
-function render($entity, object $formatoverride=NULL) {
+function render($entity, object $renderoverride=NULL) {
 	global $uos;
 	
 	$content = '';
