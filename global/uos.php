@@ -5,25 +5,23 @@ include_once "./core/core.php";
 
 $uos->universe = new node_universe($uos->config->data->universe);
 
-//print_r($uos->universe);die();
-
-
 // Find target
+$target = false;
 if (empty($uos->request->url)) {
 	// find universe start point
-	fetch($uos->universe);
+	$target = fetch($uos->universe);
 } else {
 	$requestexploded = explode(':',$uos->request->request);
-	//if (isset($requestexploded))
-	//print_r($requestexploded);
-	$entity = fetchentity($uos->request->target);
-	addoutput('body', $entity);
-	//die();
-	//fetchentity($uos->request);
+	$target = fetchentity($uos->request->target);
 }
 
-
-
-
+if ($target) {
+  $target->callaction('view');
+	//addoutput('body', $target);
+	header("HTTP/1.1 200 OK");
+} else {
+	echo 'Not found';
+	die();
+}
 
 // Shutdown function called here

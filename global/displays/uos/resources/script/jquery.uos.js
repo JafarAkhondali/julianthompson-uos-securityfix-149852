@@ -69,9 +69,11 @@ uos.global = {
 
 uos.processelement = function($element,data) {
 		
-	uos.log('uos.processelement',$element.attr('id'),$element,data);
+	//uos.log('uos.processelement',$element.attr('id'),$element,data);
 
-	$element.data('uos',data);	
+	$element.data('uos-elementdata',data);	
+  var elementdata = $element.data('uos-elementdata');
+  uos.log('uos-elementdata', elementdata);
 	uos.addBehaviours($element);
 	var elementactions = $element.data('uos-actions');
 	if (elementactions.init) {
@@ -346,13 +348,14 @@ function handleDragStart(e) {
   uos.log($(this).attr('title'));
   var title = $(this).attr('title');
   var guid = $(this).data('guid');
- 	if (isShiftHeld() && $(this).attr('data-downloadurl')) {
- 	  uos.log('ccc');
-		downloadurl = $(this).data('downloadurl');
+  var elementdata = $(this).data('uos-elementdata');
+  uos.log('uos-elementdata', elementdata.dragfile);
+  //alert('here');
+  
+ 	if (isShiftHeld() && elementdata.dragfile) {
+		downloadurl = elementdata.dragfile;
 	} else {
-	//application/octet-stream
-		//downloadurl = "application/x-url:"+title+".url:http://uos.localhost/global/admin/dragdrop/data/"+guid+"/"+guid+".url";
-		downloadurl = "application/octet-stream:"+title+".webloc:http://uos.localhost/global/admin/dragdrop/data/"+guid+"/"+guid+".webloc"
+		downloadurl = elementdata.draglink;
 	}
 	e.dataTransfer.setData("DownloadURL",downloadurl);
 
@@ -520,6 +523,10 @@ function handleBackspace(e) {
   //  e.stopPropagation(); // Stops some browsers from redirecting.
   //}
   e.preventDefault();
+}
+
+function handleTab(e) {
+	if (e.metaKey) $('body').removeClass('meta-pressed');	
 }
 
 function isShiftHeld() {
