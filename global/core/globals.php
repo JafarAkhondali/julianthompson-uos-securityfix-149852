@@ -122,6 +122,8 @@ $uos->request = new StdClass();
 
 $uos->request->parameters = array();
 
+$uos->request->outputformat = new StdClass(); 
+
 $uos->output = new StdClass();
 $uos->output = array();
 
@@ -140,8 +142,8 @@ $uos->title = 'UniverseOS';
 
 
 // Build Input parameters
-$uos->request->outputdisplay = null;
-$uos->request->outputformat = null;
+$uos->request->outputformat->display = null;
+$uos->request->outputformat->format = null;
 
 // Command Line
 if (isset($argv)) {
@@ -155,7 +157,7 @@ if (isset($argv)) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
 	}
   session_save_path('/tmp');
-	$uos->request->outputformat = 'cli';
+	$uos->request->outputformat->format = 'cli';
   
 // Webserver
 } elseif (isset($_SERVER['REQUEST_URI'])) {
@@ -171,9 +173,10 @@ if (isset($argv)) {
   $uos->request->ssl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false; 
   $uos->request->urlprotocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https" : "http"; 
 	$uos->request->urlhostname = $_SERVER['SERVER_NAME'];
+	$uos->request->siteurl = $uos->request->urlprotocol .'://'. $uos->request->urlhostname . '/';
 
 	$uos->request->url = trim($parsedurl['path'],'/');
-	$uos->request->urlfull = $uos->request->urlprotocol .'://'. $uos->request->urlhostname . '/' . $uos->request->url;
+	$uos->request->urlfull = $uos->request->siteurl . $uos->request->url;
 	
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
@@ -184,7 +187,7 @@ if (isset($argv)) {
 	  $uos->request->commandtype = UOS_REQUEST_TYPE_POST;
 		$uos->request->parameters = $uos->request->parameters + $_POST;
 	}
-	$uos->request->outputformat = 'html';
+	$uos->request->outputformat->format = 'html';
 
 	if(!empty($_FILES)) {
 		$uos->request->files = $_FILES;
@@ -199,10 +202,14 @@ if (isset($argv)) {
 
 
 $uos->request->explodedurl = explode('.',$uos->request->url,2);
-$uos->request->displaymode = 'default';
 @list($requeststring, $outputstring) = $uos->request->explodedurl;
-@list($uos->request->target, $uos->request->action) = array_reverse(explode(':',$requeststring));
-@list($uos->request->outputformat, $uos->request->displaymode) = array_reverse(explode('.',$outputstring));
+@list($uos->request->target, $uos->request->action) = array_reverse(explode('-',$requeststring));
+if (empty($uos->request->action)) $uos->request->action = 'view';
+$displayformat = explode('.',$outputstring);
+if (count($displayformat)<2) array_unshift($displayformat,UOS_DEFAULT_DISPLAY);
+@list($uos->request->outputformat->display, $uos->request->outputformat->format) = $displayformat;
+if (empty($uos->request->outputformat->display)) $uos->request->outputformat->display = 'default';
+if (empty($uos->request->outputformat->format)) $uos->request->outputformat->format='html';
 
 //$explodeddisplay = explode('.',)
 /*

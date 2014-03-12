@@ -5,10 +5,10 @@
 $(document).ready(function() {
 
 	//console.log(uos.elements);
-	jQuery.each(uos.elements, function(index,element) {
+	jQuery.each(uos.elements, function(index,elementdata) {
 		var elementId = '#'+index;
 		$element = jQuery(elementId);	
-		if ($element.length>0) uos.processelement($element);	
+		if ($element.length>0) uos.processelement($element,elementdata);	
 	});
 
 	//$(document).bind('keydown', 'Ctrl+s', saveChanges);
@@ -18,6 +18,8 @@ $(document).ready(function() {
 	$(document).bind('keydown', 'backspace', handleBackspace);
 	
 	$(document).bind('keydown', 'meta+s', saveChanges);
+	
+	$(document).bind('keydown', 'tab', handleTab);
 	
 	$(document).bind('keydown', 'ctrl+s', saveChanges);
 
@@ -31,6 +33,7 @@ $(document).ready(function() {
 
   $(window).blur(function() {
       uos.log('Blur');
+      $('body').removeClass('meta-pressed');
   });
   
  	$(window).resize(function() {

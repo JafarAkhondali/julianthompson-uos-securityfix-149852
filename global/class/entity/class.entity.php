@@ -201,13 +201,13 @@ class entity {
   public function callaction($action,$parameters=NULL) {
   	global $uos;
   	$result = NULL;
-	if (get_class($this)=='node_person') $uos->config->logging = TRUE;
+		//if (get_class($this)=='node_person') $uos->config->logging = TRUE;
     $this->getactions();
     //print_r($this->actions[$action]);
     //print_r(gettype($this));
-	trace(get_class($this),'jmt');
-	//trace($this->title,'jmt');
-	trace(empty($this->actions)?'EMPTYACTONS':'','jmt');
+		trace(get_class($this),'jmt');
+		//trace($this->title,'jmt');
+		trace(empty($this->actions)?'EMPTYACTONS':'','jmt');
     if (isset($this->actions[$action])) {
     
       //$response->found = TRUE;
@@ -250,8 +250,9 @@ class entity {
 
     } else {
       //$response->error = TRUE;
+      return UOS_ERROR_NOT_FOUND;
     }
-	$uos->config->logging = FALSE;
+	//$uos->config->logging = FALSE;
     
     return $result;
   }

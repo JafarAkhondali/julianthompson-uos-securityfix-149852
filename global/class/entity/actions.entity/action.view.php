@@ -1,0 +1,3 @@
+<?php
+
+addoutput('body', $this);

@@ -195,19 +195,13 @@ function render($entity, object $renderoverride=NULL) {
 	 
 	$render->activerenderer = UOS_DEFAULT_DISPLAY;
 	
-	$render->format = $uos->request->outputformat;
+	$render->format = $uos->request->outputformat->format;
   	
 	$render->activerendererpath = addtopath(UOS_DISPLAYS,$render->activerenderer);
 
 	$render->filesearchpaths = find_element_paths($render->activerendererpath, $entity, TRUE);
 	
 	$format = $render->format;
-		
-	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.${format}.php");
-		
-	$render->templatefile = find_element_file($render->filesearchpaths, "template.${format}.php");
-		
-	$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.${format}.php");  
 	
 	$render->classes = class_tree($entity);
 		
@@ -229,10 +223,18 @@ function render($entity, object $renderoverride=NULL) {
 		
 	$render->childcount = 0;
 	
+	$render->displaymode = 'default';
+	
+	if ($render->displaymode=='default') {
+		$render->formatdisplay = $format;
+	} else {
+		$render->formatdisplay = implode('.',array($render->displaymode,$format));
+	}
+	
 	//if we use this autoload is called which crashes the system for string types
 	//$render->isuosentity = is_universe_entity($entity);
 		
-	$render->displaymode = 'default';
+
 		
 	$render->renderindex = $uos->render->index;
 		
@@ -241,6 +243,14 @@ function render($entity, object $renderoverride=NULL) {
 	$render->wrapperelement = 'div';
 	
 	$render->preprocessed = array();
+
+	$render->preprocessall = find_element_file($render->filesearchpaths, "preprocess.php");
+	
+	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.${format}.php");
+		
+	$render->templatefile = find_element_file($render->filesearchpaths, "template.${format}.php");
+		
+	$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.${format}.php");  
 	  
   if (is_subclass_of($render,'node')) { 
   	$render->title = $entity->title->value;
@@ -308,11 +318,12 @@ function render($entity, object $renderoverride=NULL) {
 	  }	  
 
   } else {
-  	$content = '<div class="error">entity render error</div>';
+  	$content = '<div class="error">';
+  	$content .= implode(PHP_EOL,find_all_element_paths($render->filesearchpaths, "template.${format}.php"));
+  	$content .= '</div>';
   }
   unset($render->renderpath);
   unset($render->filesearchpaths);
-  addoutput('resources/json/'.$render->elementid, (object) $render);
   //$content .= print_r($rendersettings,TRUE);
   $uos->render->depth--; 
   return $content;
@@ -324,6 +335,7 @@ function startrender() {
 	
 	// create a new render object
 	$uos->render = new StdClass();
+	$uos->activerender = $uos->render;
 	
 	// assign to render for convenience 
 	$render = $uos->render;
@@ -334,12 +346,22 @@ function startrender() {
 	$render->index = 0;
 	$render->depth = 0;
 	$render->renderpath = array();
-	$render->format = $uos->request->outputformat;
-	$format = $render->format;
+	$render->format = $uos->request->outputformat->format;
+	$render->display = $uos->request->outputformat->display; 
+	//$format = $render->format;
 	
-	include $render->rendererpath . "display.uos.php";
-	include $render->rendererpath . "preprocess.".$format.".php";
-	include $render->rendererpath . "template.page.".$format.".php";
+
+	$render->formatdisplay = implode('.',array($render->display,$render->format));
+	//print_r($render);
+	//die();
+	
+	//include core display functions
+	include $render->rendererpath . "include.uos.php";
+	
+	
+	include $render->rendererpath . "preprocess.".$render->format.".php";
+	//include $render->rendererpath . "preprocess.".$render->format.".php";	
+	include $render->rendererpath . "template.".$render->format.".php";
 
 }
 
@@ -393,6 +415,16 @@ function find_element_file($patharray,$filename) {
     }
   }
   return NULL;
+}
+
+
+// Nearly identical but separate to find_element_paths for speed
+function find_all_element_paths($patharray,$filename) {
+$paths = array();
+  foreach($patharray as $path) {
+     $paths[] = $path . $filename;
+  }
+  return $paths;
 }
 
 
