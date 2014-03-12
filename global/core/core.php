@@ -223,7 +223,7 @@ function render($entity, object $renderoverride=NULL) {
 		
 	$render->childcount = 0;
 	
-	$render->displaymode = 'default';
+	$render->displaymode = $uos->activerender->display;//'default';
 	
 	if ($render->displaymode=='default') {
 		$render->formatdisplay = $format;
@@ -272,6 +272,8 @@ function render($entity, object $renderoverride=NULL) {
   $uos->render->index++;
   
   $uos->render->depth++;
+  
+  if ($renderoverlay) $render + $renderoverlay;
   
   //$render->elementtitle = is_set($entity->title)?$entity->title->value:$render->classes[0];
   
@@ -343,6 +345,7 @@ function startrender() {
 	$render->activerenderer = UOS_DEFAULT_DISPLAY;	
 	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer); 
 	$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
+	$render->filesearchpaths = array($render->rendererpath); 
 	$render->index = 0;
 	$render->depth = 0;
 	$render->renderpath = array();
@@ -350,18 +353,29 @@ function startrender() {
 	$render->display = $uos->request->outputformat->display; 
 	//$format = $render->format;
 	
-
-	$render->formatdisplay = implode('.',array($render->display,$render->format));
-	//print_r($render);
-	//die();
+	if ($render->display=='default') {
+		$render->formatdisplay = $render->format;
+	} else {
+		$render->formatdisplay = implode('.',array($render->display,$render->format));
+	}
+	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.".$render->formatdisplay.".php");
+	
+	$render->templatefile = find_element_file($render->filesearchpaths, "template.".$render->formatdisplay.".php");
 	
 	//include core display functions
 	include $render->rendererpath . "include.uos.php";
 	
+	if ($render->preprocessfile) {
+		include $render->preprocessfile;
+	} else {
+		throw new Exception('No preprocess file found');
+	}
 	
-	include $render->rendererpath . "preprocess.".$render->format.".php";
-	//include $render->rendererpath . "preprocess.".$render->format.".php";	
-	include $render->rendererpath . "template.".$render->format.".php";
+	if ($render->templatefile) {
+		include $render->templatefile;
+	} else {
+		throw new Exception('No template file found');
+	}
 
 }
 
@@ -632,8 +646,8 @@ function UrlToQueryArray($query) {
 function useLibrary($librarystr) {
 	//how do we deal with sublibraries
 	//$explodedstr = explode('/', trim($librarystr,'/'));
-	
-	$files = find_files(UOS_LIBRARIES. $librarystr . '/','.*\.uos.php', FALSE);
+	$librarypath = UOS_LIBRARIES. $librarystr .'/';
+	$files = find_files($librarypath,'.*\.uos.php', FALSE);
 	if (!empty($files)) {
 		foreach($files as $file) {
 			include $file;
