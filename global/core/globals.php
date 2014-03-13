@@ -114,6 +114,28 @@ if ($uos->config->showerrors) {
 }
 
 
+// Messy I know
+$uos->responsecodes = array(
+	100 => 'Continue',
+	200 => 'OK',
+	201 => 'Created',
+	202	=> 'Accepted',
+	205 => 'Reset Content',
+	206 => 'Partial Content',
+	300 => 'Multiple Choices',
+	307 => 'Temporary Redirect',
+	402 => 'Payment Required',
+	403 => 'Forbidden',
+	404 => 'Not Found',
+	405 => 'Method Not Allowed',
+	406 => 'Not Acceptable',
+	500 => 'Internal Server',
+	501 => 'Not Implemented',
+	502 => 'Bad Gateway',
+	503 => 'Service Unavailable',
+	505 => 'HTTP Version Not Supported'
+);
+
 
 
 $uos->actions = array();
@@ -123,6 +145,10 @@ $uos->request = new StdClass();
 $uos->request->parameters = array();
 
 $uos->request->outputformat = new StdClass(); 
+
+$uos->response = new StdClass(); 
+
+$uos->response->code = 404;  // Default to Not Found
 
 $uos->output = new StdClass();
 $uos->output = array();

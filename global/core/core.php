@@ -2,7 +2,7 @@
 
 include_once "core/globals.php";
 
-register_shutdown_function('universe_shutdown');
+//register_shutdown_function('universe_shutdown');
 set_error_handler('handleError');
 
 
@@ -21,7 +21,7 @@ function fetch($target) {
 
 	fetchentitychildren($target);
 	//print_r($target);die();
-	addoutput('body/', $target);
+	addoutput('content/', $target);
 }
 
 function fetchentity($guid) {
@@ -172,9 +172,8 @@ function class_tree($entity,$reverse=FALSE) {
 
 
 // Input : Path - Output : $path + '/' + $pathext + '/'
-function addpaths($paths) {
-	$paths = func_get_args();
-	return implode('',$paths);
+function addtopath($path,$pathext) {
+	return $path . $pathext . '/';
 }
 
 
@@ -198,7 +197,7 @@ function render($entity, object $renderoverride=NULL) {
 	
 	$render->format = $uos->request->outputformat->format;
   	
-	$render->activerendererpath = addpaths(UOS_DISPLAYS,$render->activerenderer,'/');
+	$render->activerendererpath = addtopath(UOS_DISPLAYS,$render->activerenderer);
 
 	$render->filesearchpaths = find_element_paths($render->activerendererpath, $entity, TRUE);
 	
@@ -207,8 +206,8 @@ function render($entity, object $renderoverride=NULL) {
 	$render->classes = class_tree($entity);
 		
 	$render->classtree = $render->classes;
-		
-	$render->classtreestring = 'uos-element '.implode(' ', array_reverse($render->classes));
+	
+	$render->classtreestring = 'uos-element uos-uninitialized '.implode(' ', array_reverse($render->classes));
 	
 	$render->inheritancestring = implode(',', $render->classes);
 		
@@ -253,7 +252,7 @@ function render($entity, object $renderoverride=NULL) {
 		
 	$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.${format}.php");  
 	  
-  if (is_subclass_of($render,'node')) { 
+  if (is_subclass_of($entity,'node')) { 
   	$render->title = $entity->title->value;
   } else {
   	$render->title = ucfirst($render->classes[0]);
@@ -261,14 +260,13 @@ function render($entity, object $renderoverride=NULL) {
   
 	$render->attributes = array(
 		'id' => $render->elementid,
-		'class' => $render->classtreestring,
-		'data-uostypetree' => $render->inheritancestring,
-		'data-uostype' => $render->entitytype,
-		'data-accept' => '',
-		'draggable' => 'false',
-		'title' => $render->title,
-		'data-display' => $render->displaymode
+		'class' => $render->classtreestring
 	);
+	
+	$render->data = new stdClass();
+	
+	$render->data->typetree = $render->classtree;
+	$render->data->type = $render->entitytype;
   
   $uos->render->index++;
   
@@ -287,37 +285,27 @@ function render($entity, object $renderoverride=NULL) {
 
   //need to cater for multiple preprocess from node down
   if ($render->preprocessfile) {
-	  //try {
+	  try {
 	    //trace('Including preprocess file - '.$preprocessfile);
 	    include $render->preprocessfile;
-	  //} catch (Exception $e) {
-	  //  trace('Caught exception: '.  $e->getMessage());
-	  //}  
+	  } catch (Exception $e) {
+	    trace('Caught exception: '.  $e->getMessage());
+	  }  
 	  $render->preprocessed[] = $render->preprocessfile;
   }
-  //$render->debugcapture = TRUE;
-  //print_r($render);die();
   
+  //print_r($render);die();
   
   if ($render->templatefile) {
 	  //trace('Including template file - '.$templatefile);
-	  //ob_start();
-	  //try {
-	    //include $render->templatefile;
-	  	//$content = ob_get_contents();
-	  //} catch (Exception $e) {
-	    //$content = ('Caught exception: '.  $e->getMessage());
-	  //}
-	  //ob_end_clean();
-		$content = captureoutput($render->templatefile, array('render'=>$render, 'entity'=>$entity));	  
-	  //if ($render->test) return "xxxxxxx".$content;
-
-	  //print_r($render);die();
-	  //try {
-	  //$content = captureoutput($render->templatefile, array('render'=>$render));
-	  //} catch (Exception $e) {
-	  //	throw new Exception('Error executing :'.$render->templatefile);
-	  //}	  
+	  ob_start();
+	  try {
+	    include $render->templatefile;
+	  	$content = ob_get_contents();
+	  } catch (Exception $e) {
+	    trace('Caught exception: '.  $e->getMessage());
+	  }
+	  ob_end_clean();
 	  //print_r($content);die();
 	  if ($render->wrapperfile) {
 		  ob_start();
@@ -343,6 +331,79 @@ function render($entity, object $renderoverride=NULL) {
 }
 
 
+function startrender() {
+	global $uos;
+
+	// create a new render object
+	$uos->render = new StdClass();
+	$uos->activerender = $uos->render;
+	
+	// assign to render for convenience 
+	$render = $uos->render;
+
+	$render->activerenderer = UOS_DEFAULT_DISPLAY;	
+	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer); 
+	$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
+	$render->filesearchpaths = array($render->rendererpath); 
+	$render->index = 0;
+	$render->depth = 0;
+	$render->renderpath = array();
+	$render->format = $uos->request->outputformat->format;
+	$render->display = $uos->request->outputformat->display; 
+
+	if (is_array($uos->output['content'])) {
+		$entity = $uos->output['content'][0];
+	} else {
+		$entity = $uos->output['content'];	
+	}
+
+	$render->classes = class_tree($entity);
+		
+	$render->classtree = $render->classes;
+	
+	$render->attributes = array(
+		'id' => $render->elementid,
+		'class' => $render->classtreestring
+	);
+	
+	$render->data = new stdClass();
+	
+	$render->data->typetree = $render->classtree;
+	$render->data->type = $render->entitytype;
+	$render->data->typeinfo = $render->typeinfo;
+	
+  if (is_subclass_of($entity,'entity')) { 
+  	$render->title = $entity->title->value . ($render->typeinfo->title);
+  } else {
+  	$render->title = 'Untitled ' . ucfirst($render->classes[0]);
+  }
+	
+	
+	//$format = $render->format;
+	
+	if ($render->display=='default') {
+		$render->formatdisplay = $render->format;
+	} else {
+		$render->formatdisplay = implode('.',array($render->display,$render->format));
+	}
+	//$render->includefiles = find_element_paths($render->filesearchpaths, "include.".$render->formatdisplay.".php");
+	
+	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.".$render->formatdisplay.".php");
+	
+	$render->templatefile = find_element_file($render->filesearchpaths, "template.".$render->formatdisplay.".php");
+	
+	//include core display functions
+	include $render->rendererpath . "include.uos.php";
+
+	if ($render->preprocessfile) {
+		include $render->preprocessfile;
+	} 
+	
+	if ($render->templatefile) {
+		include $render->templatefile;
+	} 
+
+}
 
 function find_display_file($entity, $filetype='template', $extension='html.php') {
 	
@@ -510,61 +571,6 @@ function getcallerinfo() {
 }
 
 
-function startrender() {
-	global $uos;
-	
-	// create a new render object
-	$uos->render = new StdClass();
-	$uos->activerender = $uos->render;
-	
-	// assign to render for convenience 
-	$render = $uos->activerender;
-
-	$render->activerenderer = UOS_DEFAULT_DISPLAY;	
-	$render->rendererurl = addpaths(UOS_DISPLAYS_URL, $render->activerenderer, '/'); 
-	$render->rendererpath = addpaths(UOS_DISPLAYS, $render->activerenderer, '/');
-	$render->bootfile = addpaths(UOS_DISPLAYS, UOS_DEFAULT_DISPLAY, '/boot.php');
-	$render->filesearchpaths = array($render->rendererpath); 
-	$render->index = 0;
-	$render->depth = 0;
-	$render->renderpath = array();
-	$render->format = $uos->request->outputformat->format;
-	$render->display = $uos->request->outputformat->display; 
-
-	
-	try {
-		$output = captureoutput($render->bootfile,array('render'=>$render));
-	} catch (Exception $e) {
-		ob_end_clean();
-		return ('Caught exception: ' .  $e->getMessage() . "\n");
-	}
-
-	return $output;
-}
-
-
-
-function captureoutput($filename, $parameters) {
-	global $uos;
-
-	extract($parameters,EXTR_REFS);
-	$render->test = true;
-	//if ($render->debugcapture) return print_r($parameters, TRUE);
-	try {
-		ob_start();
-		//echo $filename . " " . (file_exists($filename)?"[ok]":"[missing]");
-		include $filename;
-		$content = ob_get_contents();
-  } catch (Exception $e) {
-    $content = render($e);//('Caught exception: ('. $filename .')' . $e->getMessage() . print_r($e,TRUE));
-  }
-	ob_end_clean();
-
-	return $content;
-}
-
-
-
 function universe_shutdown() { 
 
   global $uos;
@@ -578,13 +584,23 @@ function universe_shutdown() {
   
 	if (!isset($uos->shutdown)) {
 		$uos->shutdown = TRUE;	
-		echo startrender();
+		// compress output if supported
+		ob_start();
+		try {
+			startrender();
+		} catch (Exception $e) {
+			ob_end_clean();
+	    echo('Caught exception: ' .  $e->getMessage() . "\n");
+	    die();
+		}
+		$content = ob_get_contents();
+		ob_end_clean();
+		ob_start("ob_gzhandler");
+		echo $content;
 	} else {
 		die('Something went wrong');
 	}
 }
-
-
 
 function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
     // error was suppressed with the @-operator

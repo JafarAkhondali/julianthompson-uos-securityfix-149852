@@ -43,3 +43,5 @@ addoutput('resources/script/', $render->rendererurl."elements/entity/node/node_d
 addoutput('resources/style/', $render->rendererurl."resources/style/style.uos.css");
 
 //print_r($uos->universe->getactions());
+
+header("HTTP/1.1 $uos->response->code" . $uos->responsecodetitles[$uos->response->code]);

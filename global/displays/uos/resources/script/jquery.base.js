@@ -49,6 +49,7 @@ $(document).ready(function() {
   	this.addEventListener('dragend', handleDragEnd, false);
   	this.addEventListener('drop', handleDrop, false);
   	this.addEventListener('click', handleNodeClick, false);
+
   	//$(this).bind("contextmenu",function(e){return false;});
 	});
 	

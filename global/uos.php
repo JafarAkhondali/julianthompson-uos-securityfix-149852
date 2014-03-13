@@ -16,11 +16,18 @@ if (empty($uos->request->url)) {
 }
 
 if ($target) {
-  $target->callaction('view');
-	//addoutput('body', $target);
-	header("HTTP/1.1 200 OK");
-} else {
-	echo 'Not found.';
-	die();
+  //$target->callaction('view');
+	addoutput('content', $target);
+	$uos->response->code = 200;
+} 
+
+//print_r($target);die();
+// we found something
+try {
+	$uos->response->content = startrender();
+} catch (Exception $e) {
+	//$uos->response->code = 500;
+  $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");
 }
-// Shutdown function called here
+
+echo $uos->response->content;
