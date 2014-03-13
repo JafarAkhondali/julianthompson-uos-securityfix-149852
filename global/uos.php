@@ -20,8 +20,7 @@ if ($target) {
 	//addoutput('body', $target);
 	header("HTTP/1.1 200 OK");
 } else {
-	echo 'Not found';
+	echo 'Not found.';
 	die();
 }
-
 // Shutdown function called here
