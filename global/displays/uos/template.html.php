@@ -20,7 +20,6 @@
 	
 	<body>
 	
-	
 		<div id="universetoolbar">
 			<ul id="universe-status">
 				<li class="field-icon-container" id="universe-status-icon">
@@ -64,7 +63,9 @@
 <script>
 uos.elements = <?php print json_encode($uos->output['resources']['json']);?>;
 </script>
+
 <?php
+
 //$relationship = new relationship();
 //print_r($relationship->__gettabledefinition());
 //$db = $uos->universe->connect();
