@@ -71,21 +71,22 @@ uos.processelement = function($element,data) {
 		
 	//uos.log('uos.processelement',$element.attr('id'),$element,data);
 
-	$element.data('uos-elementdata',data);	
-  var elementdata = $element.data('uos-elementdata');
-  uos.log('uos-elementdata', elementdata);
+	$element.data('uos-data',data);	
+  var elementdata = $element.data('uos-data');
+  uos.log('uos-data', elementdata);
 	uos.addBehaviours($element);
 	var elementactions = $element.data('uos-actions');
 	if (elementactions.init) {
 		if (elementactions.init.handler) elementactions.init.handler($element,data);
 	}
-	$element.addClass('uos-processed');
 };
 
 uos.addBehaviours = function($element) {
-	var uostype = $element.data('uostype');
-	var uosdisplay = $element.data('display');
-	var uostypetree = ($element.data('uostypetree')).split(',');
+  var elementdata = $element.data('uos-data');
+	var uostype = elementdata.type;
+	var uosdisplay = elementdata.display;
+	var uostypetree = elementdata.typetree;
+	uos.log('uos.addBehaviors',elementdata);
   var elementactions = {};
 	//for (in= 0; index < a.length; ++index) {
 	for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
@@ -195,8 +196,8 @@ uos.buildToolbar = function() {
 		var $control = jQuery('<i></i>');
 		$control.attr('title',action.title);
 		$control.addClass('fa');
-		$control.click(function () {
-			uos.toolbarAction(action);
+		$control.click(function (event) {
+			uos.toolbarAction(action,event);
 		});
 		$control.addClass(action.icon);
 		$control = $control.wrap('<li></li>').parent();
@@ -282,11 +283,11 @@ uos.getActionsOLD = function (e) {
 };
 
 
-uos.toolbarAction = function (action) {
+uos.toolbarAction = function (action, event) {
 	uos.log('Calling action : ', action);
-
+	$elements = uos.getSelectedElements();
 	if (action.handler) {
-		action.handler();
+		action.handler($elements,event);
 	} else {
 
 	}
