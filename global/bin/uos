@@ -28,6 +28,16 @@ fi
 #echo $uosbasedir
 cd $uosbasedir/global/
 uosbasephp=$uosbasedir/global/uos.php
+uosdata=$uosbasedir/data
+uosconfigfile=$uosdata/config/config.uos.bash
+
+uosconfigfound="[Missing]"
+
+if [ -f $uosconfigfile ]; then
+	source $uosconfigfile 
+	uosconfigfound="[Found]"
+fi
+
 #echo $uosbasephp
 #echo "'$1'"
 #url=$(printf '%q' $1)
@@ -38,18 +48,25 @@ docroot=$(printf '%q' $uosbasedir)
 #request=$(printf '{"url":"%s","documentroot":"%s","sessionid":"%s"}' "$url" "$uosbasedir" "$session")
 request=$(printf '{"url":"%b","documentroot":"%s","sessionid":"%s"}' "$1" "$uosbasedir" "$sessionid")
 
+echo "UniverseOS"
 
+echo "Configuration file : $uosconfigfile $uosconfigfound"
 case "$1" in
 
-'install')  
-    echo "Install UniverseOS $1"
-    ;;
-
-*) 
-   php -f $uosbasephp -- $request
-   #result=$(php -f $uosbasephp -- $request)
-   #echo -e $result
-   #echo printf $result
-   ;;
+	'install')  
+		echo "Install"
+	  ;;
+	    
+	'syncdata')
+		echo "Synching to $synctarget1"
+		scp -r $uosdata $synctarget1
+		;;
+	
+	*) 
+		php -f $uosbasephp -- $request
+		#result=$(php -f $uosbasephp -- $request)
+		#echo -e $result
+		#echo printf $result
+		;;
 
 esac

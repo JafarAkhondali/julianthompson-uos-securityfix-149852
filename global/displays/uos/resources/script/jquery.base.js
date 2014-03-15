@@ -4,13 +4,16 @@
 
 $(document).ready(function() {
 
+
+  uos.initalizeallelements();
 	//console.log(uos.elements);
+	/*
 	jQuery.each(uos.elements, function(index,elementdata) {
 		var elementId = '#'+index;
 		$element = jQuery(elementId);	
-		if ($element.length>0) uos.processelement($element,elementdata);	
+		if ($element.length>0) uos.initializeelement($element,elementdata);	
 	});
-
+  */
 	//$(document).bind('keydown', 'Ctrl+s', saveChanges);
 	
 	$(document).bind('keyup keydown', handleKeyboardModifiers);
@@ -48,7 +51,7 @@ $(document).ready(function() {
   	this.addEventListener('dragleave', handleDragLeave, false);
   	this.addEventListener('dragend', handleDragEnd, false);
   	this.addEventListener('drop', handleDrop, false);
-  	this.addEventListener('click', handleNodeClick, false);
+  	//this.addEventListener('click', handleNodeClick, false);
 
   	//$(this).bind("contextmenu",function(e){return false;});
 	});

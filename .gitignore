@@ -39,6 +39,7 @@ Thumbs.db
 *.back.php
 
 # Ignore configuration files that may contain sensitive information.
+# If repository is www root
 # data/*/*config*.php
 
 # Ignore paths that contain generated content.
