@@ -130,7 +130,7 @@ uos.loadcontent = function($element,path) {
   	uos.log('loadcontent',elementdata,elementid,replacementid,uos.elements,$newelement);
 
   	uos.initializeelement($newelement,uos.elements[replacementid]);
-  	if (selected) $element.addClass('selected');
+  	if (selected) $newelement.addClass('selected');
 	});	
 }
 
