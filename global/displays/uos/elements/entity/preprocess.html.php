@@ -9,6 +9,9 @@ $render->attributes['title'] = $render->title;
 $render->attributes['data-display'] = $render->displaymode;
 
 $render->data->clicktarget = $uos->request->siteurl . $entity->guid->value;
+$render->data->displaypaths = array(
+	'withfooter' => '/4567898765.withfooter.html'
+);
 
 $draglinkfile = $uos->request->siteurl . $entity->guid->value . '.webloc';
 $render->data->draglink = "application/octet-stream:" . $entity->title->value . ".webloc:" . $draglinkfile;

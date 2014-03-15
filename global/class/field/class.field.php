@@ -25,4 +25,8 @@ class field extends entity {
   function getdbfieldtype() {
   	return "text";
   }
+  
+  public function __toString() {
+    return $this->value;
+  }
 } 

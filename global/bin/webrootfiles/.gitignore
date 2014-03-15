@@ -1,5 +1,5 @@
 # Ignore configuration files that may contain sensitive information.
-# data/*/*config*.php
+data/
 
 # Ignore paths that contain generated content.
 cache/

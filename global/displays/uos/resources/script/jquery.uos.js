@@ -67,19 +67,72 @@ uos.global = {
 };
 
 
-uos.processelement = function($element,data) {
-		
-	//uos.log('uos.processelement',$element.attr('id'),$element,data);
 
-	$element.data('uos-data',data);	
-  var elementdata = $element.data('uos-data');
-  uos.log('uos-data', elementdata);
-	uos.addBehaviours($element);
-	var elementactions = $element.data('uos-actions');
-	if (elementactions.init) {
-		if (elementactions.init.handler) elementactions.init.handler($element,data);
-	}
+
+uos.initializeelement = function($element,data) {
+	//uos.log('uos.initializeelement',$element.attr('id'),$element,data);
+	uos.log(data);
+	if (data) {
+		$element.data('uos-data',data);	
+	  var elementdata = $element.data('uos-data');
+	  uos.log('uos-data', elementdata);
+		uos.addBehaviours($element);
+		var elementactions = $element.data('uos-actions');
+		if (elementactions.init) {
+			if (elementactions.init.handler) elementactions.init.handler($element);
+		}
+	}	
+	$element.removeClass('uos-uninitialized');
+	$element.addClass('uos-initialized');
 };
+
+
+uos.initalizeallelements = function() {
+	jQuery('.uos-uninitialized').each(function(index) {
+		var elementid = $(this).attr('id');
+		var elementdata = uos.elements[elementid];
+		uos.initializeelement($(this),elementdata);	
+	});
+}
+
+uos.loadcontent = function($element,path) {
+
+	var elementdata = $element.data('uos-data');
+	var elementid = $element.attr('id');
+	//elementdata.displaypaths
+	//alert('display up');
+	var selected = uos.isSelected($element);
+	//uos.log('uostype_entity_display_up',elementdata.displaypaths,elementdata.display);
+	//for (var i in ob) { // i will be "page1.html", "page2.html", etc...
+  //  if (!ob.hasOwnProperty(i)) continue;
+    // Do something with ob[i]
+	//}
+	//uostype_entity_get_display($element,elementdata.displaypaths[0]);
+	$.getJSON( path, function( data ) {
+  	//$( ".result" ).html( data );
+		var content = data.content;
+		var resources = data.resources;
+		uos.log(data);
+  	var $newelement = $(content);
+  	var replacementid = $newelement.attr('id');
+  	// remove data for current element
+  	delete uos.elements[elementid];
+  	//uos.elements[replacementid] = data.resources.json;
+  	jQuery.extend(uos.elements, data.resources.json);
+  	$element.replaceWith($newelement);
+  	/*  	
+		jQuery.each(uos.elements, function(index,elementdata) {
+			var elementId = '#'+index;
+			$element = jQuery(elementId);	
+			if ($element.length>0) uos.processelement($element,elementdata);	
+		});
+		*/
+  	uos.log('loadcontent',elementdata,elementid,replacementid,uos.elements,$newelement);
+
+  	uos.initializeelement($newelement,uos.elements[replacementid]);
+  	if (selected) $element.addClass('selected');
+	});	
+}
 
 uos.addBehaviours = function($element) {
   var elementdata = $element.data('uos-data');
@@ -95,7 +148,7 @@ uos.addBehaviours = function($element) {
 		if(uos.types[searchtypename]) {
 			var currenttype = uos.types[searchtypename];
 			if (currenttype.actions) {
-				//uos.log('found actions for definition',uostype, searchtypename);
+				uos.log('found actions for definition',uostype, searchtypename);
 				for(var aindex in currenttype.actions) {
 					// if we haven't defined the action already (overwritten)
 					//console.log(elementactions);

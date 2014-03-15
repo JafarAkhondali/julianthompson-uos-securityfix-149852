@@ -246,7 +246,7 @@ body.alt-pressed #universetoolbar ul#universe-actions li.alt-keystatus {
 }
 
 
-div.node {
+div.uos-element.node {
 	xborder:1px solid grey;
 
 	xxbackground-color: #cccccc;
@@ -598,6 +598,10 @@ li.status-refreshing {
 div.node > ul > li > div.field.locked {
 	color: red;
 } 
+
+div.uos-element.node.uos-uninitialized {
+	opacity: 0.2;
+}
 
 
 body.uos-toolbar-active div#universetoolbar #universe-details {

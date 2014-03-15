@@ -267,6 +267,8 @@ function render($entity, object $renderoverride=NULL) {
 	
 	$render->data->typetree = $render->classtree;
 	$render->data->type = $render->entitytype;
+	$render->data->typeinfo = $render->typeinfo;
+	$render->data->display = $render->formatdisplay;
   
   $uos->render->index++;
   
@@ -311,7 +313,8 @@ function render($entity, object $renderoverride=NULL) {
 		  ob_start();
 		  try {
 		    include $render->wrapperfile;
-		  	$content = "<!-- start '.$render->wrapperfile.' -->\n".ob_get_contents()."<!-- end '.$render->wrapperfile.' -->\n";
+		  	$content = ob_get_contents();
+		  	//$content = "<!-- start '.$render->wrapperfile.' -->\n".ob_get_contents()."<!-- end '.$render->wrapperfile.' -->\n";
 		  } catch (Exception $e) {
 		    trace('Caught exception: '.  $e->getMessage());
 		  }
@@ -371,6 +374,7 @@ function startrender() {
 	$render->data->typetree = $render->classtree;
 	$render->data->type = $render->entitytype;
 	$render->data->typeinfo = $render->typeinfo;
+	$render->data->display = $render->formatdisplay;
 	
   if (is_subclass_of($entity,'entity')) { 
   	$render->title = $entity->title->value . ($render->typeinfo->title);
