@@ -21,5 +21,3 @@ if ($entity->filename) {
 	$dragfilefile = $uos->request->siteurl . $entity->guid->value . '.file';
 	$render->data->dragfile = $entity->mimetype->value . ":" . $entity->filename->value . ":" . $dragfilefile;
 }
-
-addoutput('resources/json/'.$render->elementid, $render->data);

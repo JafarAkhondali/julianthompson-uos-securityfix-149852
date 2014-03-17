@@ -6,20 +6,17 @@ include_once "./core/core.php";
 $uos->universe = new node_universe($uos->config->data->universe);
 
 // Find target
-$target = false;
-if (empty($uos->request->url)) {
-	// find universe start point
-	$target = fetch($uos->universe);
-} else {
-	$requestexploded = explode(':',$uos->request->request);
+//$target = false;
+if (!empty($uos->request->target)) {
 	$target = fetchentity($uos->request->target);
-}
-
-if ($target) {
+	fetchentitychildren($target);
   //$target->callaction('view');
 	addoutput('content', $target);
 	$uos->response->code = 200;
-} 
+}
+
+//print_r($target);
+//die('died'); 
 
 //print_r($target);die();
 // we found something

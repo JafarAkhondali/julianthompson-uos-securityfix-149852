@@ -15,17 +15,20 @@ function __autoload($classname='') {
     die('__autoload : missing class file - ' . $classname . '(' .$classpath . ')');
   }
 }
-
+/*
 function fetch($target) {
 	global $uos;
 
-	fetchentitychildren($target);
+	//fetchentitychildren($target);
 	//print_r($target);die();
-	addoutput('content/', $target);
+	return $target;
 }
-
+*/
 function fetchentity($guid) {
 	global $uos;
+
+	$guidexploded = explode(':',$guid);
+	if (isset($guidexploded[1])) @list($guid,$field) = $guidexploded;
 
 	if (!isset($uos->instances[$guid])) {
 		//pretend to load from db
@@ -39,7 +42,14 @@ function fetchentity($guid) {
 	} else {
 		$entity = $uos->instances[$guid];
 	}
-	return $uos->instances[$guid];
+	if ($entity) {
+		if ($field) {
+			return $uos->instances[$guid]->properties[$field];
+		} else {
+			return $uos->instances[$guid];
+		}
+	}
+	return NULL;
 }
 
 function fetchentitychildren(&$entity) {
@@ -47,7 +57,10 @@ function fetchentitychildren(&$entity) {
 	
 	if ($entity->type->value == 'node_universe') {
 		foreach($uos->config->data->entities as $guid=>$propertyobject) {
-			$entity->children[] = fetchentity($guid);
+			if ($guid != $entity->guid->value) {
+				$entity->children[] = fetchentity($guid);
+				//print_r($guid);
+			}
 		}	
 	} else {
 		$entityguid = $entity->guid->value;
@@ -184,18 +197,51 @@ function render($entity, object $renderoverride=NULL) {
 	
 	//throw new Exception('Division by zero.');
 
-	$render = new stdClass();//$uos->render;
-
-	//$classtree = class_tree($entity);
+	//$render = new stdClass();//$uos->render;
+	if ($uos->activerender) {
+		$parentrender = $uos->activerender;
+  	$render = clone $parentrender;
+  	$render->depth++;
+  	$render->index = count($uos->activerender->children);
+  	$uos->activerender->children[] = $render;
+  	$uos->activerender = $render;
+  } else {
+  	// here we can set up new render object instead of in startrender?
+		$render->activerenderer = UOS_DEFAULT_DISPLAY;	
+		$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer); 
+		$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
+		$render->filesearchpaths = array($render->rendererpath); 
+		$render->index = 0;
+		$render->depth = 0;
+		$render->renderpath = array();
+		$render->format = $uos->request->outputformat->format;
+		$render->display = $uos->request->outputformat->display;
+	  $render->children = array(); 
+  }
   
-  if (empty($entity)) return '';
+	if ($render->displaymode=='default') {
+		$render->formatdisplay = $format;
+	} else {
+		$render->formatdisplay = implode('.',array($render->displaymode,$format));
+	}
+	  
+  $uos->render->index++;
+  
+  if (empty($entity)) {
+  	$uos->activerender = $parentrender;
+  	return '';
+  }
   
   //if ($uos->render->depth>4) return 'Too Deep';
+	//$render->activerenderer = $uos->activerenderer;
 	
+	//$render->format = $uos->activerender->format;	
+	
+	//$render->displaymode = $uos->activerender->display;//'default';
 	 
-	$render->activerenderer = UOS_DEFAULT_DISPLAY;
+	//$render->activerenderer = UOS_DEFAULT_DISPLAY;
 	
-	$render->format = $uos->request->outputformat->format;
+	//$render->format = $uos->request->outputformat->format;
   	
 	$render->activerendererpath = addtopath(UOS_DISPLAYS,$render->activerenderer);
 
@@ -223,22 +269,14 @@ function render($entity, object $renderoverride=NULL) {
 		
 	$render->childcount = 0;
 	
-	$render->displaymode = $uos->activerender->display;//'default';
-	
-	if ($render->displaymode=='default') {
-		$render->formatdisplay = $format;
-	} else {
-		$render->formatdisplay = implode('.',array($render->displaymode,$format));
-	}
-	
 	//if we use this autoload is called which crashes the system for string types
 	//$render->isuosentity = is_universe_entity($entity);
 		
 
 		
-	$render->renderindex = $uos->render->index;
+	//$render->renderindex = $uos->render->index;
 		
-	$render->renderdepth = $uos->render->depth;
+	//$render->renderdepth = $uos->render->depth;
 	
 	$render->wrapperelement = 'div';
 	
@@ -252,7 +290,7 @@ function render($entity, object $renderoverride=NULL) {
 		
 	$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.${format}.php");  
 	  
-  if (is_subclass_of($entity,'node')) { 
+  if (is_subclass_of($entity,'entity')) { 
   	$render->title = $entity->title->value;
   } else {
   	$render->title = ucfirst($render->classes[0]);
@@ -270,9 +308,8 @@ function render($entity, object $renderoverride=NULL) {
 	$render->data->typeinfo = $render->typeinfo;
 	$render->data->display = $render->formatdisplay;
   
-  $uos->render->index++;
+
   
-  $uos->render->depth++;
   
   if ($renderoverlay) $render + $renderoverlay;
   
@@ -284,7 +321,7 @@ function render($entity, object $renderoverride=NULL) {
   
   //trace($preprocessfile);
   $preprocessed = array();
-
+	//print_r($uos->rendertree);die();
   //need to cater for multiple preprocess from node down
   if ($render->preprocessfile) {
 	  try {
@@ -296,6 +333,7 @@ function render($entity, object $renderoverride=NULL) {
 	  $render->preprocessed[] = $render->preprocessfile;
   }
   
+	addoutput('elementdata/'.$render->elementid, $render->data);
   //print_r($render);die();
   
   if ($render->templatefile) {
@@ -329,7 +367,8 @@ function render($entity, object $renderoverride=NULL) {
   unset($render->renderpath);
   unset($render->filesearchpaths);
   //$content .= print_r($rendersettings,TRUE);
-  $uos->render->depth--; 
+  //$uos->render->depth--; 
+  $uos->activerender = $parentrender;
   return $content;
 }
 
@@ -338,11 +377,11 @@ function startrender() {
 	global $uos;
 
 	// create a new render object
-	$uos->render = new StdClass();
-	$uos->activerender = $uos->render;
+	$uos->rendertree = new StdClass();
+	$uos->activerender = $uos->rendertree;
 	
 	// assign to render for convenience 
-	$render = $uos->render;
+	$render = $uos->rendertree;
 
 	$render->activerenderer = UOS_DEFAULT_DISPLAY;	
 	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer); 
@@ -352,7 +391,8 @@ function startrender() {
 	$render->depth = 0;
 	$render->renderpath = array();
 	$render->format = $uos->request->outputformat->format;
-	$render->display = $uos->request->outputformat->display; 
+	$render->display = $uos->request->outputformat->display;
+  $render->parent = NULL; 
 
 	if (is_array($uos->output['content'])) {
 		$entity = $uos->output['content'][0];
@@ -403,6 +443,7 @@ function startrender() {
 		include $render->preprocessfile;
 	} 
 	
+	//print_r($render);die();
 	if ($render->templatefile) {
 		include $render->templatefile;
 	} 

@@ -54,10 +54,10 @@ uos.types['entity'].actions = {
 
 function uostype_entity_initialize($element) {
 	//$element.css('border','3px solid red');
-  var elementdata = $element.data('uos-data'); 
+  var elementdata = uos.getelementdata($element); 
   
 	$element.bind('click', function(event) {
-		uostype_entity_click($element,event);
+		uostype_entity_click($(this),event);
 	});
 
 	// bind some events
@@ -75,40 +75,65 @@ function uostype_entity_initialize($element) {
 }		
 
 function uostype_entity_click($element,event) {
-	uos.selectElement($element,isMetaHeld());
+
+	var elementdata = uos.getelementdata($element);
+	uos.log('uostype_entity_click',elementdata);
 	event.preventDefault();
 	event.stopPropagation();	
+
+	if (isShiftHeld()) {
+		//uos.extendSelection($element);
+	} else {
+		if (uos.isSelected($element)) {
+			uos.log('element is currently selected');
+			if (!isMetaHeld()) {
+				uos.deselectAllElements();
+			} 
+			uos.deselectElement($element);
+		} else {
+			uos.log('element is not currently selected');
+			if (!isMetaHeld()) {
+				uos.deselectAllElements();
+			}
+			uos.selectElement($element,isMetaHeld());
+		}
+	}
+
+	//uos.selectElement($element,isMetaHeld());
 }
 
 function uostype_entity_header_click($element, event) {
-  var elementdata = $element.data('uos-data');  
-	//alert('clicked header');
+	var elementdata = uos.getelementdata($element);
 	window.location = elementdata.clicktarget;
+	event.preventDefault();
 	event.stopPropagation();
 }
 
 function uostype_entity_header_dblclick($element, event) {
 	alert('dblclick header');
-	
+	event.preventDefault();	
 	event.stopPropagation();
 }
 
 function uostype_entity_display_up($element, event) {
-	var elementdata = $element.data('uos-data');
+	var elementdata = uos.getelementdata($element);
 	var elementid = $element.attr('id');
 	//elementdata.displaypaths
-	uos.loadcontent($element,"/8834323145.json.html");
+	//uos.log('displayup',elementdata);
+	uos.loadcontent($element,"/8834323145.htmljson");
 }
 
 
 function uostype_entity_reload($element) {
-	uos.loadcontent($element,"/8834323145.json.html");
+	var elementdata = uos.getelementdata($element);
+	uos.log('uostype_entity_reload',elementdata);
+	uos.loadcontent($element,"/8834323145.htmljson");
 }
 
 
-
 function uostype_entity_display_down($element, event) {
-	uos.log('uostype_entity_display_down',$element.data('uos-data'));
+	var elementdata = uos.getelementdata($element);
+	uos.log('uostype_entity_display_down',elementdata);
 }
 	
 

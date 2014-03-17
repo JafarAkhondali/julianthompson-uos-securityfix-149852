@@ -227,15 +227,27 @@ if (isset($argv)) {
 }
 
 
-$uos->request->explodedurl = explode('.',$uos->request->url,2);
-@list($requeststring, $outputstring) = $uos->request->explodedurl;
-@list($uos->request->target, $uos->request->action) = array_reverse(explode('-',$requeststring));
-if (empty($uos->request->action)) $uos->request->action = 'view';
-$displayformat = explode('.',$outputstring);
-if (count($displayformat)<2) array_unshift($displayformat,UOS_DEFAULT_DISPLAY);
-@list($uos->request->outputformat->display, $uos->request->outputformat->format) = $displayformat;
-if (empty($uos->request->outputformat->display)) $uos->request->outputformat->display = 'default';
-if (empty($uos->request->outputformat->format)) $uos->request->outputformat->format='html';
+// look in paths first
+// all to move to database
+if (isset($uos->config->data->aliases[$uos->request->url])) {
+	$aliasdata = $uos->config->data->aliases[$uos->request->url];
+	$uos->request->target = $aliasdata->target;
+	$uos->request->action = $aliasdata->action;
+	$uos->request->outputformat->display = $aliasdata->display;
+	$uos->request->outputformat->format = $aliasdata->format;
+} else {
+
+	$uos->request->explodedurl = explode('.',$uos->request->url,2);
+	@list($requeststring, $outputstring) = $uos->request->explodedurl;
+	@list($uos->request->target, $uos->request->action) = array_reverse(explode('-',$requeststring));
+	if (empty($uos->request->action)) $uos->request->action = 'view';
+	$displayformat = explode('.',$outputstring);
+	if (count($displayformat)<2) array_unshift($displayformat,UOS_DEFAULT_DISPLAY);
+	@list($uos->request->outputformat->display, $uos->request->outputformat->format) = $displayformat;
+	if (empty($uos->request->outputformat->display)) $uos->request->outputformat->display = 'default';
+	if (empty($uos->request->outputformat->format)) $uos->request->outputformat->format='html';
+
+}
 
 //$explodeddisplay = explode('.',)
 /*
