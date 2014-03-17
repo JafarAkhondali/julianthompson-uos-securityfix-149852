@@ -61,5 +61,5 @@
 </html>
 
 <script>
-uos.elements = <?php print json_encode($uos->output['resources']['json']);?>;
+uos.elements = <?php print json_encode($uos->output['elementdata']);?>;
 </script>

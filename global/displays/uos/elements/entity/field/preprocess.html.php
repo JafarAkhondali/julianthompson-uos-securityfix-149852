@@ -1,2 +1,2 @@
 <?php
-$render->attributes['draggable'] = "true";
+$render->attributes['draggable'] = "false";

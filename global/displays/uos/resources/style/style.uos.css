@@ -48,6 +48,10 @@ body {
 	padding: 10px 15px;
 }
 
+#universetoolbar ul#universe-actions > li:hover {
+	color: rgba(255,255,255,1);
+}
+
 #universetoolbar ul#universe-actions > li.km {
 	padding: 20px 20px;
 	font-size: 17px;
@@ -281,6 +285,10 @@ div.uos-element .uos-header {
 
 div.uos-element:hover > .uos-header {
 	display: inline-block;
+}
+
+div.uos-element .uos-header .field-group:hover {
+	background-color: rgba(255,255,255,1);
 }
 
 div.uos-element .uos-header .field {
@@ -606,4 +614,9 @@ div.uos-element.node.uos-uninitialized {
 
 body.uos-toolbar-active div#universetoolbar #universe-details {
 	display: none;
+}
+
+#container > div.uos-element.field {
+	background-color: white;
+	padding: 10px 15px;
 }

@@ -2,47 +2,14 @@
 
 
 
-$(document).ready(function() {
+jQuery(document).ready(function() {
+//jQuery(window).load(function() {
 
-
-  uos.initalizeallelements();
+  uos.initialize();
 	//console.log(uos.elements);
-	/*
-	jQuery.each(uos.elements, function(index,elementdata) {
-		var elementId = '#'+index;
-		$element = jQuery(elementId);	
-		if ($element.length>0) uos.initializeelement($element,elementdata);	
-	});
-  */
-	//$(document).bind('keydown', 'Ctrl+s', saveChanges);
-	
-	$(document).bind('keyup keydown', handleKeyboardModifiers);
-	
-	$(document).bind('keydown', 'backspace', handleBackspace);
-	
-	$(document).bind('keydown', 'meta+s', saveChanges);
-	
-	$(document).bind('keydown', 'tab', handleTab);
-	
-	$(document).bind('keydown', 'ctrl+s', saveChanges);
 
-	$(document).bind('keydown', 'meta+c', handleCopy);
-	
-	$(document).bind('keydown', 'ctrl+c', handleCopy);
 
-  $(window).focus(function() {
-      uos.log('Focus');
-  });
-
-  $(window).blur(function() {
-      uos.log('Blur');
-      $('body').removeClass('meta-pressed');
-  });
-  
- 	$(window).resize(function() {
-      uos.log('Resize');
-  });
-  
+  /*
 	$('.node').each(function() {
 	  var $this = $(this);
   	this.addEventListener('dragstart', handleDragStart, false);
@@ -55,8 +22,7 @@ $(document).ready(function() {
 
   	//$(this).bind("contextmenu",function(e){return false;});
 	});
-	
-	uos.load();
+	*/
 });
 
 
