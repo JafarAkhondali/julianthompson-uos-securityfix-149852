@@ -3,7 +3,7 @@
 include_once "core/globals.php";
 
 //register_shutdown_function('universe_shutdown');
-set_error_handler('handleError');
+//set_error_handler('handleError');
 
 
 function __autoload($classname='') {
@@ -27,6 +27,7 @@ function fetch($target) {
 function fetchentity($guid) {
 	global $uos;
 
+	$field = null;
 	$guidexploded = explode(':',$guid);
 	if (isset($guidexploded[1])) @list($guid,$field) = $guidexploded;
 
@@ -183,6 +184,20 @@ function class_tree($entity,$reverse=FALSE) {
 	return ($reverse) ? array_reverse($tree) : $tree;
 }
 
+function class_tree_new($entity,$reverse=FALSE) {
+	$tree = array();
+	if (is_object($entity)) {
+  	$currentclass = get_class($entity); 
+    do {
+      $tree[] = strtolower($currentclass);
+    } while($currentclass = get_parent_class($currentclass));		
+    //$tree[] = 'object';
+	} else {
+		$tree[] = gettype($entity);	
+	}
+	return ($reverse) ? array_reverse($tree) : $tree;
+}
+
 
 // Input : Path - Output : $path + '/' + $pathext + '/'
 function addtopath($path,$pathext) {
@@ -190,138 +205,116 @@ function addtopath($path,$pathext) {
 }
 
 
-function render($entity, object $renderoverride=NULL) {
+function render($entity, object $rendermask=NULL) {
 	global $uos;
-	
+
 	$content = '';
 	
 	//throw new Exception('Division by zero.');
 
 	//$render = new stdClass();//$uos->render;
-	if ($uos->activerender) {
-		$parentrender = $uos->activerender;
-  	$render = clone $parentrender;
-  	$render->depth++;
-  	$render->index = count($uos->activerender->children);
+	if (isset($uos->activerenderbranch)) {
+		$parentrenderbranch = $uos->activerenderbranch;
+  	$render = clone $parentrenderbranch;
+  	$render->children = array(); 
+  	$render->elementdepth++;
+  	$render->elementindex = count($parentrenderbranch->children);
   	$uos->activerender->children[] = $render;
   	$uos->activerender = $render;
+		$render->filesearchpaths = find_element_paths($render->rendererpath, $entity, TRUE); 
   } else {
-  	// here we can set up new render object instead of in startrender?
+  	// we are starting a new render tree
+  	$parentrenderbranch = NULL;
+  	$render = new StdClass();
 		$render->activerenderer = UOS_DEFAULT_DISPLAY;	
 		$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer); 
 		$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
-		$render->filesearchpaths = array($render->rendererpath); 
-		$render->index = 0;
+		$render->elementindex = 0;
 		$render->depth = 0;
 		$render->renderpath = array();
 		$render->format = $uos->request->outputformat->format;
 		$render->display = $uos->request->outputformat->display;
 	  $render->children = array(); 
+	  $render->maxdepth = 4;
+		$render->filesearchpaths = array($render->rendererpath); 
+		$render->stop = FALSE;
+		//$uos->rendertrees[] = new StdClass();
+		$uos->activerenderbranch= $render;
+		include_once $render->rendererpath . "include.uos.php";
   }
   
-	if ($render->displaymode=='default') {
-		$render->formatdisplay = $format;
-	} else {
-		$render->formatdisplay = implode('.',array($render->displaymode,$format));
-	}
-	  
-  $uos->render->index++;
+  //$render->buffering = FALSE;
   
-  if (empty($entity)) {
-  	$uos->activerender = $parentrender;
+	if ($render->display=='default') {
+		$render->formatdisplay = $render->format;
+	} else {
+		$render->formatdisplay = implode('.',array((string) $render->display, (string)$render->format));
+	}
+
+  // this should wrap the whole thing
+  if (empty($entity) || ($render->maxdepth && ($render->depth>=$render->maxdepth)) ) {
+  	$uos->activerender = $parentrenderbranch;
   	return '';
   }
-  
-  //if ($uos->render->depth>4) return 'Too Deep';
-	//$render->activerenderer = $uos->activerenderer;
 	
-	//$render->format = $uos->activerender->format;	
-	
-	//$render->displaymode = $uos->activerender->display;//'default';
-	 
-	//$render->activerenderer = UOS_DEFAULT_DISPLAY;
-	
-	//$render->format = $uos->request->outputformat->format;
-  	
-	$render->activerendererpath = addtopath(UOS_DISPLAYS,$render->activerenderer);
+	$render->classtree = class_tree($entity);
+	$render->entitytype = $render->classtree[0]; 
+	$render->instanceid = get_instance_id($render->entitytype). '__' . round((time() + microtime(true)) * 1000);		
 
-	$render->filesearchpaths = find_element_paths($render->activerendererpath, $entity, TRUE);
-	
-	$format = $render->format;
-	
-	$render->classes = class_tree($entity);
-		
-	$render->classtree = $render->classes;
-	
-	$render->classtreestring = 'uos-element uos-uninitialized '.implode(' ', array_reverse($render->classes));
-	
-	$render->inheritancestring = implode(',', $render->classes);
-		
-	$render->entitytype = $render->classes[0];
-		
-	//$render->callerinfo = getcallerinfo();
-		
-	$render->typeinfo = get_type_data($render->classes[0]);
-		
-	$render->instanceid = get_instance_id($render->classes[0]);
-	
-	$render->elementid = $render->instanceid. '__' . round((time() + microtime(true)) * 1000);
-		
-	$render->childcount = 0;
-	
+  if (is_subclass_of($entity,'entity') && (isset($entity->title->value))) { 
+  	$render->title = $entity->title->value;
+  } else {
+  	$render->title = ucfirst($render->entitytype);
+  }
+
+  
+  // apply rendermask here?
+  if ($rendermask) {
+  	// object merge / step through array?
+  	$render->masked = TRUE;
+  }  
+
+	//$render->callerinfo = getcallerinfo();	
 	//if we use this autoload is called which crashes the system for string types
 	//$render->isuosentity = is_universe_entity($entity);
-		
-
-		
-	//$render->renderindex = $uos->render->index;
-		
-	//$render->renderdepth = $uos->render->depth;
-	
-	$render->wrapperelement = 'div';
 	
 	$render->preprocessed = array();
 
 	$render->preprocessall = find_element_file($render->filesearchpaths, "preprocess.php");
 	
-	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.${format}.php");
+	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.$render->formatdisplay.php");
 		
-	$render->templatefile = find_element_file($render->filesearchpaths, "template.${format}.php");
+	$render->templatefile = find_element_file($render->filesearchpaths, "template.$render->formatdisplay.php");
 		
-	$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.${format}.php");  
-	  
-  if (is_subclass_of($entity,'entity')) { 
-  	$render->title = $entity->title->value;
-  } else {
-  	$render->title = ucfirst($render->classes[0]);
-  }
+	$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.$render->formatdisplay.php");  
+
   
+  // START - should only be set in preprocess functions that need it
+  
+	$render->childcount = NULL;
+
+	$render->wrapperelement = 'div';
+
+	$render->typeinfo = get_type_data($render->entitytype);
+
+	$render->classtreestring = 'uos-element uos-uninitialized '.implode(' ', array_reverse($render->classtree));
+	
+	$render->inheritancestring = implode(',', $render->classtree);
+ 
 	$render->attributes = array(
-		'id' => $render->elementid,
+		'id' => $render->instanceid,
 		'class' => $render->classtreestring
 	);
 	
-	$render->data = new stdClass();
+	$render->elementdata = new stdClass();	
+	$render->elementdata->typetree = $render->classtree;
+	$render->elementdata->type = $render->entitytype;
+	$render->elementdata->typeinfo = $render->typeinfo;
+	$render->elementdata->display = $render->formatdisplay;
 	
-	$render->data->typetree = $render->classtree;
-	$render->data->type = $render->entitytype;
-	$render->data->typeinfo = $render->typeinfo;
-	$render->data->display = $render->formatdisplay;
-  
-
-  
-  
-  if ($renderoverlay) $render + $renderoverlay;
-  
-  //$render->elementtitle = is_set($entity->title)?$entity->title->value:$render->classes[0];
-  
-  //array_push($uos->render->renderpath,$classes[0]);
 
   //extract($rendersettings,EXTR_OVERWRITE);
-  
-  //trace($preprocessfile);
-  $preprocessed = array();
-	//print_r($uos->rendertree);die();
+
   //need to cater for multiple preprocess from node down
   if ($render->preprocessfile) {
 	  try {
@@ -332,10 +325,13 @@ function render($entity, object $renderoverride=NULL) {
 	  }  
 	  $render->preprocessed[] = $render->preprocessfile;
   }
+    
+  addoutput('elementdata/'.$render->instanceid, $render->elementdata);
   
-	addoutput('elementdata/'.$render->elementid, $render->data);
-  //print_r($render);die();
-  
+  if ($render->stop) {
+		return print_r($render,TRUE);  	  	
+  }
+    
   if ($render->templatefile) {
 	  //trace('Including template file - '.$templatefile);
 	  ob_start();
@@ -361,93 +357,24 @@ function render($entity, object $renderoverride=NULL) {
 
   } else {
   	$content = '<div class="error">';
-  	$content .= implode(PHP_EOL,find_all_element_paths($render->filesearchpaths, "template.${format}.php"));
+  	$content .= implode(PHP_EOL,find_all_element_paths($render->filesearchpaths, "template.$render->formatdisplay.php"));
   	$content .= '</div>';
   }
-  unset($render->renderpath);
-  unset($render->filesearchpaths);
+  //unset($render->renderpath);
+  //unset($render->filesearchpaths);
   //$content .= print_r($rendersettings,TRUE);
   //$uos->render->depth--; 
-  $uos->activerender = $parentrender;
+  if ($parentrenderbranch) {
+  	$uos->activerender = $parentrenderbranch;
+  }
   return $content;
 }
 
 
 function startrender() {
 	global $uos;
-
-	// create a new render object
-	$uos->rendertree = new StdClass();
-	$uos->activerender = $uos->rendertree;
-	
-	// assign to render for convenience 
-	$render = $uos->rendertree;
-
-	$render->activerenderer = UOS_DEFAULT_DISPLAY;	
-	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer); 
-	$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
-	$render->filesearchpaths = array($render->rendererpath); 
-	$render->index = 0;
-	$render->depth = 0;
-	$render->renderpath = array();
-	$render->format = $uos->request->outputformat->format;
-	$render->display = $uos->request->outputformat->display;
-  $render->parent = NULL; 
-
-	if (is_array($uos->output['content'])) {
-		$entity = $uos->output['content'][0];
-	} else {
-		$entity = $uos->output['content'];	
-	}
-
-	$render->classes = class_tree($entity);
-		
-	$render->classtree = $render->classes;
-	
-	$render->attributes = array(
-		'id' => $render->elementid,
-		'class' => $render->classtreestring
-	);
-	
-	$render->data = new stdClass();
-	
-	$render->data->typetree = $render->classtree;
-	$render->data->type = $render->entitytype;
-	$render->data->typeinfo = $render->typeinfo;
-	$render->data->display = $render->formatdisplay;
-	
-  if (is_subclass_of($entity,'entity')) { 
-  	$render->title = $entity->title->value . ($render->typeinfo->title);
-  } else {
-  	$render->title = 'Untitled ' . ucfirst($render->classes[0]);
-  }
-	
-	
-	//$format = $render->format;
-	
-	if ($render->display=='default') {
-		$render->formatdisplay = $render->format;
-	} else {
-		$render->formatdisplay = implode('.',array($render->display,$render->format));
-	}
-	//$render->includefiles = find_element_paths($render->filesearchpaths, "include.".$render->formatdisplay.".php");
-	
-	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.".$render->formatdisplay.".php");
-	
-	$render->templatefile = find_element_file($render->filesearchpaths, "template.".$render->formatdisplay.".php");
-	
-	//include core display functions
-	include $render->rendererpath . "include.uos.php";
-
-	if ($render->preprocessfile) {
-		include $render->preprocessfile;
-	} 
-	
-	//print_r($render);die();
-	if ($render->templatefile) {
-		include $render->templatefile;
-	} 
-
+	$entity = $uos->output['content'];		
+	return render($entity);
 }
 
 function find_display_file($entity, $filetype='template', $extension='html.php') {
@@ -588,8 +515,8 @@ function trace($message, $tags=NULL) {
   
   $source = getcallerinfo();
   $logitem->function = $source['function'];
-  $logitem->source = $source['file'];
-  $logitem->line = $source['line'];  
+  $logitem->source = (isset($source['file']))?$source['file']:'Unknown';
+  $logitem->line = (isset($source['line']))?$source['line']:'Unknown';  
   $logitem->tags = ($tags)?array($tags):array();
 
 

@@ -55,26 +55,38 @@ uos.types['entity'].actions = {
 function uostype_entity_initialize($element) {
 	//$element.css('border','3px solid red');
   var elementdata = uos.getelementdata($element); 
+  var domelement = $element.get(0);
   
 	$element.bind('click', function(event) {
-		uostype_entity_click($(this),event);
+		uostype_entity_event_click($(this),event);
 	});
+	
+  domelement.addEventListener("dragstart", uostype_entity_event_dragstart, false);
+  //$element.bind('dragstart', uostype_entity_event_dragstart);
+  
+	domelement.addEventListener('dragenter', handleDragEnter, false);
+	domelement.addEventListener('dragover', handleDragOver, false);
+	domelement.addEventListener('dragleave', handleDragLeave, false);
+	domelement.addEventListener('dragend', handleDragEnd, false);
+	domelement.addEventListener('drop', handleDrop, false);
 
 	// bind some events
 	$elementheader = $element.find('.uos-header');
 	
 	$elementheader.bind('click',function(event) {
-		uostype_entity_header_click($element,event);
+		uostype_entity_event_header_click($element,event);
 	});
 	
 	$elementheader.bind('dblclick',function(event) {
-		uostype_entity_header_dblclick($element,event);
+		uostype_entity_event_header_dblclick($element,event);
 	});
 	
 	uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
 }		
 
-function uostype_entity_click($element,event) {
+
+
+function uostype_entity_event_click($element,event) {
 
 	var elementdata = uos.getelementdata($element);
 	uos.log('uostype_entity_click',elementdata);
@@ -98,18 +110,59 @@ function uostype_entity_click($element,event) {
 			uos.selectElement($element,isMetaHeld());
 		}
 	}
-
+	uos.updateSelectedCount();
 	//uos.selectElement($element,isMetaHeld());
 }
 
-function uostype_entity_header_click($element, event) {
+
+
+function uostype_entity_event_header_click($element, event) {
 	var elementdata = uos.getelementdata($element);
 	window.location = elementdata.clicktarget;
 	event.preventDefault();
 	event.stopPropagation();
 }
 
-function uostype_entity_header_dblclick($element, event) {
+
+
+function uostype_entity_event_dragstart(event) {
+	var $element = jQuery(this);
+	var elementdata = uos.getelementdata($element);
+	
+	//if (!uos.isSelected($element)) {
+	//	uostype_entity_event_click($element,event);
+	//}
+  
+  uos.selectElement($element,true);
+	
+	uos.log('uostype_entity_event_drag_start',$element.attr('title'),elementdata,event);
+	
+ 	if (isShiftHeld() && elementdata.dragfile) {
+		downloadurl = elementdata.dragfile;
+	} else {
+		downloadurl = elementdata.draglink;
+	}
+
+	event.dataTransfer.setData("DownloadURL",downloadurl);
+	
+  event.dataTransfer.effectAllowed = 'move';
+  
+  var iconcount = document.getElementById("universe-status-icon");
+	var crt = iconcount.cloneNode(true);
+	crt.id = "universe-drag-helper";
+	$(crt).addClass('drag-helper');
+  //crt.style.backgroundColor = "red";
+  //crt.style.position = "absolute"; crt.style.top = "0px"; crt.style.left = "-100px";
+  document.body.appendChild(crt);
+  //var iconcount = jQuery('<div class="xxx">Test</div>');
+  uos.log('iconcount');
+ 	event.dataTransfer.setDragImage(crt,-1,-1);
+	event.stopPropagation(); 
+}
+
+
+
+function uostype_entity_event_header_dblclick($element, event) {
 	alert('dblclick header');
 	event.preventDefault();	
 	event.stopPropagation();

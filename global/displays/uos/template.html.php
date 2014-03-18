@@ -38,7 +38,7 @@
 			<ul id="universe-actions">
 			</ul>
 		</div>
-		
+	
 		<div id="container">
 		<?php print render($entity);?>
 		</div>

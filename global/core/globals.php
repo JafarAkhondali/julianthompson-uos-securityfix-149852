@@ -41,14 +41,19 @@ define( 'UOS_GLOBAL',					UOS_ROOT . 'global/');
 define( 'UOS_LIBRARIES',      UOS_GLOBAL . 'libraries/');
 
 
+// Library folder URL
+define( 'UOS_LIBRARIES_URL',    UOS_GLOBAL_URL . 'libraries/');
+
+
 // Classes folder
 define( 'UOS_CLASSES',         UOS_GLOBAL . 'class/');
 
 
-// Displays folder
+// Displays folder Path
 define( 'UOS_DISPLAYS',        UOS_GLOBAL . 'displays/');
 
-// Displays folder
+
+// Displays folder URL
 define( 'UOS_DISPLAYS_URL',    UOS_GLOBAL_URL . 'displays/');
 
 

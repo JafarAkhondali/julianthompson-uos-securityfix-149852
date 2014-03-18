@@ -16,6 +16,7 @@ if (!empty($uos->request->target)) {
 }
 
 //print_r($target);
+//print_r($uos->output['content']);die();
 //die('died'); 
 
 //print_r($target);die();
@@ -26,5 +27,5 @@ try {
 	//$uos->response->code = 500;
   $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");
 }
-
+//echo '<pre>'.print_r($uos->activerender,TRUE).'</pre>';
 echo $uos->response->content;
