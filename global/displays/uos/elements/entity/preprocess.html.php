@@ -1,23 +1,19 @@
 <?php
+global $uos;
+
 $render->childcount = count($entity->children);
 $render->attributes['data-childcount'] = $render->childcount;
 $render->attributes['data-uostypetree'] = $render->inheritancestring;
 $render->attributes['data-uostype'] = $render->entitytype;
 $render->attributes['data-accept'] = '';
-$render->attributes['draggable'] = 'false';
-$render->attributes['title'] = $render->title;
-$render->attributes['data-display'] = $render->displaymode;
+$render->attributes['data-display'] = $render->formatdisplay;
 
-$render->data->clicktarget = $uos->request->siteurl . $entity->guid->value;
-$render->data->displaypaths = array(
+$render->elementdata->displaypaths = array(
 	'withfooter' => '/4567898765.withfooter.html'
 );
 
-$draglinkfile = $uos->request->siteurl . $entity->guid->value . '.webloc';
-$render->data->draglink = "application/octet-stream:" . $entity->title->value . ".webloc:" . $draglinkfile;
-
-if ($entity->filename) {
-	//$dragfilefile = $uos->request->siteurl . $entity->filepath->value;
-	$dragfilefile = $uos->request->siteurl . $entity->guid->value . '.file';
-	$render->data->dragfile = $entity->mimetype->value . ":" . $entity->filename->value . ":" . $dragfilefile;
+if (is_subclass_of($entity,'entity') && (isset($entity->title->value))) { 
+	$render->title = $entity->title->value;
+} else {
+	$render->title = ucfirst($render->entitytype);
 }

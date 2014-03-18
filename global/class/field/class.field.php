@@ -27,6 +27,6 @@ class field extends entity {
   }
   
   public function __toString() {
-    return $this->value;
+    return (string) $this->value;
   }
 } 

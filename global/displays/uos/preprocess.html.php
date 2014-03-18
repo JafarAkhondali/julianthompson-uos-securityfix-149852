@@ -6,28 +6,28 @@
 //addoutput('resources/script/', "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js");
 
 // jQuery Local
-addoutput('resources/script/', "/global/libraries/jquery/1.9.1/jquery.min.js");
-addoutput('resources/script/', "/global/libraries/jqueryui/1.10.2/jquery-ui.min.js");
+addoutput('resources/script/', UOS_LIBRARIES_URL . "jquery/1.9.1/jquery.min.js");
+addoutput('resources/script/', UOS_LIBRARIES_URL . "jqueryui/1.10.2/jquery-ui.min.js");
 
 // jQuery Hotkeys 
-addoutput('resources/script/', "/global/libraries/jquery.hotkeys/default.jquery.hotkeys.js");
+addoutput('resources/script/', UOS_LIBRARIES_URL . "jquery.hotkeys/default.jquery.hotkeys.js");
 
 // Growl
-addoutput('resources/script/', "/global/libraries/jquery.growl/javascripts/jquery.growl.js");
-addoutput('resources/style/', "/global/libraries/jquery.growl/stylesheets/jquery.growl.css");
+addoutput('resources/script/', UOS_LIBRARIES_URL . "jquery.growl/javascripts/jquery.growl.js");
+addoutput('resources/style/',  UOS_LIBRARIES_URL . "jquery.growl/stylesheets/jquery.growl.css");
 
 // For Three.js
-addoutput('resources/script/', "/global/libraries/mrdoob-three.js/build/three.min.js");
-addoutput('resources/script/', "/global/libraries/mrdoob-three.js/examples/js/libs/tween.min.js");
-addoutput('resources/script/', "/global/libraries/mrdoob-three.js/examples/js/controls/TrackballControls.js");
-addoutput('resources/script/', "/global/libraries/mrdoob-three.js/examples/js/renderers/CSS3DRenderer.js");
+addoutput('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/build/three.min.js");
+addoutput('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/examples/js/libs/tween.min.js");
+addoutput('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/examples/js/controls/TrackballControls.js");
+addoutput('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/examples/js/renderers/CSS3DRenderer.js");
 
 
 // Font Awesome CDN
 //addoutput('resources/style/', "http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
 
 // Font Awesome Local
-addoutput('resources/style/', "/global/libraries/font-awesome/css/font-awesome.css");
+addoutput('resources/style/', UOS_LIBRARIES_URL . "font-awesome/css/font-awesome.css");
 
 
 // Core UOS
@@ -44,4 +44,4 @@ addoutput('resources/style/', $render->rendererurl."resources/style/style.uos.cs
 
 //print_r($uos->universe->getactions());
 
-header("HTTP/1.1 $uos->response->code" . $uos->responsecodetitles[$uos->response->code]);
+header("HTTP/1.1 " . $uos->response->code . " " . $uos->responsecodes[$uos->response->code]);

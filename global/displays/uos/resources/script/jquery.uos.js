@@ -149,7 +149,7 @@ uos.loadcontent = function($element,path) {
 		var resources = data.resources;
 		var elementdata = data.elementdata;
 		
-		//uos.log(elementdata);
+		uos.log('uos.loadcontent.response',data);
 		
 		var $loadedcontent = $(content);
 		
@@ -247,13 +247,13 @@ uos.getAllChildEntities = function($element) {
 uos.selectElement = function($element, multiple) {
 	uos.log($element.attr('title') + ' selected');
 	$element.addClass('selected');
-	uos.updateSelectedCount();
+	//uos.updateSelectedCount();
 };
 
 uos.deselectElement = function($element) {
 	$element.removeClass('selected');
 	uos.log('ds');
-	uos.updateSelectedCount();
+	//uos.updateSelectedCount();
 };
 
 uos.deselectAllElements = function() {
@@ -358,7 +358,7 @@ uos.getSelectedActions = function() {
 					if (actions==null) {
 						actions = elementdata.actions;
 					} else {
-						actions = uos.getActionIntersection(actions, elementactions);
+						actions = uos.getActionIntersection(actions, elementdata.actions);
 					}
 				}
 			});
@@ -747,7 +747,7 @@ function dragGetPayloadTypes(e) {
 	}
 	return types;
 }
-
+/*
 function handleNodeClick(e) {
 	//uos.log(e);
 	if (isShiftHeld()) {
@@ -775,7 +775,7 @@ function handleNodeClick(e) {
 	}
 	//return false;
 }
-
+*/
 function handleSave(e) {
   event.preventDefault();
   uos.log('saving?');
