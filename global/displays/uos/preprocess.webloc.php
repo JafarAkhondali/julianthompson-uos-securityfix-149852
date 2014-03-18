@@ -1,5 +1,5 @@
 <?php
-header("Content-type: application/octet-stream; charset=utf-8");
+//header("Content-type: application/octet-stream; charset=utf-8");
 //$filename = $entity->title->value.'.webloc';
 //$filename = 'x.webloc';
 //header("Content-type: text/xml; charset=utf-8");
@@ -12,5 +12,5 @@ header("Content-type: application/octet-stream; charset=utf-8");
 //header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 //header('Pragma: public');
 //header('Content-Length: ' . filesize($file));
-//header('Content-type: application/octet-stream');
+header('Content-type: application/octet-stream');
 //header("Content-type: ".$entity->mimetype->value."; charset=utf-8");

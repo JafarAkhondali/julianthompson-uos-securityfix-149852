@@ -37,6 +37,7 @@ ehthumbs.db
 Thumbs.db
 
 *.back.php
+*.back.js
 
 # Ignore configuration files that may contain sensitive information.
 # If repository is www root
