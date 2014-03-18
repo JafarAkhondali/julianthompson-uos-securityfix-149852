@@ -205,7 +205,7 @@ function addtopath($path,$pathext) {
 }
 
 
-function render($entity, object $rendermask=NULL) {
+function render($entity, $rendermask=NULL) {
 	global $uos;
 
 	$content = '';
@@ -271,6 +271,7 @@ function render($entity, object $rendermask=NULL) {
   // apply rendermask here?
   if ($rendermask) {
   	// object merge / step through array?
+  	$render = (object) array_merge((array) $render, (array) $rendermask);
   	$render->masked = TRUE;
   }  
 

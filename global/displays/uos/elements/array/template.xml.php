@@ -1,3 +1,3 @@
-<?php foreach ($entity as $uos->activerender->currentkey=>$subentity) : ?>
-<?php print render($subentity);?>
+<?php foreach ($entity as $currentkey=>$subentity) : ?>
+<?php print render($subentity, array('currentkey'=>$currentkey));?>
 <?php endforeach; ?>
