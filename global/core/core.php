@@ -31,6 +31,7 @@ function fetchentity($guid) {
 	$guidexploded = explode(':',$guid);
 	if (isset($guidexploded[1])) @list($guid,$field) = $guidexploded;
 
+	// if entity not in the instances try to add it
 	if (!isset($uos->instances[$guid])) {
 		//pretend to load from db
 		if (isset($uos->config->data->entities[$guid])) {
@@ -40,39 +41,42 @@ function fetchentity($guid) {
 			//fetchentitychildren($entity);
 			$uos->instances[$guid] = $entity;
 		}
-	} else {
-		$entity = $uos->instances[$guid];
-	}
-	if ($entity) {
+	} 
+	// if now set return entity
+	if (isset($uos->instances[$guid])) {
 		if ($field) {
 			return $uos->instances[$guid]->properties[$field];
 		} else {
 			return $uos->instances[$guid];
 		}
 	}
-	return NULL;
+	return null;
 }
+
+
 
 function fetchentitychildren(&$entity) {
 	global $uos;
-	
-	if ($entity->type->value == 'node_universe') {
-		foreach($uos->config->data->entities as $guid=>$propertyobject) {
-			if ($guid != $entity->guid->value) {
-				$entity->children[] = fetchentity($guid);
-				//print_r($guid);
-			}
-		}	
-	} else {
-		$entityguid = $entity->guid->value;
-		if (isset($uos->config->data->children[$entityguid])) {
-			$childguids = $uos->config->data->children[$entityguid];
-			foreach($childguids as $childguid) {
-				$entity->children[] = fetchentity($childguid);
+	if (is_universe_entity($entity)) {	
+		if ($entity->type->value == 'node_universe') {
+			foreach($uos->config->data->entities as $guid=>$propertyobject) {
+				if ($guid != $entity->guid->value) {
+					$entity->children[] = fetchentity($guid);
+					//print_r($guid);
+				}
+			}	
+		} else {
+			$entityguid = $entity->guid->value;
+			if (isset($uos->config->data->children[$entityguid])) {
+				$childguids = $uos->config->data->children[$entityguid];
+				foreach($childguids as $childguid) {
+					$entity->children[] = fetchentity($childguid);
+				}
 			}
 		}
 	}
 }
+
 
 
 function getclassfile($class='',$prefix = 'class') {
@@ -115,6 +119,7 @@ function entity_class_tree($entity,$reverse=FALSE) {
 function is_universe_entity($entity) {
 	return is_subclass_of($entity, UOS_BASE_CLASS);
 }
+
 
 /*
     $explodedpath = explode('_',$class);
@@ -259,9 +264,11 @@ function render($entity, $rendermask=NULL) {
 	
 	$render->classtree = class_tree($entity);
 	$render->entitytype = $render->classtree[0]; 
+	$render->typeinfo = get_type_data($render->entitytype);
 	$render->instanceid = get_instance_id($render->entitytype). '__' . round((time() + microtime(true)) * 1000);		
 
-  if (is_subclass_of($entity,'entity') && (isset($entity->title->value))) { 
+	if (is_universe_entity($entity) && (isset($entity->title->value))) {
+  //if (is_subclass_of($entity,'entity') && (isset($entity->title->value))) { 
   	$render->title = $entity->title->value;
   } else {
   	$render->title = ucfirst($render->entitytype);
@@ -277,7 +284,7 @@ function render($entity, $rendermask=NULL) {
 
 	//$render->callerinfo = getcallerinfo();	
 	//if we use this autoload is called which crashes the system for string types
-	//$render->isuosentity = is_universe_entity($entity);
+	$render->isuosentity = is_universe_entity($entity);
 	
 	$render->preprocessed = array();
 
@@ -295,8 +302,6 @@ function render($entity, $rendermask=NULL) {
 	$render->childcount = NULL;
 
 	$render->wrapperelement = 'div';
-
-	$render->typeinfo = get_type_data($render->entitytype);
 
 	$render->classtreestring = 'uos-element uos-uninitialized '.implode(' ', array_reverse($render->classtree));
 	
@@ -374,8 +379,11 @@ function render($entity, $rendermask=NULL) {
 
 function startrender() {
 	global $uos;
-	$entity = $uos->output['content'];		
-	return render($entity);
+	
+	if (isset($uos->output['content'])) {
+		$entity = $uos->output['content'];		
+		return render($entity);
+	}
 }
 
 function find_display_file($entity, $filetype='template', $extension='html.php') {
@@ -654,6 +662,42 @@ function useLibrary($librarystr) {
 		return TRUE;
 	}
 	return FALSE;
+}
+
+
+// simular structure to fetch entity
+// Return Values
+// TRUE - Library (already) loaded successfully
+// FALSE - Library not found / no config 
+// Add better error handling - status codes
+function includeLibrary($librarykey) {
+
+	global $uos;
+	
+	if (!isset($uos->libraries[$librarykey])) {
+		$config = array();
+		$librarykeyexploded = explode('.',$librarykey,2);
+		$library = $librarykeyexploded[0];
+		$librarypath = UOS_LIBRARIES. $library .'/';	
+		$libraryconfigfile = $librarypath . 'library.uos.php';
+		//echo $libraryconfigfile;
+		if (file_exists($libraryconfigfile)) {
+			include_once $libraryconfigfile;
+			//print_r($config);
+			if (isset($config[$librarykey])) {
+				//echo "here";
+				foreach($config[$librarykey] as $libraryfile) {
+					include_once $libraryfile;
+				}
+				$uos->libraries[$librarykey] = TRUE;
+			} else {
+				$uos->libraries[$librarykey] = FALSE;
+			}
+		} else {
+		  $uos->libraries[$librarykey] = FALSE;
+		}
+	}
+	return $uos->libraries[$librarykey];
 }
 
 
