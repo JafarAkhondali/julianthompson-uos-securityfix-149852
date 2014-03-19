@@ -27,5 +27,6 @@ try {
 	//$uos->response->code = 500;
   $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");
 }
-//echo '<pre>'.print_r($uos->activerender,TRUE).'</pre>';
+
 echo $uos->response->content;
+//echo '<pre>'.print_r($uos->activerender,TRUE).'</pre>';
