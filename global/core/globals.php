@@ -105,6 +105,8 @@ $uos->config->logging = TRUE;
 $uos->config->logtostdout = FALSE;
 $uos->config->types = Array();
 
+$uos->libraries = Array();
+
 //Include the configuration file
 include_once UOS_CONFIG_FILE;
 

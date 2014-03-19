@@ -38,6 +38,7 @@ Thumbs.db
 
 *.back.php
 *.back.js
+*.nogit.php
 
 # Ignore configuration files that may contain sensitive information.
 # If repository is www root
