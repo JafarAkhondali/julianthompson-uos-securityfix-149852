@@ -10,16 +10,14 @@ $uos->universe = new node_universe($uos->config->data->universe);
 if (!empty($uos->request->target)) {
 	$target = fetchentity($uos->request->target);
 	fetchentitychildren($target);
-  //$target->callaction('view');
-	addoutput('content', $target);
+  $target->callaction('view');
+	//addoutput('content', $target);
 	$uos->response->code = 200;
 }
 
 //print_r($target);
 //print_r($uos->output['content']);die();
-//die('died'); 
 
-//print_r($target);die();
 // we found something
 try {
 	$uos->response->content = startrender();

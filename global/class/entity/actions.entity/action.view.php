@@ -1,3 +1,3 @@
 <?php
 
-addoutput('body', $this);
+addoutput('content', $this);
