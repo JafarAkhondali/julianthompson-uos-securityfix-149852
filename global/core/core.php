@@ -221,12 +221,15 @@ function render($entity, $rendermask=NULL) {
 	if (isset($uos->activerenderbranch)) {
 		$parentrenderbranch = $uos->activerenderbranch;
   	$render = clone $parentrenderbranch;
-  	$render->children = array(); 
+  	$render->children = array();
+		$render->headers = array(); 
+		$render->startpoint = FALSE;
   	$render->elementdepth++;
   	$render->elementindex = count($parentrenderbranch->children);
   	$uos->activerender->children[] = $render;
   	$uos->activerender = $render;
 		$render->filesearchpaths = find_element_paths($render->rendererpath, $entity, TRUE); 
+
   } else {
   	// we are starting a new render tree
   	$parentrenderbranch = NULL;
@@ -237,24 +240,28 @@ function render($entity, $rendermask=NULL) {
 		$render->elementindex = 0;
 		$render->depth = 0;
 		$render->renderpath = array();
+		$render->displaystring = $uos->request->displaystring;
+		$displaystringexploded = explode('.',$uos->request->displaystring);
 		$render->format = $uos->request->outputformat->format;
 		$render->display = $uos->request->outputformat->display;
 	  $render->children = array(); 
 	  $render->maxdepth = 4;
 		$render->filesearchpaths = array($render->rendererpath); 
 		$render->stop = FALSE;
+		$render->headers = array();
 		//$uos->rendertrees[] = new StdClass();
 		$uos->activerenderbranch= $render;
 		include_once $render->rendererpath . "include.uos.php";
+		$render->startpoint = FALSE;
   }
-  
-  //$render->buffering = FALSE;
   
 	if ($render->display=='default') {
 		$render->formatdisplay = $render->format;
 	} else {
 		$render->formatdisplay = implode('.',array((string) $render->display, (string)$render->format));
 	}
+  
+  //$render->buffering = FALSE;
 
   // this should wrap the whole thing
   if (empty($entity) || ($render->maxdepth && ($render->depth>=$render->maxdepth)) ) {
@@ -286,15 +293,27 @@ function render($entity, $rendermask=NULL) {
 	//if we use this autoload is called which crashes the system for string types
 	$render->isuosentity = is_universe_entity($entity);
 	
-	$render->preprocessed = array();
+	//$render->preprocessed = array();
 
-	$render->preprocessall = find_element_file($render->filesearchpaths, "preprocess.php");
+	//$render->preprocessall = find_element_file($render->filesearchpaths, "preprocess.php");
 	
-	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.$render->formatdisplay.php");
+	$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.$render->formatdisplay.php"); 
+	
+	if (!$render->preprocessfile) {
+		$render->preprocessfile = find_element_file($render->filesearchpaths, "preprocess.$render->format.php");
+	} 
 		
 	$render->templatefile = find_element_file($render->filesearchpaths, "template.$render->formatdisplay.php");
+	
+	if (!$render->templatefile) {
+		$render->templatefile = find_element_file($render->filesearchpaths, "template.$render->format.php");
+	} 	
 		
-	$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.$render->formatdisplay.php");  
+	$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.$render->formatdisplay.php"); 
+	
+	if (!$render->wrapperfile) {
+		$render->wrapperfile = find_element_file($render->filesearchpaths, "wrapper.$render->format.php");
+	}   
 
   
   // START - should only be set in preprocess functions that need it
@@ -316,7 +335,9 @@ function render($entity, $rendermask=NULL) {
 	$render->elementdata->typetree = $render->classtree;
 	$render->elementdata->type = $render->entitytype;
 	$render->elementdata->typeinfo = $render->typeinfo;
-	$render->elementdata->display = $render->formatdisplay;
+	$render->elementdata->display = $render->display;
+	$render->elementdata->format = $render->format;
+	$render->elementdata->activedisplay = $render->formatdisplay;
 	
 
   //extract($rendersettings,EXTR_OVERWRITE);
@@ -329,7 +350,7 @@ function render($entity, $rendermask=NULL) {
 	  } catch (Exception $e) {
 	    trace('Caught exception: '.  $e->getMessage());
 	  }  
-	  $render->preprocessed[] = $render->preprocessfile;
+	  //$render->preprocessed[] = $render->preprocessfile;
   }
     
   addoutput('elementdata/'.$render->instanceid, $render->elementdata);
@@ -339,6 +360,15 @@ function render($entity, $rendermask=NULL) {
   }
     
   if ($render->templatefile) {
+  
+		// find display modes 
+		//$render->typeinfo->displays = 		//$render->typeinfo->displays = $render->typeinfo->displays + find_element_displays($render->filesearchpaths, "preprocess.$render->format.php");
+		
+		$render->elementdata->displays = find_displays($render);
+
+		
+		
+		
 	  //trace('Including template file - '.$templatefile);
 	  ob_start();
 	  try {
@@ -376,8 +406,7 @@ function render($entity, $rendermask=NULL) {
   return $content;
 }
 
-
-function startrender() {
+function startrender($content,$displaystring=FALSE) {
 	global $uos;
 	
 	if (isset($uos->output['content'])) {
@@ -385,6 +414,7 @@ function startrender() {
 		return render($entity);
 	}
 }
+
 
 function find_display_file($entity, $filetype='template', $extension='html.php') {
 	
@@ -411,10 +441,30 @@ function find_display_file($entity, $filetype='template', $extension='html.php')
       return $file;
     }
   } 
-  
   // default template
   return UOS_DEFAULT_DISPLAY . $filetype . $extension;
 }
+
+function find_displays(&$render) {
+
+	$displays = array();
+  foreach($render->filesearchpaths as $path) {
+  	if (is_dir($path)) {
+	  	$files = scandir($path);
+	  	foreach($files as $file) {
+	  		if (preg_match('/(?:template|preprocess|wrapper)\.(.*)\.php/', $file, $matches)>0) {
+	  			if (endsWith($matches[1],'html')) {
+	  				$displays[($matches[1])] = TRUE;
+	  			}
+	  			//$displays[] = implode(':',$matches);
+	  		}
+	  	}
+  	}
+  }
+  return array_keys($displays);
+  //return ($displays);
+}
+
 
 function find_element_paths($rootpath,$entity,$reverse=FALSE) {
 	$paths = array();
@@ -439,9 +489,11 @@ function find_element_file($patharray,$filename) {
 }
 
 
+
+
 // Nearly identical but separate to find_element_paths for speed
 function find_all_element_paths($patharray,$filename) {
-$paths = array();
+	$paths = array();
   foreach($patharray as $path) {
      $paths[] = $path . $filename;
   }
@@ -466,7 +518,7 @@ function addoutputold($path,$content=FALSE,$attributes=array()) {
 function addoutput($path,$content=FALSE,$attributes=array()) {
   global $uos;
   
-  if (empty($content)) return;
+  if (!isset($content)) return;
   
   $output = &$uos->output;
   $outputpath = outputarraypath($path);
@@ -700,7 +752,22 @@ function includeLibrary($librarykey) {
 	return $uos->libraries[$librarykey];
 }
 
+// in case we later want to move render time of headers
+function uos_header($string, $replace = true) {
+	header($string, $replace);
+}
+
+// in case we later want to move render time of headers
+function uos_add_headers($string, $replace = true) {
+	header($string, $replace);
+}
 
 
-
-
+function startsWith($haystack, $needle)
+{
+    return $needle === "" || strpos($haystack, $needle) === 0;
+}
+function endsWith($haystack, $needle)
+{
+    return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
+}

@@ -240,21 +240,35 @@ if (isset($uos->config->data->aliases[$uos->request->url])) {
 	$aliasdata = $uos->config->data->aliases[$uos->request->url];
 	$uos->request->target = $aliasdata->target;
 	$uos->request->action = $aliasdata->action;
+	$uos->request->displaystring = $aliasdata->displaystring;
 	$uos->request->outputformat->display = $aliasdata->display;
 	$uos->request->outputformat->format = $aliasdata->format;
 } else {
 
-	$uos->request->explodedurl = explode('.',$uos->request->url,2);
-	@list($requeststring, $outputstring) = $uos->request->explodedurl;
-	@list($uos->request->target, $uos->request->action) = array_reverse(explode('-',$requeststring));
-	if (empty($uos->request->action)) $uos->request->action = 'view';
-	$displayformat = explode('.',$outputstring);
-	if (count($displayformat)<2) array_unshift($displayformat,UOS_DEFAULT_DISPLAY);
-	@list($uos->request->outputformat->display, $uos->request->outputformat->format) = $displayformat;
-	if (empty($uos->request->outputformat->display)) $uos->request->outputformat->display = 'default';
-	if (empty($uos->request->outputformat->format)) $uos->request->outputformat->format='html';
+	$explodedurl = explode('.',$uos->request->url,2);
+	$targetaction = explode(':',$explodedurl[0]);
+	$uos->request->action = array_pop($targetaction);
+	$uos->request->target = implode(':',$targetaction);
+	$uos->request->displaystring = isset($explodedurl[1])?$explodedurl[1]:'default'; 
+	$displaystringexploded = explode('.',$uos->request->displaystring);
+	$uos->request->transport = array_pop($displaystringexploded);
+	$uos->request->formatdisplay = implode('.',$displaystringexploded);
+	
+	
+	//@list($requeststring, $outputstring) = $uos->request->explodedurl;
+	//@list($uos->request->target, $uos->request->action) = array_reverse(explode('-',$requeststring));
+	//if (empty($uos->request->action)) $uos->request->action = 'view';
+	//$displayformat = explode('.',$outputstring);
+	//if (count($displayformat)<2) array_unshift($displayformat,UOS_DEFAULT_DISPLAY);
+	//@list($uos->request->outputformat->display, $uos->request->outputformat->format) = $displayformat;
+	//if (empty($uos->request->outputformat->display)) $uos->request->outputformat->display = 'default';
+	//if (empty($uos->request->outputformat->format)) $uos->request->outputformat->format='html';
 
 }
+
+//$viewdisplay = explode('.',$outputstring,2);
+//$uos->request->action2 = array_unshift($viewdisplay);
+//$uos->request->displaystring = array_unshift($viewdisplay);
 
 //$explodeddisplay = explode('.',)
 /*
