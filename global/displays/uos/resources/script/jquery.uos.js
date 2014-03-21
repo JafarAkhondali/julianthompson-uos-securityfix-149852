@@ -135,7 +135,7 @@ uos.loadcontent = function($element,path) {
 	var elementdata = uos.getelementdata($element);
 	var elementid = $element.attr('id');
 	//elementdata.displaypaths
-	uos.log('uos.loadcontent',elementdata,$element);
+	uos.log('uos.loadcontent',path,elementid);
 	var selected = uos.isSelected($element);
 	//uos.log('uostype_entity_display_up',elementdata.displaypaths,elementdata.display);
 	//for (var i in ob) { // i will be "page1.html", "page2.html", etc...
@@ -157,10 +157,12 @@ uos.loadcontent = function($element,path) {
 			var newelementid = '#'+index;
 			$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
 			if ($newelement.length>0) {
-				uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
+				//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
 				uos.initializeelement($newelement,elementdata);
 			}
 		});
+		
+		//uos.log(uos.getelementdata($loadedcontent))
 		
   	$element.replaceWith($loadedcontent);
 	/*
@@ -180,6 +182,7 @@ uos.loadcontent = function($element,path) {
 
   	//uos.initializeelement($loadedcontent,uos.elements[replacementid]);
   	*/
+  	uos.log('uos.loadcontent.elementdata',uos.getelementdata($loadedcontent));
   	if (selected) $loadedcontent.addClass('selected');
 	});	
 }
@@ -287,6 +290,30 @@ uos.getSelectedTitles = function() {
 	});
 	return titles;
 };
+
+uos.isParentOf = function($testparent,$child) {
+	return ($testparent.has($child)).length > 0;
+}
+
+uos.isParentOfSelected = function($testparent) {
+	var childrenfound = 0;
+	$selected = uos.getSelectedElements();
+	$selected.each(function(index) {
+		if (uos.isParentOf($testparent,$(this))) childrenfound++;
+	});
+	//uos.log('uos.isParentOfSelected',$testparent.attr('title'),childrenfound>0);
+	return (childrenfound>0);
+}
+
+uos.isChildOfSelected = function($testchild) {
+	var childrenfound = 0;
+	$selected = uos.getSelectedElements();
+	$selected.each(function(index) {
+		if (uos.isParentOf($(this),$testchild)) childrenfound++;
+	});
+	//uos.log('uos.isChildOfSelected',$testchild.attr('title'),childrenfound>0);
+	return (childrenfound>0);
+}
 	
 uos.buildToolbar = function() {
 	uos.log('Build Toolbar');

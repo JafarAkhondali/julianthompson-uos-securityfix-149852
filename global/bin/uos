@@ -59,7 +59,7 @@ case "$1" in
 	    
 	'syncdata')
 		echo "Synching to $synctarget1"
-		scp -r $uosdata $synctarget1
+		scp -r $uosdata/* $synctarget1
 		;;
 	
 	*) 

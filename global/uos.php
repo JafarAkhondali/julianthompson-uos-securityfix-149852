@@ -2,6 +2,9 @@
 
 include_once "./core/core.php";
 
+//print_r($uos->request);
+//print_r($uos->output['content']);
+//die();
 
 $uos->universe = new node_universe($uos->config->data->universe);
 
@@ -10,17 +13,17 @@ $uos->universe = new node_universe($uos->config->data->universe);
 if (!empty($uos->request->target)) {
 	$target = fetchentity($uos->request->target);
 	fetchentitychildren($target);
-  $target->callaction('view');
+  $target->callaction($uos->request->action);
 	//addoutput('content', $target);
 	$uos->response->code = 200;
 }
 
 //print_r($target);
-//print_r($uos->output['content']);die();
+
 
 // we found something
 try {
-	$uos->response->content = startrender();
+	$uos->response->content = startrender($uos->output,$uos->request->displaystring);
 } catch (Exception $e) {
 	//$uos->response->code = 500;
   $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");

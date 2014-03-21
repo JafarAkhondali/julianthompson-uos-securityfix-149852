@@ -2,7 +2,7 @@
 //abstract 
 class entity {
 	
-	private 	$attributes = array();
+	public	 	$attributes = array();
 	public		$properties = array();
 	
 	//public	$__log = array();
@@ -256,7 +256,10 @@ class entity {
     
     return $result;
   }
-
+  
+  public function trigger($action,$parameters=NULL) {
+		return $this->callaction($action,$parameters);
+	}
 
  
   protected function removeproperty($propertyname) {

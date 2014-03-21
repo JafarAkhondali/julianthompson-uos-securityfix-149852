@@ -74,13 +74,16 @@ function uostype_entity_initialize($element) {
 	// bind some events
 	$elementheader = $element.find('.uos-header');
 	
-	$elementheader.bind('click',function(event) {
-		uostype_entity_event_header_click($element,event);
-	});
+	if ($elementheader.length>0) {
 	
-	$elementheader.bind('dblclick',function(event) {
-		uostype_entity_event_header_dblclick($element,event);
-	});
+		$elementheader.bind('click',function(event) {
+			uostype_entity_event_header_click($element,event);
+		});
+		
+		$elementheader.bind('dblclick',function(event) {
+			uostype_entity_event_header_dblclick($element,event);
+		});
+	}
 	
 	uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
 }		
@@ -129,12 +132,15 @@ function uostype_entity_event_header_click($element, event) {
 function uostype_entity_event_dragstart(event) {
 	var $element = jQuery(this);
 	var elementdata = uos.getelementdata($element);
-	
+
 	//if (!uos.isSelected($element)) {
 	//	uostype_entity_event_click($element,event);
 	//}
-  
+  $element.trigger('click');
   uos.selectElement($element,true);
+  uos.updateSelectedCount();
+  
+	jQuery('body').addClass('uos-dragging');	
 	
 	uos.log('uostype_entity_event_drag_start',$element.attr('title'),elementdata,event);
 	
@@ -167,9 +173,11 @@ function uostype_entity_event_dragover(event) {
 	//uos.log(dragContainsFiles(e)?"File":"Node");
 	//uos.log(dragGetPayloadTypes(e));
   //if (e.stopPropagation) {
-  //e.stopPropagation(); // Stops some browsers from redirecting.
+  event.stopPropagation(); // Stops some browsers from redirecting.
+  
+	uos.log('uostype_entity_event_dragover',$element.attr('title'),elementdata,event);
   //}
-	if (!uos.isSelected($element)) {
+	if (!uos.isSelected($element) && !uos.isParentOfSelected($element) && !uos.isChildOfSelected($element)) {
   //if ($(this)[0] != $(dragSrcEl)[0]) {
 	  if (event.preventDefault) {
 	    event.preventDefault(); // Necessary. Allows us to drop.
@@ -200,7 +208,8 @@ function uostype_entity_event_dragenter(event) {
   //if (e.stopPropagation) {
     event.stopPropagation(); // Stops some browsers from redirecting.
   //}
-  if ($(this)[0] != $(dragSrcEl)[0]) {
+	if (!uos.isSelected($element) && !uos.isParentOfSelected($element) && !uos.isChildOfSelected($element)) {
+  //if ($(this)[0] != $(dragSrcEl)[0]) {
 	  //this.classList.add('over');
 	  event.preventDefault();
 	  
@@ -240,11 +249,12 @@ function uostype_entity_event_drop(event) {
 	var $element = jQuery(this);
 	var elementdata = uos.getelementdata($element);
 	
-  //uos.log('Dropped',e);
-  uos.log('drop',$element.attr('title'),$(event.target).attr('title'));
+	jQuery('body').removeClass('uos-dragging');
   $element.removeClass('dragging');
   $element.removeClass('dragging-hover-target');
   $(event.target).removeClass('dragging-target');
+	
+  uos.log('uostype_entity_event_drop',$element.attr('title'),$(event.target).attr('title'));
 
   if (event.stopPropagation) {
     event.stopPropagation(); // Stops some browsers from redirecting.
@@ -254,8 +264,9 @@ function uostype_entity_event_drop(event) {
   var data = event.dataTransfer.getData('text');
   uos.log(data);
 
+  if (!uos.isSelected($element)) {
   // Don't do anything if dropping the same column we're dragging.
-  if (dragSrcEl != this) {
+  //if (dragSrcEl != this) {
     // Set the source column's HTML to the HTML of the column we dropped on.
     //dragSrcEl.innerHTML = this.innerHTML;
     //this.innerHTML = e.dataTransfer.getData('text/html');
@@ -275,8 +286,7 @@ function uostype_entity_event_drop(event) {
       //uos.log('node drop');
     	//uos.log(e.dataTransfer);
 			var titles = uos.getSelectedTitles();
-    	$.growl.notice({ title : 'Dropped Node(s)', message: 'Dropped : ' + titles.join(', ') + ' onto ' + $(this).attr('title'), location : 'br' });
-    	uos.log('Dropped Node : ' + $(dragSrcEl).attr('title') + ' onto ' + $element.attr('title'));
+    	$.growl.notice({ title : 'Dropped Node(s)', message: 'Dropped : ' + titles.join(', ') + ' onto ' + $element.attr('title'), location : 'br' });
     	//uos.log(e.dataTransfer.getData('text/html'));
     }
   	$element.removeClass('dragging-target');    
@@ -308,15 +318,21 @@ function uostype_entity_display_up($element, event) {
 	var elementdata = uos.getelementdata($element);
 	var elementid = $element.attr('id');
 	//elementdata.displaypaths
-	//uos.log('displayup',elementdata);
-	uos.loadcontent($element,"/8834323145.htmljson");
+	var displayindex = jQuery.inArray(elementdata.activedisplay,elementdata.displays);
+	var displaycount = elementdata.displays.length;
+	displayindex++;
+	//if (displayindex>=displaycount) displayindex = 0;
+	var currentdisplay = elementdata.displays[displayindex];
+	uos.log('displayup',elementdata.activedisplay,elementdata.displays,displayindex,displaycount, currentdisplay);
+	
+	uos.loadcontent($element,"/"+elementdata.guid+"."+currentdisplay);
 }
 
 
 function uostype_entity_reload($element) {
 	var elementdata = uos.getelementdata($element);
 	uos.log('uostype_entity_reload',elementdata);
-	uos.loadcontent($element,"/8834323145.htmljson");
+	uos.loadcontent($element,"/8834323145.uosio");
 }
 
 
@@ -354,6 +370,8 @@ function loadCSSifnotload(csspath) {
 	link.href = "/path/to.css";
 	document.getElementsByTagName("head")[0].appendChild(link);
 }
+
+
 
 //if (!$("link[href='/path/to.css']").length)
 //    $('<link href="/path/to.css" rel="stylesheet">').appendTo("head");
