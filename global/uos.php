@@ -10,20 +10,24 @@ $uos->universe = new node_universe($uos->config->data->universe);
 
 // Find target
 //$target = false;
-if (!empty($uos->request->target)) {
-	$target = fetchentity($uos->request->target);
+if (!empty($uos->request->targetstring)) {
+	$target = fetchentity($uos->request->targetstring);
 	fetchentitychildren($target);
   $target->callaction($uos->request->action);
 	//addoutput('content', $target);
 	$uos->response->code = 200;
 }
 
-//print_r($target);
+//print_r($uos->request->displaystring);
+//print_r($uos->request);
+//print_r($uos->output);die();
+//echo rendernew($uos->output, $uos->request->displaystring);
+
 
 
 // we found something
 try {
-	$uos->response->content = startrender($uos->output,$uos->request->displaystring);
+	$uos->response->content = rendernew($uos->output,$uos->request->displaystring);
 } catch (Exception $e) {
 	//$uos->response->code = 500;
   $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");

@@ -61,6 +61,13 @@ define( 'UOS_DISPLAYS_URL',    UOS_GLOBAL_URL . 'displays/');
 define( 'UOS_DEFAULT_DISPLAY', 'default');
 
 
+// Default display string (Will replace default display)
+define('UOS_DEFAULT_DISPLAY_STRING',	'page.html');
+
+
+define('UOS_DEFAULT_ACTION',	'view');
+
+
 // Data folder
 define( 'UOS_DATA',            UOS_ROOT . 'data/');
 
@@ -149,8 +156,6 @@ $uos->actions = array();
 
 $uos->request = new StdClass(); 
 
-$uos->request->parameters = array();
-
 $uos->request->outputformat = new StdClass(); 
 
 $uos->response = new StdClass(); 
@@ -172,11 +177,9 @@ $uos->title = 'UniverseOS';
 //$browsercapabilities = new phpbrowscap\Browscap(UOS_TEMPORARY);
 //$browsercapabilities = new phpbrowscap\Browscap(UOS_TEMPORARY);
 
-
+$uos->request->action = UOS_DEFAULT_ACTION;
 
 // Build Input parameters
-$uos->request->outputformat->display = null;
-$uos->request->outputformat->format = null;
 
 // Command Line
 if (isset($argv)) {
@@ -185,17 +188,20 @@ if (isset($argv)) {
   $uos->request->type = UOS_REQUEST_TYPE_CLI;
   $uos->request->sessionid = $cliargs->sessionid;//isset($cliargs->sessionid)?session_id($cliargs->sessionid):session_id();
 	$parsedurl = parse_url(trim($cliargs->url,'/'));
-  $uos->request->url = $parsedurl['path'];
+  $uos->request->urlpath = $parsedurl['path'];
+  
+	$uos->request->parameters = array();
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
 	}
   session_save_path('/tmp');
-	$uos->request->outputformat->format = 'cli';
+	$uos->request->displaystring = 'cli';
   
 // Webserver
 } elseif (isset($_SERVER['REQUEST_URI'])) {
 
   $uos->request->commandtype = UOS_REQUEST_TYPE_GET;
+	$uos->request->displaystring = UOS_DEFAULT_DISPLAY_STRING;
   
 	//Only enable for debug  
 	if ($uos->config->debugmode) $uos->request->servervars = $_SERVER;  
@@ -204,12 +210,14 @@ if (isset($argv)) {
 	$uos->request->parsedurl = $parsedurl;
   $uos->request->port = $_SERVER['SERVER_PORT'];
   $uos->request->ssl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false; 
-  $uos->request->urlprotocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https" : "http"; 
-	$uos->request->urlhostname = $_SERVER['SERVER_NAME'];
-	$uos->request->siteurl = $uos->request->urlprotocol .'://'. $uos->request->urlhostname . '/';
+  $uos->request->protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https" : "http"; 
+	$uos->request->hostname = $_SERVER['SERVER_NAME'];
+	$uos->request->hosturl = $uos->request->protocol .'://'. $uos->request->hostname . '/';
 
-	$uos->request->url = trim($parsedurl['path'],'/');
-	$uos->request->urlfull = $uos->request->siteurl . $uos->request->url;
+	$uos->request->urlpath = trim($parsedurl['path'],'/');
+	$uos->request->url = $uos->request->hosturl . $uos->request->urlpath;
+
+	$uos->request->parameters = array();
 	
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
@@ -220,7 +228,6 @@ if (isset($argv)) {
 	  $uos->request->commandtype = UOS_REQUEST_TYPE_POST;
 		$uos->request->parameters = $uos->request->parameters + $_POST;
 	}
-	$uos->request->outputformat->format = 'html';
 
 	if(!empty($_FILES)) {
 		$uos->request->files = $_FILES;
@@ -238,21 +245,35 @@ if (isset($argv)) {
 // all to move to database
 if (isset($uos->config->data->aliases[$uos->request->url])) {
 	$aliasdata = $uos->config->data->aliases[$uos->request->url];
-	$uos->request->target = $aliasdata->target;
-	$uos->request->action = $aliasdata->action;
+	$uos->request->targetstring = $aliasdata->targetstring;
 	$uos->request->displaystring = $aliasdata->displaystring;
-	$uos->request->outputformat->display = $aliasdata->display;
-	$uos->request->outputformat->format = $aliasdata->format;
+	$uos->request->action = $aliasdata->action;
+	//$uos->request->outputformat->display = $aliasdata->display;
+	//$uos->request->outputformat->format = $aliasdata->format;
 } else {
 
-	$explodedurl = explode('.',$uos->request->url,2);
-	$targetaction = explode(':',$explodedurl[0]);
-	$uos->request->action = array_pop($targetaction);
-	$uos->request->target = implode(':',$targetaction);
-	$uos->request->displaystring = isset($explodedurl[1])?$explodedurl[1]:'default'; 
-	$displaystringexploded = explode('.',$uos->request->displaystring);
-	$uos->request->transport = array_pop($displaystringexploded);
-	$uos->request->formatdisplay = implode('.',$displaystringexploded);
+	$explodedurl = explode(':', trim($uos->request->urlpath, ':') );
+	//$targetaction = explode(':',$explodedurl[0]);
+	//print_r($explodedurl);
+	// first part of url is always targetstring
+	$uos->request->targetstring = array_shift($explodedurl);
+	// if we have a display string and/or action string
+	if (!empty($explodedurl)) {
+		// if we only have one string it must be a display string
+		if (count($explodedurl)==1) {
+			$uos->request->displaystring = array_pop($explodedurl);
+		} else {
+			@list($uos->request->action,$uos->request->displaystring,$uos->request->extra) = $explodedurl;
+		}
+	}
+	
+
+	//$uos->request->action = array_pop($targetaction);
+	//$uos->request->target = implode(':',$targetaction);
+	//$uos->request->displaystring = isset($explodedurl[1])?$explodedurl[1]:UOS_DEFAULT_DISPLAY_STRING; 
+	//$displaystringexploded = explode('.',$uos->request->displaystring);
+	//$uos->request->transport = array_pop($displaystringexploded);
+	//$uos->request->formatdisplay = implode('.',$displaystringexploded);
 	
 	
 	//@list($requeststring, $outputstring) = $uos->request->explodedurl;
