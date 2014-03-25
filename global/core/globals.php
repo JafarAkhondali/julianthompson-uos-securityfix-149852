@@ -243,8 +243,8 @@ if (isset($argv)) {
 
 // look in paths first
 // all to move to database
-if (isset($uos->config->data->aliases[$uos->request->url])) {
-	$aliasdata = $uos->config->data->aliases[$uos->request->url];
+if (isset($uos->config->data->aliases[$uos->request->urlpath])) {
+	$aliasdata = $uos->config->data->aliases[$uos->request->urlpath];
 	$uos->request->targetstring = $aliasdata->targetstring;
 	$uos->request->displaystring = $aliasdata->displaystring;
 	$uos->request->action = $aliasdata->action;
