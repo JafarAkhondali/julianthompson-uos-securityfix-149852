@@ -210,7 +210,7 @@ function addtopath($path,$pathext) {
 }
 
 
-function render($entity, $rendermask=NULL) {
+function renderdisabled($entity, $rendermask=NULL) {
 	global $uos;
 
 	$content = '';
@@ -406,7 +406,7 @@ function render($entity, $rendermask=NULL) {
   return $content;
 }
 
-function startrender($content,$displaystring=FALSE) {
+function startrenderdisabled($content,$displaystring=FALSE) {
 	global $uos;
 	
 	if (isset($uos->output['content'])) {
@@ -479,6 +479,9 @@ function find_element_paths($rootpath,$entity,$reverse=FALSE) {
 }
 
 function find_element_file($patharray,$filename) {
+	if (!is_array($patharray)) {
+		throw new Exception('find_element_file bad parameter');
+	}
   foreach($patharray as $path) {
     $file = $path . $filename;
     if (file_exists($file)) {
@@ -763,11 +766,154 @@ function uos_add_headers($string, $replace = true) {
 }
 
 
-function startsWith($haystack, $needle)
-{
+function startsWith($haystack, $needle) {
     return $needle === "" || strpos($haystack, $needle) === 0;
 }
-function endsWith($haystack, $needle)
-{
+
+function endsWith($haystack, $needle) {
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 }
+
+
+
+function getFileOutput($file,$variables) {
+
+	$output = '';
+	extract($variables, EXTR_REFS || EXTR_OVERWRITE);
+
+	if (empty($file)) throw new Exception('getFileOutput : bad filename : '.$file);
+	
+  try {
+  	ob_start();
+    include $file;
+  	$output = ob_get_clean();
+  } catch (Exception $e) {
+  	$output = ob_get_clean();
+  	// throw an exception here?
+    throw new Exception('Caught exception: '.  $e->getMessage());
+  } 	
+  return $output;	  
+}
+
+
+
+function rendernew($entity, $rendersettings = NULL) {
+
+	global $uos;
+	
+	$output = '';
+
+	if (is_array($rendersettings) || is_object($rendersettings)) {
+		$render = (object) $rendersettings;
+	} else {
+		$render = new StdClass();	
+		if (is_string($rendersettings)) {
+			$render->displaystring = $rendersettings;
+		}
+	}	
+	setIfUnset($render->activerenderer, UOS_DEFAULT_DISPLAY);
+	
+	setIfUnset($render->displaystring, UOS_DEFAULT_DISPLAY_STRING);
+	
+	//$render->displaystringexploded = explode('.',$render->displaystring);
+	
+	//print_r(UOS_DEFAULT_DISPLAY_STRING);
+	//print_r($render);
+	//print_r('x');
+	//die();
+	
+	$render->finishprocessing = FALSE;
+	
+	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer); 
+	$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
+	//$render->rendererelements = addtopath($render->rendererpath,'elements');
+	
+	//$render->filesearchpaths = find_element_paths($render->rendererpath, $entity, TRUE);
+
+	//foreach()
+	//$render->transportfile = find_element_file($render->filesearchpaths, "transport.$render->formatdisplay.php");
+
+	$render->entityconfig = get_type_info($entity);	
+	
+	$render->instanceid = get_instance_id( $render->entityconfig->class ). '__' . round((time() + microtime(true)) * 1000);		
+
+	$render->classtreestring = 'uos-element uos-uninitialized '.implode(' ', array_reverse($render->entityconfig->classtree));
+	
+	$render->inheritancestring = implode(',', $render->entityconfig->classtree);
+	
+	$render->entitytype = $render->entityconfig->class;
+	
+	$rendervariables = array('render'=>$render,'entity'=>$entity, 'uos'=>$uos);
+	
+	require_once $render->rendererpath . 'elements/include.uos.php';
+	
+	$render->displayfiles = $display = get_type_displays($entity,$render->rendererpath,$render->displaystring);
+	
+	$render->displays = array_keys($render->entityconfig->displays);
+	
+	try {
+		$render->preprocessoutput = getFileOutput($display->preprocessfile,$rendervariables);
+		$render->templateoutput = getFileOutput($display->templatefile,$rendervariables);
+		$render->wrapperoutput = getFileOutput($display->wrapperfile,$rendervariables);
+		//$render->transportoutput = getFileOutput($display->transportfile,$rendervariables);
+	} catch (Exception $e) {
+		$render->templateoutput = 'Unset';
+		$render->wrapperoutput = 'Error : '.$e->getMessage().print_r($uos->request,TRUE).print_r($render,TRUE).':'.$render->displaystring;
+	}
+	
+	//print_r($render);die();
+	return $render->wrapperoutput;
+	//$file = $render->rendererelements.'/uos/template.
+	//return getFileOutput($file,array('entity'=>&$entity,'render'=>&$render, 'uos'=>&$uos));
+}
+
+
+function get_type_info($entity) {
+	global $uos;
+
+	$classtree = class_tree($entity);
+	$typeconfig = NULL;
+	$class = $classtree[0];
+	//if (is_null($uos->config->types[$class])) $class = 'unknown';
+	if (!isset($uos->config->types[$class])) {
+		$typeconfig = $uos->config->types[$class] = new StdClass();
+	} else {
+		$typeconfig = $uos->config->types[$class];
+	}
+	$typeconfig->class = $class;
+	$typeconfig->classtree = $classtree;
+	return $uos->config->types[$class];		
+}
+
+
+
+function get_type_displays($entity, $rendererpath, $displaystring=NULL) {
+	$typeconfig = get_type_info($entity);
+	$typeconfig->displaypaths = find_element_paths($rendererpath, $entity, TRUE);
+	//print_r($typeconfig->displaypaths);
+	if (!isset($typeconfig->displays)) $typeconfig->displays = Array();
+	$display = $typeconfig->displays[$displaystring] = new StdClass();
+	$displaystringexploded = explode('.',$displaystring);
+	//foreach($display)
+	while(count($displaystringexploded)>0) {
+		$displaystring = implode('.',$displaystringexploded);
+		//echo $displaystring.":";
+		foreach ($typeconfig->displaypaths as $displaypath) {
+			//echo "looking for : "."transport.$displaystring.php".print_r($typeconfig->displaypaths,TRUE);
+			if (!isset($display->transportfile)) $display->transportfile = find_element_file(array($displaypath),  "transport.$displaystring.php");
+			//if (!isset($display->includefiles)) $display->includefiles = find_element_file($typeconfig->displaypaths, "include.$displaystring.php");
+			if (!isset($display->preprocessfile)) $display->preprocessfile = find_element_file(array($displaypath), "preprocess.$displaystring.php");
+			if (!isset($display->templatefile)) $display->templatefile = find_element_file(array($displaypath), "template.$displaystring.php");
+			if (!isset($display->wrapperfile)) $display->wrapperfile = find_element_file(array($displaypath), "wrapper.$displaystring.php");
+		}
+		array_shift($displaystringexploded);
+	}
+	return $display;
+}
+
+
+
+function setIfUnset(&$variable,$value) {
+	return (isset($variable))?$variable=$variable:$variable=$value;
+}
+

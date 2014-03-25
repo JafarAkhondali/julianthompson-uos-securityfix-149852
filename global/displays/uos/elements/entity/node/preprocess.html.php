@@ -1,6 +1,7 @@
 <?php
 include $render->rendererpath . '/elements/entity/preprocess.html.php';
 
+//if (!isset($render->attributes)) $render->attributes = array();
 //$render->title = (string) $entity->title;
 $render->attributes['draggable'] = 'true';
 $render->attributes['title'] = (string) $entity->title;

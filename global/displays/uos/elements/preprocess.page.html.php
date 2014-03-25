@@ -1,4 +1,11 @@
 <?php
+$render->title = ucfirst($render->entityconfig->title);
+$render->wrapperelement = 'div';
+if (!isset($render->attributes)) $render->attributes = array();
+if (!isset($render->elementdata)) $render->elementdata = new stdClass();
+
+addoutput('elementdata/'.$render->instanceid, $render->elementdata);
+
 //print_r($uos->output);die();
 
 // jQuery CDN
@@ -41,7 +48,3 @@ addoutput('resources/script/', $render->rendererurl."elements/entity/node/node.r
 addoutput('resources/script/', $render->rendererurl."elements/entity/node/node_device/node_device.resources/script/jquery.node_device.js");
 
 addoutput('resources/style/', $render->rendererurl."resources/style/style.uos.css");
-
-//print_r($uos->universe->getactions());
-
-header("HTTP/1.1 " . $uos->response->code . " " . $uos->responsecodes[$uos->response->code]);

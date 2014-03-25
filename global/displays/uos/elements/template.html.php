@@ -1,5 +1,8 @@
-
-<!-- Start <?php print gettype($entity);?> -->
+<!-- Unknown Start <?php print $render->entityconfig->class;?> -->
 <?php print_r($entity);?>
-<?php print_r($callerinfo);?>
-<!-- End <?php print gettype($entity);?> -->
+<pre>
+<?php print_r($render);?>
+</pre>
+<?php //print_r($callerinfo);?>
+<!-- Unknown End <?php print $render->entityconfig->class;?> -->
+yyyy

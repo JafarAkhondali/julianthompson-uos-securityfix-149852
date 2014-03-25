@@ -40,7 +40,7 @@
 		</div>
 	
 		<div id="container">
-		<?php print render($entity);?>
+		<?php print rendernew($entity['content'],'html');?>
 		</div>
 
 		<div id="input">
