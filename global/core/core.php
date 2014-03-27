@@ -874,7 +874,9 @@ function rendernew($entity, $rendersettings = NULL) {
 	
 	$render->formatdisplaynames = preg_grep("/($render->displayformat|.*\.$render->displayformat)/i", $render->displaynames);
 
-	print_r($render);die();
+	if (isset($render->debug) && $render->debug) {
+		print_r($render);die();
+	}
 		
 	try {
 		if (property_exists($render->display,'preprocess')) {
