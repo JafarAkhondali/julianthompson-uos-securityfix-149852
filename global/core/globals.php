@@ -90,6 +90,9 @@ define( 'UOS_TEMPORARY',				'/tmp/');
 define( 'UOS_BASE_CLASS',      'entity');
 
 
+define( 'UOS_GUID_FIELD_SEPARATOR','-');
+
+
 // Get Database from Virtual host / htaccess file
 define( 'UOS_DATABASE',					getenv('UOS_DATABASE'));
 
@@ -252,7 +255,12 @@ if (isset($uos->config->data->aliases[$uos->request->urlpath])) {
 	//$uos->request->outputformat->format = $aliasdata->format;
 } else {
 
-	$explodedurl = explode(':', trim($uos->request->urlpath, ':') );
+
+  // for format 
+  // http://julian.universeos/GUID/view/png
+  // http://julian.universeos/GUID:field/view/png
+  /*
+	$explodedurl = explode('/', trim($uos->request->urlpath, '/') );
 	//$targetaction = explode(':',$explodedurl[0]);
 	//print_r($explodedurl);
 	// first part of url is always targetstring
@@ -261,7 +269,27 @@ if (isset($uos->config->data->aliases[$uos->request->urlpath])) {
 	if (!empty($explodedurl)) {
 		// if we only have one string it must be a display string
 		if (count($explodedurl)==1) {
-			$uos->request->displaystring = array_pop($explodedurl);
+			$uos->request->action = array_pop($explodedurl);
+		} else {
+			@list($uos->request->action,$uos->request->displaystring,$uos->request->extra) = $explodedurl;
+		}
+	}
+	*/
+	
+  // for format 
+  // http://julian.universeos/GUID.view.png
+  // http://julian.universeos/GUID-field.view.png
+
+	$explodedurl = explode('.', trim($uos->request->urlpath, '/'),3);
+	//$targetaction = explode(':',$explodedurl[0]);
+	//print_r($explodedurl);
+	// first part of url is always targetstring
+	$uos->request->targetstring = array_shift($explodedurl);
+	// if we have a display string and/or action string
+	if (!empty($explodedurl)) {
+		// if we only have one string it must be a display string
+		if (count($explodedurl)==1) {
+			$uos->request->action = array_pop($explodedurl);
 		} else {
 			@list($uos->request->action,$uos->request->displaystring,$uos->request->extra) = $explodedurl;
 		}
