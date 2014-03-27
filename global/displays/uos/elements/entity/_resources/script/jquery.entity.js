@@ -337,8 +337,6 @@ function uostype_entity_display_up($element, event) {
 	var newdisplay = displays[displayindex];
 	uos.log('displayup',elementdata.activedisplay,displays,displayindex,displaycount, newdisplay,elementdata);
 
-
-	
 	uos.loadcontent($element,"/"+elementdata.guid+".view.uosio?display="+newdisplay);
 }
 
@@ -346,7 +344,7 @@ function uostype_entity_display_up($element, event) {
 function uostype_entity_reload($element) {
 	var elementdata = uos.getelementdata($element);
 	uos.log('uostype_entity_reload',elementdata);
-	uos.loadcontent($element,"/8834323145.uosio");
+	uos.loadcontent($element,"/"+elementdata.guid+".view.uosio");
 }
 
 

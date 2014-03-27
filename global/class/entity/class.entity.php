@@ -293,7 +293,7 @@ class entity {
   }
   
   public function __toString() {
-    return json_encode($this);
+    return (string) $this->type . '(' . (string) $this->guid . ')';
   }
   
 }		
