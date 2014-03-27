@@ -23,10 +23,11 @@ $image_p = imagecreatetruecolor($new_width, $new_height);
 $image = imagecreatefromjpeg($filename);
 imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 
-
-imagestring($image, 5, 40, 20, 'UniverseOS (Source URL) QR - JPG', 0xFFFFFF);
 // Output
 //imagejpeg($image_p, null, 100);
-imagejpeg($image, null, 100);
+
+imagestring($image, 5, 40, 20, 'UniverseOS (Source URL) QR - GIF', 0xFFFFFF);
+
+imagegif($image);
 
 //readfile($filename);
