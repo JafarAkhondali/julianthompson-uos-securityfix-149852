@@ -22,6 +22,10 @@ class field extends entity {
 		}
   }
   
+  function isvalid() {
+  	return TRUE;
+  }
+  
   function getdbfieldtype() {
   	return "text";
   }

@@ -28,7 +28,7 @@ function fetchentity($guid) {
 	global $uos;
 
 	$field = null;
-	$guidexploded = explode(':',$guid);
+	$guidexploded = explode(UOS_GUID_FIELD_SEPARATOR,$guid);
 	if (isset($guidexploded[1])) @list($guid,$field) = $guidexploded;
 
 	// if entity not in the instances try to add it
@@ -58,13 +58,15 @@ function fetchentity($guid) {
 function fetchentitychildren(&$entity) {
 	global $uos;
 	if (is_universe_entity($entity)) {	
-		if ($entity->type->value == 'node_universe') {
+		if (get_class($entity) == 'node_universe') {
 			foreach($uos->config->data->entities as $guid=>$propertyobject) {
 				if ($guid != $entity->guid->value) {
 					$entity->children[] = fetchentity($guid);
 					//print_r($guid);
 				}
 			}	
+		} elseif (is_subclass_of($entity,'field')) {
+		
 		} else {
 			$entityguid = $entity->guid->value;
 			if (isset($uos->config->data->children[$entityguid])) {
@@ -529,6 +531,30 @@ function addoutput($path,$content=FALSE,$attributes=array()) {
   @eval ( $outputpath . '= $content;' );
 }
 
+function addoutputunique($path,$content=FALSE,$attributes=array()) {
+  global $uos;
+  
+  if (!isset($content)) return;
+  
+  $output = &$uos->output;
+  $outputpath = outputarraypath($path);
+  $searcharray = NULL;
+  
+  if (substr($path, -1) == '/') {
+  	$outputpathtrimmed = substr($outputpath,0,-2);
+  	print_r("if (isset($outputpathtrimmed)) \$searcharray = $outputpathtrimmed;");
+  	eval ( "if (isset($outputpathtrimmed)) \$searcharray = $outputpathtrimmed;" );
+	  //print_r($searcharray);die();
+	  //if ($searcharray!=NULL) {
+	  //	print_r($outputpath);print_r(gettype($searcharray));print_r($searcharray);
+	  //	die();
+	  //}
+  }
+  if (!$searcharray || ($searcharray && (array_search($content, $searcharray)===FALSE)) ) {
+  	@eval ( $outputpath . '= $content;' );
+  }
+}
+
 
 function outputarraypathold($path) {
   if (empty($path)) return '$uos->output->content';
@@ -800,8 +826,6 @@ function getFileOutput($file,$variables) {
 function rendernew($entity, $rendersettings = NULL) {
 
 	global $uos;
-	
-	$output = '';
 
 	if (is_array($rendersettings) || is_object($rendersettings)) {
 		$render = (object) $rendersettings;
@@ -814,26 +838,23 @@ function rendernew($entity, $rendersettings = NULL) {
 	setIfUnset($render->activerenderer, UOS_DEFAULT_DISPLAY);
 	
 	setIfUnset($render->displaystring, UOS_DEFAULT_DISPLAY_STRING);
-	
-	//$render->displaystringexploded = explode('.',$render->displaystring);
-	
-	//print_r(UOS_DEFAULT_DISPLAY_STRING);
-	//print_r($render);
-	//print_r('x');
-	//die();
-	
+
+	$render->output = '';
 	$render->finishprocessing = FALSE;
 	
-	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer); 
+	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer, '/'); 
 	$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
-	//$render->rendererelements = addtopath($render->rendererpath,'elements');
+
+	$render->entityconfig = &get_type_info($entity);	
 	
-	//$render->filesearchpaths = find_element_paths($render->rendererpath, $entity, TRUE);
-
-	//foreach()
-	//$render->transportfile = find_element_file($render->filesearchpaths, "transport.$render->formatdisplay.php");
-
-	$render->entityconfig = get_type_info($entity);	
+	get_type_displays($entity,$render->rendererpath);
+	
+	if (!isset($render->entityconfig->displays[$render->displaystring])) {
+		return "I can't show you that.";
+	}
+	
+	$render->display = $render->entityconfig->displays[$render->displaystring]; 
+	
 	
 	$render->instanceid = get_instance_id( $render->entityconfig->class ). '__' . round((time() + microtime(true)) * 1000);		
 
@@ -846,35 +867,54 @@ function rendernew($entity, $rendersettings = NULL) {
 	$rendervariables = array('render'=>$render,'entity'=>$entity, 'uos'=>$uos);
 	
 	require_once $render->rendererpath . 'elements/include.uos.php';
+
+	$render->displayformat = array_pop(explode('.',$render->displaystring));
+
+	$render->displaynames = array_keys($render->entityconfig->displays);
 	
-	$render->displayfiles = $display = get_type_displays($entity,$render->rendererpath,$render->displaystring);
-	
-	$render->displays = array_keys($render->entityconfig->displays);
-	
+	$render->formatdisplaynames = preg_grep("/($render->displayformat|.*\.$render->displayformat)/i", $render->displaynames);
+
+	print_r($render);die();
+		
 	try {
-		$render->preprocessoutput = getFileOutput($display->preprocessfile,$rendervariables);
-		$render->templateoutput = getFileOutput($display->templatefile,$rendervariables);
-		$render->wrapperoutput = getFileOutput($display->wrapperfile,$rendervariables);
-		//$render->transportoutput = getFileOutput($display->transportfile,$rendervariables);
+		if (property_exists($render->display,'preprocess')) {
+			$render->workingpath = dirname($render->display->preprocess);
+			$render->preprocessoutput = getFileOutput($render->display->preprocess,$rendervariables);
+			$render->output = &$render->preprocessoutput;
+		}
+		if (property_exists($render->display,'template')) {
+			$render->workingpath = dirname($render->display->template);
+			$render->templateoutput = getFileOutput($render->display->template,$rendervariables);
+			$render->output = $render->templateoutput;
+		}
+		if (property_exists($render->display,'wrapper')) {
+			$render->workingpath = dirname($render->display->wrapper);
+			$render->wrapperoutput = getFileOutput($render->display->wrapper,$rendervariables);
+			$render->output = $render->wrapperoutput;
+		}
+		if (property_exists($render->display,'transport')) {
+			$render->workingpath = dirname($render->display->transport);
+			$render->transportoutput = getFileOutput($render->display->transport,$rendervariables);
+			$render->output = $render->transportoutput;
+		}
 	} catch (Exception $e) {
 		$render->templateoutput = 'Unset';
-		$render->wrapperoutput = 'Error : '.$e->getMessage().print_r($uos->request,TRUE).print_r($render,TRUE).':'.$render->displaystring;
+		$render->output = 'Error : '.$e->getMessage().print_r($uos->request,TRUE).print_r($render,TRUE).':'.$render->displaystring;
 	}
 	
-	//print_r($render);die();
-	return $render->wrapperoutput;
+
+	return $render->output;
 	//$file = $render->rendererelements.'/uos/template.
 	//return getFileOutput($file,array('entity'=>&$entity,'render'=>&$render, 'uos'=>&$uos));
 }
 
 
-function get_type_info($entity) {
+function get_type_info_old($entity) {
 	global $uos;
 
 	$classtree = class_tree($entity);
 	$typeconfig = NULL;
 	$class = $classtree[0];
-	//if (is_null($uos->config->types[$class])) $class = 'unknown';
 	if (!isset($uos->config->types[$class])) {
 		$typeconfig = $uos->config->types[$class] = new StdClass();
 	} else {
@@ -882,33 +922,146 @@ function get_type_info($entity) {
 	}
 	$typeconfig->class = $class;
 	$typeconfig->classtree = $classtree;
-	return $uos->config->types[$class];		
+	if (!isset($typeconfig->title)) $typeconfig->title = 'Unknown';
+	if (!isset($typeconfig->icon)) $typeconfig->icon = 'asterisk';
+	
+	return $typeconfig;		
 }
 
 
 
-function get_type_displays($entity, $rendererpath, $displaystring=NULL) {
+
+function get_type_display_files($entity, $rendererpath, $displaystring=NULL) {
+	global $uos;
+
 	$typeconfig = get_type_info($entity);
-	$typeconfig->displaypaths = find_element_paths($rendererpath, $entity, TRUE);
-	//print_r($typeconfig->displaypaths);
-	if (!isset($typeconfig->displays)) $typeconfig->displays = Array();
-	$display = $typeconfig->displays[$displaystring] = new StdClass();
-	$displaystringexploded = explode('.',$displaystring);
-	//foreach($display)
-	while(count($displaystringexploded)>0) {
-		$displaystring = implode('.',$displaystringexploded);
-		//echo $displaystring.":";
-		foreach ($typeconfig->displaypaths as $displaypath) {
-			//echo "looking for : "."transport.$displaystring.php".print_r($typeconfig->displaypaths,TRUE);
-			if (!isset($display->transportfile)) $display->transportfile = find_element_file(array($displaypath),  "transport.$displaystring.php");
-			//if (!isset($display->includefiles)) $display->includefiles = find_element_file($typeconfig->displaypaths, "include.$displaystring.php");
-			if (!isset($display->preprocessfile)) $display->preprocessfile = find_element_file(array($displaypath), "preprocess.$displaystring.php");
-			if (!isset($display->templatefile)) $display->templatefile = find_element_file(array($displaypath), "template.$displaystring.php");
-			if (!isset($display->wrapperfile)) $display->wrapperfile = find_element_file(array($displaypath), "wrapper.$displaystring.php");
+	$display = array();
+	
+	if (!isset($typeconfig->displays[$displaystring])) {
+	
+		if (!isset($typeconfig->displays)) $typeconfig->displays = Array();
+		
+		$display = $typeconfig->displays[$displaystring] = new StdClass();		
+		$displaystringexploded = explode('.',$displaystring);
+
+		while(count($displaystringexploded)>0) {
+			$displaystring = implode('.',$displaystringexploded);
+			//echo $displaystring.":";
+			foreach ($typeconfig->displaypaths as $displaypath) {
+				if (!isset($display->preprocessfile)) $display->preprocessfile = find_element_file(array($displaypath), "preprocess.$displaystring.php");
+				if (!isset($display->templatefile)) $display->templatefile = find_element_file(array($displaypath), "template.$displaystring.php");
+				if (!isset($display->wrapperfile)) $display->wrapperfile = find_element_file(array($displaypath), "wrapper.$displaystring.php");
+				if (!isset($display->transportfile)) $display->transportfile = find_element_file(array($displaypath),  "transport.$displaystring.php");
+			}
+			array_shift($displaystringexploded);
 		}
-		array_shift($displaystringexploded);
+		
+		
 	}
+	
 	return $display;
+}
+			
+function get_type_displays($entity, $rendererpath) {
+	global $uos;
+
+	$typeconfig = &get_type_info($entity);
+	
+	if (!$typeconfig) {
+		print_r($entity);
+		die('no config found');
+	}
+	
+	$displays = array();
+
+	if (!property_exists($typeconfig,'displaypaths')) {	
+		$typeconfig->displaypaths = find_element_paths($rendererpath, $entity, TRUE);
+	}
+	
+	if (!isset($typeconfig->displays)) {
+		foreach ($typeconfig->displaypaths as $displaypath) {
+			$filelist = file_list($displaypath);
+			foreach ($filelist as $file) {
+				// we have found a template|preprocess|wrapper... file
+				if (preg_match('/([a-z]*)\.(.*)\.php$/', $file, $matches)>0) {
+					$filetype = $matches[1];
+					$displaystring = $matches[2];
+					if (!isset($displays[$displaystring])) {
+						$displays[$displaystring] = new StdClass();
+					}
+					$display = $displays[$displaystring];
+					if (!property_exists($display,$filetype)) {
+					  $display->$filetype = $displaypath.$file;
+					}
+				}
+			}
+		}
+		foreach($displays as $displaystring=>$display) {
+			$displaystringexploded = explode('.',$displaystring);
+			//echo "For display string $displaystring :\n";
+			while(count($displaystringexploded)>0) {
+				$subdisplaystring = implode('.',$displaystringexploded);
+				//print_r($subdisplaystring);echo "\n";
+				$displays[$displaystring] = (object) array_merge((array) $displays[$subdisplaystring], (array) $displays[$displaystring]);
+				array_shift($displaystringexploded);				
+			}
+		}
+		$typeconfig->displays = $displays;
+	}
+}
+
+
+function get_type_displays_old($entity, $rendererpath) {
+	global $uos;
+
+	$typeconfig = get_type_info($entity);
+	$displays = array();
+
+	if (!isset($typeconfig->displays)) {
+		$typeconfig->displaypaths = find_element_paths($rendererpath, $entity, TRUE);
+		$display = $typeconfig->displays[$displaystring] = new StdClass();
+		$displaystringexploded = explode('.',$displaystring);
+		//foreach($display)
+		while(count($displaystringexploded)>0) {
+			$displaystring = implode('.',$displaystringexploded);
+			//echo $displaystring.":";
+			foreach ($typeconfig->displaypaths as $displaypath) {
+			
+				$filelist = file_list($displaypath);
+				foreach ($filelist as $file) {
+					// we have found a template|preprocess|wrapper... file
+					if (preg_match('([a-z]*)\.(.*)\.php', $file, $matches)>0) {
+						//$typeconfig->displays[($matches[2])] =
+					}
+				}
+			}
+			array_shift($displaystringexploded);
+		}
+	}
+}
+
+
+function &get_type_info($entity) {
+	global $uos;
+
+	$classtree = class_tree($entity);
+	
+	$class = $classtree[0];
+
+	if (!isset($uos->config->types[$class])) {
+		$uos->config->types[$class] = new StdClass();	
+	}
+	$typeconfig = &$uos->config->types[$class];
+	$typeconfig->class = $class;
+	$typeconfig->classtree = $classtree;
+	if (!isset($typeconfig->title)) $typeconfig->title = 'Unknown';
+	if (!isset($typeconfig->icon)) $typeconfig->icon = 'asterisk';
+
+	return $uos->config->types[$class];		
+}
+
+function &get_unknown_type_info() {
+	return $uos->config->types['unknown'];
 }
 
 

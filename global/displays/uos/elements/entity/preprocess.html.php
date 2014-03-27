@@ -18,7 +18,7 @@ $render->elementdata->typetree = $render->entityconfig->classtree;
 $render->elementdata->type = $render->entityconfig->class;
 $render->elementdata->typeinfo = $render->entityconfig;
 $render->elementdata->activedisplay = $render->displaystring;
-$render->elementdata->displays = $render->displays;
+$render->elementdata->displays = $render->formatdisplaynames;
 
 
 if (isset($entity->title->value)) { 
@@ -31,4 +31,6 @@ $render->wrapperelement = 'div';
 
 $render->elementdata->guid = (string) $entity->guid;
 
- addoutput('elementdata/'.$render->instanceid, $render->elementdata);
+addoutput('elementdata/'.$render->instanceid, $render->elementdata);
+addoutputunique('resources/script/', $render->rendererurl."elements/entity/_resources/script/jquery.entity.js");
+addoutputunique('resources/style/', $render->rendererurl."elements/entity/_resources/style/style.html.css");

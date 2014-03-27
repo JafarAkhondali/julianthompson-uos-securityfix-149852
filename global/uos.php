@@ -27,7 +27,7 @@ if (!empty($uos->request->targetstring)) {
 
 // we found something
 try {
-	$uos->response->content = rendernew($uos->output,$uos->request->displaystring);
+	$uos->response->content = rendernew($uos->output['content'],$uos->request->displaystring);
 } catch (Exception $e) {
 	//$uos->response->code = 500;
   $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");

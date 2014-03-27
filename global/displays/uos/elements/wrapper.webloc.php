@@ -1,2 +1,0 @@
-<!-- UniverseOS-->
-<?php print $content;?>
