@@ -45,16 +45,20 @@ return $img;
   $command = sprintf('/usr/local/bin/gs -sDEVICE=pngalpha -o %s.page-%%04d.png -r144 %s',$filename,$filename);
 
   //execute the command
-  echo $command;
-    /*
+  //echo $command;
+
   exec($command);
   
   //echo $command;
   //echo basename($pdffile) . '.page-.*\.png';
-	$pagefiles = find_files(dirname($filename), '.page-.*\.png', TRUE);
-  print_r($pagefiles);
+	$pagefiles = find_files(dirname($filename).'/', '.*\.page-.*\.png', TRUE);
+  sort($pagefiles);
+  //print_r($pagefiles);
+  header("Content-type: image/png; charset=utf-8");
+  readfile($pagefiles[0]);
+  /*
   //$pagefiles = aaprojects_get_file_list(dirname($pdffile),basename($pdffile) . '.page-.*\.png',TRUE);
-  //sort($pagefiles);
+
   //print_r($pagefiles);
   //print_r(array($pdffile.'.page-'.$page.'.png'));
   //print_r($pdffile.'.page-'.$page.'.png');
