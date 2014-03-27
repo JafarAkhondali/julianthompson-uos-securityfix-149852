@@ -52,7 +52,7 @@ div.uos-element.dragging-target {
 
 @-webkit-keyframes beat {
     0% {-webkit-transform: scale(1);}
-    40% {-webkit-transform: scale(1.01);}
+    40% {-webkit-transform: scale(1.005);}
     100% {-webkit-transform: scale(1);}
 }
 

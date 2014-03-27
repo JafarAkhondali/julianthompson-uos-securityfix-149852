@@ -28,7 +28,7 @@ if (!empty($uos->request->targetstring)) {
 // we found something
 try {
 	$uos->response->content = rendernew($uos->output['content'],array(
-		'debug'	=> FALSE,
+		//'debug'	=> TRUE,
 		'displaystring' => $uos->request->displaystring
 	));
 } catch (Exception $e) {

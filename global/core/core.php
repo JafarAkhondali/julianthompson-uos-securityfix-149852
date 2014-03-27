@@ -837,7 +837,7 @@ function rendernew($entity, $rendersettings = NULL) {
 	}	
 	setIfUnset($render->activerenderer, UOS_DEFAULT_DISPLAY);
 	
-	setIfUnset($render->displaystring, UOS_DEFAULT_DISPLAY_STRING);
+	setIfUnset($render->displaystring, $uos->request->displaystring);
 
 	$render->output = '';
 	$render->finishprocessing = FALSE;
@@ -862,7 +862,7 @@ function rendernew($entity, $rendersettings = NULL) {
 	
 	$render->inheritancestring = implode(',', $render->entityconfig->classtree);
 	
-	$render->entitytype = $render->entityconfig->class;
+	$render->elementtype = $render->entitytype = $render->entityconfig->class;
 	
 	$rendervariables = array('render'=>$render,'entity'=>$entity, 'uos'=>$uos);
 	
@@ -875,7 +875,9 @@ function rendernew($entity, $rendersettings = NULL) {
 	$render->formatdisplaynames = preg_grep("/($render->displayformat|.*\.$render->displayformat)/i", $render->displaynames);
 
 	if (isset($render->debug) && $render->debug) {
-		print_r($render);die();
+		print_r($uos->request);
+		print_r($render);
+		die();
 	}
 		
 	try {

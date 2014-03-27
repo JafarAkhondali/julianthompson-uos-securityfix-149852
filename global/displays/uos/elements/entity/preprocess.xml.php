@@ -1,3 +1,3 @@
 <?php
-//$render->wrapperfile = false;
-$render->wrapperelement = 'div';
+header("Content-type: text/xml; charset=utf-8");
+$render->wrapperelement = $render->elementtype;
