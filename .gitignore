@@ -53,3 +53,4 @@ cache/
 #global/library/test
 /data/
 /cache/
+/libraries/phpmyadmin/
