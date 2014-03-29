@@ -54,3 +54,5 @@ cache/
 /data/
 /cache/
 global/libraries/phpmyadmin/phpMyAdmin-2.10.2-english/config.inc.php
+global/admin/*
+!global/admin/test
