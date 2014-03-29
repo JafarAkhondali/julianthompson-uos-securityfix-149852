@@ -13,7 +13,7 @@ $uos->universe = new node_universe($uos->config->data->universe);
 if (!empty($uos->request->targetstring)) {
 	$target = fetchentity($uos->request->targetstring);
 	fetchentitychildren($target);
-  $target->callaction($uos->request->action);
+  $target->trigger($uos->request->action);
 	//addoutput('content', $target);
 	$uos->response->code = 200;
 }

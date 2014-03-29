@@ -291,6 +291,23 @@ uos.getSelectedTitles = function() {
 	return titles;
 };
 
+uos.getSelectedTypes = function() {
+	var typearray = [];
+	
+	var $elements = uos.getSelectedElements();
+	
+	for (index = 0; index < $elements.length; ++index) {
+		//$element = $(this);
+		var $element = jQuery($elements[index]);
+		var elementdata = uos.getelementdata($element);
+		//uos.log(elementdata.type);
+		//typearray[elementdata.type] = true;
+		typearray.push(elementdata.type);
+	}
+	//uos.log(typearray);
+	return unique(typearray);
+};
+
 uos.isParentOf = function($testparent,$child) {
 	return ($testparent.has($child)).length > 0;
 }
@@ -707,6 +724,17 @@ function filtermessages(tag) {
 
 var toType = function(obj) {
   return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+}
+
+
+//http://stackoverflow.com/questions/12551635/jquery-remove-duplicates-from-an-array-of-strings
+function unique(list) {
+  var result = new Array();
+  uos.log('xxx',typeof(result));
+  $.each(list, function(i, e) {
+    if ($.inArray(e, result) == -1) result.push(e);
+  });
+  return result;
 }
 
 

@@ -241,8 +241,20 @@ function uostype_entity_accept_selection($element) {
 	var elementdata = uos.getelementdata($element);
 	// will elementdata.type
 	//$selected = uos.getSelectedElements();
+	var selectiontypes = uos.getSelectedTypes();
 	
-	uos.log('uostype_entity_accept_selection:',$element.attr('title'),elementdata.type);
+	// test case - if selection contains a message we wont accept it
+	//if (selectiontypes.indexOf("node_message")>0) {
+	// test case - if first item is node_message ?!!
+	uos.log('uos.getSelectedTypes gave me',typeof(selectiontypes));
+	if (selectiontypes[0]=='node_message') {
+		uos.log('fuck off with ya fancy content types - I dont want your filthy messages');
+		$element.addClass('uos-blocking');
+	} else {
+		uos.log('good! your selection',selectiontypes,'doesnt contain those damn messages. phew!');	
+	}
+	
+	uos.log('uostype_entity_accept_selection:',$element.attr('title'),elementdata.type, selectiontypes);
 }
 
 
@@ -313,6 +325,7 @@ function uostype_entity_event_drop(event) {
   }
 
   $element.removeClass('dragging-noaccept');  
+  $element.removeClass('uos-blocking');
   //jQuery('#universe-drag-helper').remove();
 
   return false;
@@ -325,6 +338,7 @@ function uostype_entity_event_dragend(event) {
   //$('.node').removeClass('over');
   jQuery('#universe-drag-helper').remove();
   jQuery('#uos-drag-helper-container').remove();
+	uos.getAllElements().removeClass('uos-blocking');
 }
 
 
