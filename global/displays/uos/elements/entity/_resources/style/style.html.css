@@ -44,9 +44,9 @@ div.uos-element.dragging-target {
 	xtransform: scale(1.03);
 	x-ms-transform: scale(1.03); /* IE 9 */
 	x-webkit-transform: scale(1.03); /* Safari and Chrome */
-  -webkit-animation: beat 2s ease 0s infinite normal;
-  -moz-animation: beat 2s ease 0s infinite normal;
-  animation: beat 2s ease 0s infinite normal;
+  -webkit-animation: beat 1.5s ease 0s infinite normal;
+  -moz-animation: beat 1.5s ease 0s infinite normal;
+  animation: beat 1.5s ease 0s infinite normal;
 	background-color: rgba(126,250,185,0.3);
 }
 
@@ -82,6 +82,9 @@ div.uos-element.node.selected {
 body.uos-dragging-entity div.uos-element.node.selected {
 	-webkit-transform: scale(0.98);
 	opacity: 0.3;	
+	x-webkit-box-shadow: inset 0px 0px 100px 27px rgba(0,0,0,0.7);
+	x-moz-box-shadow: inset 0px 0px 100px 27px rgba(0,0,0,0.7);
+	xbox-shadow: inset 0px 0px 100px 27px rgba(0,0,0,0.7);
 }
 
 

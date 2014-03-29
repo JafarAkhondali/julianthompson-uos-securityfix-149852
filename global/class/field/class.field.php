@@ -31,6 +31,6 @@ class field extends entity {
   }
   
   public function __toString() {
-    return (string) $this->value;
+    return is_object($this->value) ? print_r($this->value,TRUE) : (string) $this->value;
   }
 } 
