@@ -515,6 +515,18 @@ uos.overlay = function(toggle) {
 	}
 };
 
+uos.buildDragHelper = function() {
+  var iconcount = document.getElementById("universe-status-icon");
+	var draghelper = iconcount.cloneNode(true);
+	draghelper.id = "universe-drag-helper";
+	$(draghelper).addClass('drag-helper');
+  //crt.style.backgroundColor = "red";
+  //crt.style.position = "absolute"; crt.style.top = "0px"; crt.style.left = "-100px";
+  $('body').append('<div id="uos-drag-helper-container">');
+  $('#uos-drag-helper-container').append(draghelper);
+  return draghelper;
+}
+
 
 uos.initialize  = function() {
 

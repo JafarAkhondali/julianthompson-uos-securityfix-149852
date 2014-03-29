@@ -97,7 +97,6 @@ body.uos-dragging-entity div.uos-element.node.selected {
 }
 
 body.uos-dragging-entity div.uos-element.uos-blocking {
-	background-color: red;
 	transform: scale(0.97);
 	-ms-transform: scale(0.97); /* IE 9 */
 	-webkit-transform: scale(0.97); /* Safari and Chrome */
@@ -105,6 +104,14 @@ body.uos-dragging-entity div.uos-element.uos-blocking {
   -moz-animation: none;
   animation: none;
   x-webkit-transition: all ease;
+	background: -moz-radial-gradient(center, ellipse cover,  rgba(109,0,25,0) 0%, rgba(160,0,18,0.41) 100%); /* FF3.6+ */
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(109,0,25,0)), color-stop(100%,rgba(160,0,18,0.41))); /* Chrome,Safari4+ */
+	background: -webkit-radial-gradient(center, ellipse cover,  rgba(109,0,25,0) 0%,rgba(160,0,18,0.41) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-radial-gradient(center, ellipse cover,  rgba(109,0,25,0) 0%,rgba(160,0,18,0.41) 100%); /* Opera 12+ */
+	background: -ms-radial-gradient(center, ellipse cover,  rgba(109,0,25,0) 0%,rgba(160,0,18,0.41) 100%); /* IE10+ */
+	background: radial-gradient(ellipse at center,  rgba(109,0,25,0) 0%,rgba(160,0,18,0.41) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#006d0019', endColorstr='#69a00012',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
 }
 
 

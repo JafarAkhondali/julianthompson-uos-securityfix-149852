@@ -153,15 +153,8 @@ function uostype_entity_event_dragstart(event) {
 
 	event.dataTransfer.setData("DownloadURL",downloadurl);
   event.dataTransfer.effectAllowed = 'move';
-  
-  var iconcount = document.getElementById("universe-status-icon");
-	var draghelper = iconcount.cloneNode(true);
-	draghelper.id = "universe-drag-helper";
-	$(draghelper).addClass('drag-helper');
-  //crt.style.backgroundColor = "red";
-  //crt.style.position = "absolute"; crt.style.top = "0px"; crt.style.left = "-100px";
-  $('body').append('<div id="uos-drag-helper-container">');
-  $('#uos-drag-helper-container').append(draghelper);
+ 
+  var draghelper = uos.buildDragHelper();
 	//container").css("left"))));
   //document.body.appendChild(draghelper);
  	event.dataTransfer.setDragImage(draghelper,-1,-1);
