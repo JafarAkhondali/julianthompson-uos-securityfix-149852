@@ -152,7 +152,7 @@ class entity {
 			
 			//trace($classes);
 			foreach($classes as $class) {
-				$path = classtopath($class) . 'actions.' . $class . '/';
+				$path = classtopath($class) . '_actions/';
 				trace('found action : '.$path,'jmt');
 				$actionfiles = file_list($path, 'action\..*\.php');
 				foreach ($actionfiles as $actionfile) {

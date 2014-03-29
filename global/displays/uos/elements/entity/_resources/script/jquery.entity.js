@@ -48,7 +48,7 @@ uos.types['entity'].actions = {
 		title : '3D display',
 		icon : 'fa-globe',
 		handler : uos_three
-	}
+	},
 };
 
 
@@ -221,7 +221,9 @@ function uostype_entity_event_dragenter(event) {
   //if ($(this)[0] != $(dragSrcEl)[0]) {
 	  //this.classList.add('over');
 	  event.preventDefault();
+	  if (uostype_entity_accept_selection($element)) {
 	  
+	  }
 	  // dummy test - call willAccept(e)
 	  if ($(this).data('type')=='node_file') {
 	  	$(this).addClass('dragging-noaccept');
@@ -232,6 +234,15 @@ function uostype_entity_event_dragenter(event) {
 	  }
 	  return true;
   }
+}
+
+function uostype_entity_accept_selection($element) {
+
+	var elementdata = uos.getelementdata($element);
+	// will elementdata.type
+	//$selected = uos.getSelectedElements();
+	
+	uos.log('uostype_entity_accept_selection:',$element.attr('title'),elementdata.type);
 }
 
 

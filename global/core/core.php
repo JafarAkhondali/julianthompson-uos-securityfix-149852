@@ -867,8 +867,10 @@ function rendernew($entity, $rendersettings = NULL) {
 	$rendervariables = array('render'=>$render,'entity'=>$entity, 'uos'=>$uos);
 	
 	require_once $render->rendererpath . 'elements/include.uos.php';
+	
+	$explodeddisplaystring = explode('.',$render->displaystring);
 
-	$render->displayformat = array_pop(explode('.',$render->displaystring));
+	$render->displayformat = array_pop($explodeddisplaystring);
 
 	$render->displaynames = array_keys($render->entityconfig->displays);
 	

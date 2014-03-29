@@ -444,12 +444,12 @@ uos.getActionsOLD = function (e) {
 
 
 uos.toolbarAction = function (action, event) {
-
+	var response = null;
 	$elements = uos.getSelectedElements();
 	uos.log('Calling action : ' + action.title, $elements);	
 	if (action.handler) {
 		$elements.each(function(index) {
-			action.handler($elements,event);
+			response = action.handler($elements,event);
 		});
 	}
 
@@ -461,7 +461,20 @@ uos.toolbarAction = function (action, event) {
 	//} else {
 	//	uos.log('Action not found.');
 	//}
+	return response;
 };
+
+uos.elementAction = function ($element,actionname) {
+	var elementdata = uos.getelementdata($element);
+	if (elementdata.actions[actionname] && elementdata.actions[actionname].handler) {
+    var args = []; // empty array
+    // copy all other arguments we want to "pass through" 
+    for(var i = 2; i < arguments.length; i++) {
+        args.push(arguments[i]);
+    }
+    return elementdata.actions[actionname].handler.apply($element, args);
+	}
+}
 
 
 uos.getReadableFileSizeString = function(fileSizeInBytes) {	
