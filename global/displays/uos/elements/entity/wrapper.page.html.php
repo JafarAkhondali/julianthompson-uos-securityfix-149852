@@ -11,9 +11,9 @@ $styles = $uos->output['resources']['style'];
 <<?php print $render->wrapperelement;?> <?php print display_uos_attributestostring($render->attributes);?>>
 
 <head>
-	<title><?php print $uos->title;?></title>
+	<title><?php print $render->title;?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-
+	<link rel="icon" type="image/x-icon" href="<?php print $render->rendererpath . '/elements/_resources/images/favicon.ico';?>">
 <?php foreach($scripts as $script) : ?>
 	<script src="<?php print $script;?>"></script>		
 <?php endforeach; ?>
