@@ -54,6 +54,7 @@ addoutputunique('resources/script/', $render->rendererurl."elements/_resources/s
 //throw new Exception('Division by zero.');
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.base.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.uos.three.js");
+addoutputunique('resources/script/', $render->rendererurl."elements/_resources/libraries/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js");
 //addoutputunique('resources/script/', $render->rendererurl."elements/entity/entity.resources/script/jquery.entity.js");
 //addoutputunique('resources/style/', $render->rendererurl."elements/entity/entity.resources/style/style.html.css");
 //addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/field.resources/script/jquery.field.js");
