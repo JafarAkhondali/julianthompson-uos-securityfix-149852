@@ -752,3 +752,211 @@ function unique(list) {
 
 // remove when we've updated all the variables
 //var universeos = uos;
+
+
+
+// source : http://html5demos.com/dnd-upload#view-source
+/*
+var holder = document.getElementById('holder'),
+    tests = {
+      filereader: typeof FileReader != 'undefined',
+      dnd: 'draggable' in document.createElement('span'),
+      formdata: !!window.FormData,
+      progress: "upload" in new XMLHttpRequest
+    }, 
+    support = {
+      filereader: document.getElementById('filereader'),
+      formdata: document.getElementById('formdata'),
+      progress: document.getElementById('progress')
+    },
+    acceptedTypes = {
+      'image/png': true,
+      'image/jpeg': true,
+      'image/gif': true
+    },
+    progress = document.getElementById('uploadprogress'),
+    fileupload = document.getElementById('upload');
+
+"filereader formdata progress".split(' ').forEach(function (api) {
+  if (tests[api] === false) {
+    support[api].className = 'fail';
+  } else {
+    // FFS. I could have done el.hidden = true, but IE doesn't support
+    // hidden, so I tried to create a polyfill that would extend the
+    // Element.prototype, but then IE10 doesn't even give me access
+    // to the Element object. Brilliant.
+    support[api].className = 'hidden';
+  }
+});
+
+function previewfile(file) {
+  if (tests.filereader === true && acceptedTypes[file.type] === true) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      var image = new Image();
+      image.src = event.target.result;
+      image.width = 250; // a fake resize
+      holder.appendChild(image);
+    };
+
+    reader.readAsDataURL(file);
+  }  else {
+    holder.innerHTML += '<p>Uploaded ' + file.name + ' ' + (file.size ? (file.size/1024|0) + 'K' : '');
+    console.log(file);
+  }
+}
+
+function readfiles(files) {
+    debugger;
+    var formData = tests.formdata ? new FormData() : null;
+    for (var i = 0; i < files.length; i++) {
+      if (tests.formdata) formData.append('file', files[i]);
+      previewfile(files[i]);
+    }
+
+    // now post a new XHR request
+    if (tests.formdata) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/devnull.php');
+      xhr.onload = function() {
+        progress.value = progress.innerHTML = 100;
+      };
+
+      if (tests.progress) {
+        xhr.upload.onprogress = function (event) {
+          if (event.lengthComputable) {
+            var complete = (event.loaded / event.total * 100 | 0);
+            progress.value = progress.innerHTML = complete;
+          }
+        }
+      }
+
+      xhr.send(formData);
+    }
+}
+
+if (tests.dnd) { 
+  holder.ondragover = function () { this.className = 'hover'; return false; };
+  holder.ondragend = function () { this.className = ''; return false; };
+  holder.ondrop = function (e) {
+    this.className = '';
+    e.preventDefault();
+    readfiles(e.dataTransfer.files);
+  }
+} else {
+  fileupload.className = 'hidden';
+  fileupload.querySelector('input').onchange = function () {
+    readfiles(this.files);
+  };
+}
+*/	
+
+uos.dropfiles = function($element,files) {
+    //debugger;
+		var elementdata = uos.getelementdata($element);
+    uos.log('file drop');
+    //uos.log(e.dataTransfer.files);
+    var filenames = [];
+    $element.addClass('uos-processing');
+    var $requestelement = jQuery('<div class="uos-request"/>');
+    $requestelement.append('<h1><i class="fa fa-cog fa-spin"></i></h1>');
+    
+    var formData = new FormData();
+    
+    formData.append("target", elementdata.guid);
+    
+    formData.append("action", 'dropfiles');
+    
+    formData.append("display", 'html');
+    
+    var $requestinfo = jQuery('<div class="uos-request-info"/>');
+    
+		for (var i = 0; i < files.length; i++) {
+		  uos.log("Dropped File : ", files[i]);
+		  filenames.push(files[i].name + ' (' + uos.getReadableFileSizeString(files[i].size) + ')');
+		  formData.append('file', files[i]);
+		  $requestinfo.append('<div>'+files[i].name+'</div>');
+		}
+
+    $requestelement.append($requestinfo);
+    
+    $progressindicator = jQuery('<div class="uos-progress-indicator"></div>');
+    
+    $progressslider = jQuery('<div class="uos-progress-slider"></div>');
+    
+    $progressindicator.append($progressslider);
+
+		$requestelement.append($progressindicator);
+    
+    $element.append($requestelement);
+        				  
+		$.growl.notice({ 
+			title : 'Dropped File(s)', 
+			message:  filenames.join(', ') + ' into ' + $element.attr('title'), 
+			location : 'br'  
+		});
+		
+		// sort out preview
+		$element.addClass('uos-processing');
+		
+		//var formData = tests.formdata ? new FormData() : null;
+		//for (var i = 0; i < files.length; i++) {
+		//  if (tests.formdata) formData.append('file', files[i]);
+		
+		//}
+		
+		// now post a new XHR request
+		//if (tests.formdata) {
+
+		var uosrequest = new XMLHttpRequest();
+		uosrequest.open('POST', '/global/uos.php');
+		//xhr.setRequestHeader("X_FILENAME", file.name);
+		
+		console.log('uos.dropfiles',elementdata,formData);
+		
+		uosrequest.upload.addEventListener('progress', function(event) {
+			var progresspercent = (event.loaded / event.total) * 100;
+			$progressslider.width(progresspercent+ '%');
+			console.log('Uploading: ' + (Math.round(progresspercent)+ '%'),event);
+		});
+		
+		uosrequest.onload = function(event) {
+  		uos.log('uos.dropfiles:response',event.target);
+		  //progress.value = progress.innerHTML = 100;
+			$.growl.notice({ title : 'Uploaded File(s)', message:  filenames.join(', ') + ' into ' + $element.attr('title'), location : 'br'  });	
+			
+			//$requestinfo.remove();
+			
+			var $loadedcontent = $(event.target.response);
+		
+			//jQuery.each(data.elementdata, function(index,elementdata) {
+			//	var newelementid = '#'+index;
+			//	$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
+			//	if ($newelement.length>0) {
+			//		//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
+			//		uos.initializeelement($newelement,elementdata);
+			//	}
+			//});
+			
+			//uos.log(uos.getelementdata($loadedcontent))
+		
+  		$element.replaceWith($loadedcontent); 
+		};
+		
+		uosrequest.send(formData);	
+};
+
+
+uos.microtime = function(get_as_float) {
+  //  discuss at: http://phpjs.org/functions/microtime/
+  // original by: Paulo Freitas
+  //   example 1: timeStamp = microtime(true);
+  //   example 1: timeStamp > 1000000000 && timeStamp < 2000000000
+  //   returns 1: true
+
+  var now = new Date()
+    .getTime() / 1000;
+  var s = parseInt(now, 10);
+
+  return (get_as_float) ? now : (Math.round((now - s) * 1000) / 1000) + ' ' + s;
+};

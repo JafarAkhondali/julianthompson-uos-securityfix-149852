@@ -76,6 +76,8 @@ body.alt-pressed #universetoolbar ul#universe-actions li.alt-keystatus {
 }
 
 #container {
+	margin:10px;
+	/* for tool bar */
 	margin-top: 95px;
 }
 
@@ -267,12 +269,15 @@ div.uos-element.node {
   -webkit-user-drag: element;
 	-webkit-transition: all 1s;
 	min-height: 90px;
-	margin: 10px;
 	position: relative;
 	border: 2px solid white;
 	border-radius: 40px;
 	overflow: hidden;
 	color: rgba(255,255,255,0.6);
+}
+
+div.uos-element.node > div > div.uos-element.node{
+	margin: 10px;
 }
 
 div.uos-element .uos-header {
@@ -545,4 +550,23 @@ body.uos-toolbar-active div#universetoolbar #universe-details {
 
 .bootstrap-switch-container {
 	height: 2.4em;
+}
+
+
+
+
+.uos-progress-indicator {
+	overflow: hidden;
+	border-radius: 10px;
+	height:1em;	
+	display: block;
+	background-color: rgba(255,255,255,0.2);
+}
+
+.uos-progress-indicator .uos-progress-slider {
+	width: 0.1%;
+	display: block;
+	height: 100%;
+	background-color: rgba(255,255,255,0.5);
+	-webkit-transition: all 1s;	
 }

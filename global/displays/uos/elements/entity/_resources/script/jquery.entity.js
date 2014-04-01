@@ -297,17 +297,12 @@ function uostype_entity_event_drop(event) {
     //this.innerHTML = e.dataTransfer.getData('text/html');
     // transfer data file?
     if (event.dataTransfer.files.length>0) {
-    	uos.log('file drop');
-    	//uos.log(e.dataTransfer.files);
-    	var filenames = [];
-    	for (var i = 0; i < event.dataTransfer.files.length; i++) {
-      	uos.log("Dropped File : ", event.dataTransfer.files[i]);
-      	filenames.push(event.dataTransfer.files[i].name + ' (' + uos.getReadableFileSizeString(event.dataTransfer.files[i].size) + ')');
-      }
-      
-      $.growl.notice({ title : 'Dropped File(s)', message:  filenames.join(', ') + ' into ' + $element.attr('title'), location : 'br'  });
+
+			uos.dropfiles($element,event.dataTransfer.files);
 
     } else {
+    
+    	//uos.dropnodes($element,uos.getSeletedElements);
       //uos.log('node drop');
     	//uos.log(e.dataTransfer);
 			var titles = uos.getSelectedTitles();

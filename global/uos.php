@@ -2,9 +2,10 @@
 
 include_once "./core/core.php";
 
-//print_r($uos->request);
-//print_r($uos->output['content']);
-//die();
+if (isset($uos->request->parameters['debugrequest'])) {
+	print_r($uos->request);
+	die();
+}
 
 $uos->universe = new node_universe($uos->config->data->universe);
 
@@ -25,16 +26,17 @@ if (!empty($uos->request->targetstring)) {
 
 
 
-// we found something
-try {
-	$uos->response->content = rendernew($uos->output['content'],array(
-		//'debug'	=> TRUE,
-		'displaystring' => $uos->request->displaystring
-	));
-} catch (Exception $e) {
-	//$uos->response->code = 500;
-  $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");
+// we found something do something otherwise be as silent as a ninja
+if (isset($uos->output['content'])) {
+	try {
+		$uos->response->content = rendernew($uos->output['content'],array(
+			//'debug'	=> TRUE,
+			'displaystring' => $uos->request->displaystring
+		));
+	} catch (Exception $e) {
+		//$uos->response->code = 500;
+	  $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");
+	}
+	echo $uos->response->content;
 }
-
-echo $uos->response->content;
 //echo '<pre>'.print_r($uos->activerender,TRUE).'</pre>';

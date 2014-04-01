@@ -228,7 +228,8 @@ if (isset($argv)) {
 	
 	//Overwrite get variables with posted
 	if (!empty($_POST)) {
-	  $uos->request->commandtype = UOS_REQUEST_TYPE_POST;
+		//$uos->request->action = 'drop';
+	  //$uos->request->commandtype = $uos->request->parameters['target'];
 		$uos->request->parameters = $uos->request->parameters + $_POST;
 	}
 
@@ -241,7 +242,29 @@ if (isset($argv)) {
   //$uos->request->urlexploded = explode('/',$uos->request->urlpath);  
   //$uos->request->serverrequest = $_REQUEST;
 	//$uos->request->urlparsed = $parsedurl;
+	
+	// GET overrides
+	
+	
+	
+	if(isset($uos->request->parameters['target'])) {
+		$uos->request->target = $uos->request->parameters['target'];
+	}
+	
+	if(isset($uos->request->parameters['action'])) {
+		$uos->request->action = $uos->request->parameters['action'];
+	}
+	
+	if(isset($uos->request->parameters['display'])) {	
+		$uos->request->displaystring = $uos->request->parameters['display'];
+	}
+	
+	if($uos->request->urlpath=='global/uos.php') {
+		$uos->request->urlpath = implode('.',array($uos->request->target,$uos->request->action,$uos->request->displaystring));
+	}
 }
+
+
 
 
 // look in paths first
