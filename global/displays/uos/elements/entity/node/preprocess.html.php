@@ -16,8 +16,9 @@ $render->elementdata->clicktarget = $uos->request->hosturl . $entity->guid->valu
 
 $draglinkurl = $entity->guid->value . '.view.webloc';
 $draglinkfilename =  (string) $entity->title . ".webloc";
-$render->elementdata->draglink = "application/octet-stream:" . $draglinkurl . ":" . $draglinkfilename;
-
+$draglinkfilename = "http://universeos/2868744583.view.webloc";
+//$render->elementdata->draglink = "application/octet-stream:/" . $draglinkurl . ":" . $draglinkfilename;
+$render->elementdata->draglink = "application/octet-stream:" . $render->attributes['title']. '.webloc' . ":" . $render->elementdata->clicktarget.'.view.webloc';
 if ($entity->filename) {
 	//$dragfilefile = $uos->request->siteurl . $entity->filepath->value;
 	$dragfilefile = $uos->request->siteurl . $entity->guid->value . '.file';
