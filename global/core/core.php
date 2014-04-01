@@ -847,6 +847,10 @@ function rendernew($entity, $rendersettings = NULL) {
 
 	$render->entityconfig = &get_type_info($entity);	
 	
+	$render->elementtype = $render->entitytype = $render->entityconfig->class;
+	
+	if (in_array($render->elementtype, array('string','integer'))) return (string) $entity;
+	
 	get_type_displays($entity,$render->rendererpath);
 	
 	if (!isset($render->entityconfig->displays[$render->displaystring])) {
@@ -862,7 +866,7 @@ function rendernew($entity, $rendersettings = NULL) {
 	
 	$render->inheritancestring = implode(',', $render->entityconfig->classtree);
 	
-	$render->elementtype = $render->entitytype = $render->entityconfig->class;
+
 	
 	$rendervariables = array('render'=>$render,'entity'=>$entity, 'uos'=>$uos);
 	
@@ -1076,3 +1080,11 @@ function setIfUnset(&$variable,$value) {
 	return (isset($variable))?$variable=$variable:$variable=$value;
 }
 
+//http://www.php.net/manual/en/reserved.variables.files.php
+function diverse_array($vector) { 
+    $result = array(); 
+    foreach($vector as $key1 => $value1) 
+        foreach($value1 as $key2 => $value2) 
+            $result[$key2][$key1] = $value2; 
+    return $result; 
+} 

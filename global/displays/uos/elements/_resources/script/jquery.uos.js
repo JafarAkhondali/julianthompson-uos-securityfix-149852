@@ -859,7 +859,7 @@ uos.dropfiles = function($element,files) {
     var filenames = [];
     $element.addClass('uos-processing');
     var $requestelement = jQuery('<div class="uos-request"/>');
-    $requestelement.append('<h1><i class="fa fa-cog fa-spin"></i></h1>');
+    $requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> Adding files</h1>');
     
     var formData = new FormData();
     
@@ -874,8 +874,8 @@ uos.dropfiles = function($element,files) {
 		for (var i = 0; i < files.length; i++) {
 		  uos.log("Dropped File : ", files[i]);
 		  filenames.push(files[i].name + ' (' + uos.getReadableFileSizeString(files[i].size) + ')');
-		  formData.append('file', files[i]);
-		  $requestinfo.append('<div>'+files[i].name+'</div>');
+		  $requestinfo.append('<div class="uos-file"><i class="fa fa-file-text"></i><div class="uos-file-title">'+files[i].name+'</div>');
+		  formData.append('files[]', files[i]);
 		}
 
     $requestelement.append($requestinfo);
@@ -909,7 +909,7 @@ uos.dropfiles = function($element,files) {
 		//if (tests.formdata) {
 
 		var uosrequest = new XMLHttpRequest();
-		uosrequest.open('POST', '/global/uos.php');
+		uosrequest.open('POST', '/global/uos.php');//?debugresponse');
 		//xhr.setRequestHeader("X_FILENAME", file.name);
 		
 		console.log('uos.dropfiles',elementdata,formData);
@@ -939,7 +939,7 @@ uos.dropfiles = function($element,files) {
 			//});
 			
 			//uos.log(uos.getelementdata($loadedcontent))
-		
+			$element.removeClass('uos-processing');
   		$element.replaceWith($loadedcontent); 
 		};
 		

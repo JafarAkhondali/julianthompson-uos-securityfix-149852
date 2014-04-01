@@ -234,7 +234,20 @@ if (isset($argv)) {
 	}
 
 	if(!empty($_FILES)) {
-		$uos->request->files = $_FILES;
+		$uploadedfiles = diverse_array($_FILES["files"]);
+		//$uos->request->filesd = $uploadedfiles;
+		//$uos->request->files = $_FILES;
+		foreach($uploadedfiles as $uploadedfile) {
+			//$uploadedfile['type'] = 'node_file';
+			//$uos->request->files[] = print_r($uploadedfile,TRUE);
+			//$uos->request->files[] = $uploadedfile;
+			$uos->request->files[] = new node_file(array(
+				'title'=>$uploadedfile['name'],
+				'mime'=>$uploadedfile['type'],
+				'size'=>$uploadedfile['size'],
+				'path'=>$uploadedfile['tmp_name'],
+			));//$uploadedfile);		
+		}
 	}	
 	//$uos->request->browser = $browsercapabilities->getBrowser(null, true);
   //$uos->request->urlpath = trim($_SERVER['REQUEST_URI'],'/');

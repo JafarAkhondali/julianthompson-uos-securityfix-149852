@@ -23,8 +23,12 @@ if (!empty($uos->request->targetstring)) {
 //print_r($uos->request);
 //print_r($uos->output);die();
 //echo rendernew($uos->output, $uos->request->displaystring);
-
-
+if (isset($uos->request->parameters['debugresponse'])) {
+	print_r($uos->request);
+	print_r($uos->output);
+	print_r($_FILES);
+	die();
+}
 
 // we found something do something otherwise be as silent as a ninja
 if (isset($uos->output['content'])) {

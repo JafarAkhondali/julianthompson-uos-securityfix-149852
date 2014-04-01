@@ -276,6 +276,7 @@ div.uos-element.node {
 	color: rgba(255,255,255,0.6);
 }
 
+div.uos-element.node > div.uos-element.node,
 div.uos-element.node > div > div.uos-element.node{
 	margin: 10px;
 }
