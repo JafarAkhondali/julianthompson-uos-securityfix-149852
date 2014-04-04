@@ -29,6 +29,11 @@ addoutputunique('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/exampl
 addoutputunique('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/examples/js/controls/TrackballControls.js");
 addoutputunique('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/examples/js/renderers/CSS3DRenderer.js");
 
+
+// http://vitalets.github.io/x-editable/
+addoutputunique('resources/style/', "//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css");
+addoutputunique('resources/script/', "//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js");
+
 //addoutputunique('resources/script/', $render->rendererurl . "_resources/libraries/bootstrap-switch-3.0/dist/js/bootstrap-switch.min.js");
 
 

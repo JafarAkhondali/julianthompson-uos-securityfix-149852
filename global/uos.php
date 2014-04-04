@@ -13,10 +13,12 @@ $uos->universe = new node_universe($uos->config->data->universe);
 //$target = false;
 if (!empty($uos->request->targetstring)) {
 	$target = fetchentity($uos->request->targetstring);
-	fetchentitychildren($target);
-  $target->trigger($uos->request->action);
-	//addoutput('content', $target);
-	$uos->response->code = 200;
+	if ($target) {
+		fetchentitychildren($target);
+  	$target->trigger($uos->request->action);
+		//addoutput('content', $target);
+		$uos->response->code = 200;
+	}
 }
 
 //print_r($uos->request->displaystring);
