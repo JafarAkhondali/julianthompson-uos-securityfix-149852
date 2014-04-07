@@ -63,7 +63,7 @@ case "$1" in
 		;;
 	
 	*) 
-		php -f $uosbasephp -- $request
+		php -f $uosbasephp -- $request {\"sessionid\":\"bhcgj1itlthraqsf4qf3de31t2\"}
 		#result=$(php -f $uosbasephp -- $request)
 		#echo -e $result
 		#echo printf $result

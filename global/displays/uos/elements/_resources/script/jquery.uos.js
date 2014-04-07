@@ -142,49 +142,57 @@ uos.loadcontent = function($element,path) {
   //  if (!ob.hasOwnProperty(i)) continue;
     // Do something with ob[i]
 	//}
+  $element.addClass('uos-processing');
+  var $requestelement = jQuery('<div class="uos-request"/>');
+  $requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> Updating display</h1>');      
+  $element.append($requestelement);  
 	//uostype_entity_get_display($element,elementdata.displaypaths[0]);
-	$.getJSON( path, function( data ) {
-  	//$( ".result" ).html( data );
-		var content = data.content;
-		var resources = data.resources;
-		var elementdata = data.elementdata;
-		
-		uos.log('uos.loadcontent.response',data);
-		
-		var $loadedcontent = $(content);
-		
-		jQuery.each(data.elementdata, function(index,elementdata) {
-			var newelementid = '#'+index;
-			$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
-			if ($newelement.length>0) {
-				//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
-				uos.initializeelement($newelement,elementdata);
-			}
-		});
-		
-		//uos.log(uos.getelementdata($loadedcontent))
-		
-  	$element.replaceWith($loadedcontent);
-	/*
-	jQuery.each(uos.elements, function(index,elementdata) {
-		var elementId = '#'+index;
-		$element = jQuery(elementId);	
+	setTimeout(function () {
+
+		$.getJSON( path, function( data ) {
+	  	//$( ".result" ).html( data );
+			var content = data.content;
+			var resources = data.resources;
+			var elementdata = data.elementdata;
 			
-	});
+			uos.log('uos.loadcontent.response',data);
+			
+			var $loadedcontent = $(content);
+			
+			jQuery.each(data.elementdata, function(index,elementdata) {
+				var newelementid = '#'+index;
+				$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
+				if ($newelement.length>0) {
+					//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
+					uos.initializeelement($newelement,elementdata);
+				}
+			});
+			
+			//uos.log(uos.getelementdata($loadedcontent))
+			
+	  	$element.replaceWith($loadedcontent);
+		/*
+		jQuery.each(uos.elements, function(index,elementdata) {
+			var elementId = '#'+index;
+			$element = jQuery(elementId);	
+				
+		});
+	
+	  	var replacementid = $newelement.attr('id');
+	  	// remove data for current element
+	  	delete uos.elements[elementid];
+	  	//uos.elements[replacementid] = data.resources.json;
+	  	jQuery.extend(uos.elements, data.resources.json);
+	
+	  	//uos.log('loadcontent',elementdata,elementid,replacementid,uos.elements,$loadedcontent);
+	
+	  	//uos.initializeelement($loadedcontent,uos.elements[replacementid]);
+	  	*/
+	  		uos.log('uos.loadcontent.elementdata',uos.getelementdata($loadedcontent));
+	  		if (selected) $loadedcontent.addClass('selected');
+			});	
+  	}, 500);
 
-  	var replacementid = $newelement.attr('id');
-  	// remove data for current element
-  	delete uos.elements[elementid];
-  	//uos.elements[replacementid] = data.resources.json;
-  	jQuery.extend(uos.elements, data.resources.json);
-
-  	//uos.log('loadcontent',elementdata,elementid,replacementid,uos.elements,$loadedcontent);
-
-  	//uos.initializeelement($loadedcontent,uos.elements[replacementid]);
-  	*/
-  	uos.log('uos.loadcontent.elementdata',uos.getelementdata($loadedcontent));
-  	if (selected) $loadedcontent.addClass('selected');
-	});	
 }
 
 uos.addBehaviours = function($element) {
@@ -699,13 +707,14 @@ if (navigator.geolocation) {
 		uos.log(position.coords.latitude + ", " + position.coords.longitude);
 	});
 }
-
+/*
 Array.prototype.inArray = function(comparer) { 
     for(var i=0; i < this.length; i++) { 
         if(comparer == this[i]) return true; 
     }
     return false; 
-}; 
+};
+*/ 
 
 Object.values = function(object) {
   var values = [];

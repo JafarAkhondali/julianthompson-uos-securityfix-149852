@@ -542,7 +542,7 @@ function addoutputunique($path,$content=FALSE,$attributes=array()) {
   
   if (substr($path, -1) == '/') {
   	$outputpathtrimmed = substr($outputpath,0,-2);
-  	print_r("if (isset($outputpathtrimmed)) \$searcharray = $outputpathtrimmed;");
+  	//print_r("if (isset($outputpathtrimmed)) \$searcharray = $outputpathtrimmed;");
   	eval ( "if (isset($outputpathtrimmed)) \$searcharray = $outputpathtrimmed;" );
 	  //print_r($searcharray);die();
 	  //if ($searcharray!=NULL) {
@@ -862,7 +862,7 @@ function rendernew($entity, $rendersettings = NULL) {
 	
 	$render->instanceid = get_instance_id( $render->entityconfig->class ). '__' . round((time() + microtime(true)) * 1000);		
 
-	$render->classtreestring = 'uos-element uos-uninitialized '.implode(' ', array_reverse($render->entityconfig->classtree));
+	$render->classtreestring = 'uos-element uos-uninitialized '.implode(' ', array_reverse($render->entityconfig->classtree)) . ' display-'.str_replace('.','-',$render->displaystring);
 	
 	$render->inheritancestring = implode(',', $render->entityconfig->classtree);
 	
@@ -877,8 +877,21 @@ function rendernew($entity, $rendersettings = NULL) {
 	$render->displayformat = array_pop($explodeddisplaystring);
 
 	$render->displaynames = array_keys($render->entityconfig->displays);
+
+	//remove some items for now
+	$render->displaynames = array_diff($render->displaynames, array('page.html'));
 	
 	$render->formatdisplaynames = preg_grep("/($render->displayformat|.*\.$render->displayformat)/i", $render->displaynames);
+	
+	$render->cachepath = UOS_CACHE;// . '32745275472/'. $displaystring . '/'; 
+
+
+	if (isset($uos->request->parameters['debugrender'])) {
+		print_r($uos->request);
+		print_r($entity);
+		print_r($render);
+		die();
+	}
 
 	if (isset($render->debug) && $render->debug) {
 		print_r($uos->request);
@@ -902,6 +915,8 @@ function rendernew($entity, $rendersettings = NULL) {
 			$render->wrapperoutput = getFileOutput($render->display->wrapper,$rendervariables);
 			$render->output = $render->wrapperoutput;
 		}
+		//print_r($render);
+		//die();
 		if (property_exists($render->display,'transport')) {
 			$render->workingpath = dirname($render->display->transport);
 			$render->transportoutput = getFileOutput($render->display->transport,$rendervariables);

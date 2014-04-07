@@ -159,7 +159,7 @@ $uos->actions = array();
 
 $uos->request = new StdClass(); 
 
-$uos->request->outputformat = new StdClass(); 
+//$uos->request->outputformat = new StdClass(); 
 
 $uos->response = new StdClass(); 
 
@@ -188,7 +188,8 @@ $uos->request->action = UOS_DEFAULT_ACTION;
 if (isset($argv)) {
 
  	$cliargs = (json_decode($argv[1]));
-  $uos->request->type = UOS_REQUEST_TYPE_CLI;
+  $uos->request->source = UOS_REQUEST_TYPE_CLI;
+  $uos->request->cliargs = $cliargs;
   $uos->request->sessionid = $cliargs->sessionid;//isset($cliargs->sessionid)?session_id($cliargs->sessionid):session_id();
 	$parsedurl = parse_url(trim($cliargs->url,'/'));
   $uos->request->urlpath = $parsedurl['path'];
@@ -203,7 +204,7 @@ if (isset($argv)) {
 // Webserver
 } elseif (isset($_SERVER['REQUEST_URI'])) {
 
-  $uos->request->commandtype = UOS_REQUEST_TYPE_GET;
+  $uos->request->source = 'browser';//UOS_REQUEST_TYPE_GET;
 	$uos->request->displaystring = UOS_DEFAULT_DISPLAY_STRING;
   
 	//Only enable for debug  
@@ -325,7 +326,8 @@ if (isset($uos->config->data->aliases[$uos->request->urlpath])) {
 	if (!empty($explodedurl)) {
 		// if we only have one string it must be a display string
 		if (count($explodedurl)==1) {
-			$uos->request->action = array_pop($explodedurl);
+			$uos->request->action = 'view';
+			$uos->request->displaystring = array_pop($explodedurl);
 		} else {
 			@list($uos->request->action,$uos->request->displaystring,$uos->request->extra) = $explodedurl;
 		}
@@ -393,9 +395,20 @@ if (!isset($explodedurl['dirname'])) {
 //render($universe);die();
 
 //$uos->request->username = $_SERVER['PHP_AUTH_USER'];
-session_start();
-$uos->request->sessionid = session_id();
-$uos->request->session = &$_SESSION;
+if (isset($uos->request->sessionid)) {
+	//session_id($uos->request->sessionid);
+}
+//session_start();
+//$uos->request->sessionid = session_id();
+//$uos->request->session = &$_SESSION;
+
+if (!isset($uos->request->session['history'])) {
+	//$uos->request->session['history'] = array();
+}
+//$uos->request->session['history'][] = $uos->request;
+
+//$_SESSION['history'][] = $uos->request;
+
 
 
 //print_r($uos->request);

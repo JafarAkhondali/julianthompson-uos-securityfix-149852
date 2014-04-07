@@ -338,32 +338,39 @@ function uostype_entity_event_header_dblclick($element, event) {
 	event.stopPropagation();
 }
 
-function uostype_entity_display_up($element, event) {
+function uostype_entity_display_change($element, increment) {
 	var elementdata = uos.getelementdata($element);
 	var elementid = $element.attr('id');
 	//elementdata.displaypaths
 	var displays = Object.values(elementdata.displays);
 	var displayindex = jQuery.inArray(elementdata.activedisplay,displays);
 	var displaycount = displays.length;
-	displayindex++;
+	displayindex+=increment;
 	if (displayindex>=displaycount) displayindex = 0;
+	if (displayindex<0) displayindex = (displaycount-1);
 	var newdisplay = displays[displayindex];
-	uos.log('displayup',elementdata.activedisplay,displays,displayindex,displaycount, newdisplay,elementdata);
-
+	uos.log('displaychange',elementdata.activedisplay,displays,displayindex,displaycount, newdisplay,elementdata);
+  //var $requestelement = jQuery('<div class="uos-request"/>');
+  //$requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> Adding files</h1>');
 	uos.loadcontent($element,"/"+elementdata.guid+".view.uosio?display="+newdisplay);
 }
+
+
 
 
 function uostype_entity_reload($element) {
 	var elementdata = uos.getelementdata($element);
 	uos.log('uostype_entity_reload',elementdata);
-	uos.loadcontent($element,"/"+elementdata.guid+".view.uosio");
+	uos.loadcontent($element,"/"+elementdata.guid+".view.uosio?display="+elementdata.activedisplay);
+}
+
+function uostype_entity_display_up($element, event) {
+	uostype_entity_display_change($element, 1);
 }
 
 
 function uostype_entity_display_down($element, event) {
-	var elementdata = uos.getelementdata($element);
-	uos.log('uostype_entity_display_down',elementdata);
+	uostype_entity_display_change($element, -1)
 }
 	
 

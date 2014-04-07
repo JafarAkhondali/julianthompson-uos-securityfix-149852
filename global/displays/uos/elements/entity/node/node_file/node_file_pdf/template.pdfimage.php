@@ -38,23 +38,37 @@ return $img;
   //unlink($out);
   //$out = "$out.png";
 	$filename = UOS_DATA.$entity->filepath->value;
+	$targetpath = $render->cachepath . $entity->filepath->value . '/';
+	
 	//echo $filename;  
   //copy
   //copy($pdf,$tmp);
-
-  $command = sprintf('/usr/local/bin/gs -sDEVICE=pngalpha -o %s.page-%%04d.png -r144 %s',$filename,$filename);
+  if (!file_exists($targetpath)) {
+		@mkdir($targetpath,0777,TRUE);
+	}
+	
+	$childindex = (isset($uos->request->parameters['childindex']))?$uos->request->parameters['childindex']:1;
+	
+  //$command = sprintf('sudo /usr/local/bin/gs -sDEVICE=pngalpha -o "%spage-%%04d.png" -r144 "%s"; sudo chmod -R 775 "%s"',$targetpath,$filename,$targetpath);	
+	
+  $command = sprintf('sudo /usr/local/bin/gs -sDEVICE=pngalpha -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
 
   //execute the command
   //echo $command;
-
-  exec($command);
+	$commandoutput = array();
+  $response = exec($command,$commandoutput);
   
   //echo $command;
   //echo basename($pdffile) . '.page-.*\.png';
-	$pagefiles = find_files(dirname($filename).'/', '.*\.page-.*\.png', TRUE);
+	$pagefiles = find_files($targetpath, 'page-.*\.png', TRUE);
+	
+  //print_r($command);print_r($targetpath);print_r($commandoutput);print_r($response);print_r($entity);print_r($pagefiles);return;
+	
   sort($pagefiles);
   //print_r($pagefiles);
   header("Content-type: image/png; charset=utf-8");
+  header("HTTP/1.1 200 OK");
+  //uos_header('Content-Disposition: attachment; filename="test.png"');
   readfile($pagefiles[0]);
   /*
   //$pagefiles = aaprojects_get_file_list(dirname($pdffile),basename($pdffile) . '.page-.*\.png',TRUE);

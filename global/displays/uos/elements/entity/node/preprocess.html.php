@@ -21,7 +21,7 @@ $draglinkfilename = "http://universeos/2868744583.view.webloc";
 $render->elementdata->draglink = "application/octet-stream:" . $render->attributes['title']. '.webloc' . ":" . $render->elementdata->clicktarget.'.view.webloc';
 if ($entity->filename) {
 	//$dragfilefile = $uos->request->siteurl . $entity->filepath->value;
-	$dragfilefile = $uos->request->siteurl . $entity->guid->value . '.file';
+	$dragfilefile = $uos->request->hosturl . '/'. $entity->guid->value . '.file';
 	$render->elementdata->dragfile = $entity->mimetype->value . ":" . $entity->filename->value . ":" . $dragfilefile;
 }
 
