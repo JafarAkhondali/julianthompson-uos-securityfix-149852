@@ -259,8 +259,6 @@ if (isset($argv)) {
 	
 	// GET overrides
 	
-	
-	
 	if(isset($uos->request->parameters['target'])) {
 		$uos->request->target = $uos->request->parameters['target'];
 	}

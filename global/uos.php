@@ -27,6 +27,7 @@ if (!empty($uos->request->targetstring)) {
 //echo rendernew($uos->output, $uos->request->displaystring);
 if (isset($uos->request->parameters['debugresponse'])) {
 	print_r($uos->request);
+	print_r($_POST);
 	print_r($uos->output);
 	print_r($_FILES);
 	die();

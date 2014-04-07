@@ -51,7 +51,7 @@ return $img;
 	
   //$command = sprintf('sudo /usr/local/bin/gs -sDEVICE=pngalpha -o "%spage-%%04d.png" -r144 "%s"; sudo chmod -R 775 "%s"',$targetpath,$filename,$targetpath);	
 	
-  $command = sprintf('sudo /usr/local/bin/gs -sDEVICE=pngalpha -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
+  $command = sprintf('/usr/local/bin/gs -sDEVICE=pngalpha -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
 
   //execute the command
   //echo $command;

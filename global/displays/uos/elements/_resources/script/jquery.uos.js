@@ -870,13 +870,19 @@ uos.dropfiles = function($element,files) {
     var $requestelement = jQuery('<div class="uos-request"/>');
     $requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> Adding files</h1>');
     
-    var formData = new FormData();
+    var postData = new FormData();
     
-    formData.append("target", elementdata.guid);
+		//postData.append('files', files);
+		
+    postData.append("target", elementdata.guid);
     
-    formData.append("action", 'dropfiles');
+    postData.append("action", 'dropfiles');
+
+    postData.append("display", 'uosio');
     
-    formData.append("display", 'html');
+    //postData.append("debugrequest", '1');
+    //postData.append("debugresponse", '1');
+    //postData.append("debugrender", '1');
     
     var $requestinfo = jQuery('<div class="uos-request-info"/>');
     
@@ -884,8 +890,12 @@ uos.dropfiles = function($element,files) {
 		  uos.log("Dropped File : ", files[i]);
 		  filenames.push(files[i].name + ' (' + uos.getReadableFileSizeString(files[i].size) + ')');
 		  $requestinfo.append('<div class="uos-file"><i class="fa fa-file-text"></i><div class="uos-file-title">'+files[i].name+'</div>');
-		  formData.append('files[]', files[i]);
+		  postData.append("files[]", files[i]);
 		}
+		
+		//postData.append("file", files[0]);
+
+		console.log('uos.dropfiles',elementdata, postData);
 
     $requestelement.append($requestinfo);
     
@@ -918,10 +928,10 @@ uos.dropfiles = function($element,files) {
 		//if (tests.formdata) {
 
 		var uosrequest = new XMLHttpRequest();
-		uosrequest.open('POST', '/global/uos.php');//?debugresponse');
+		uosrequest.open('POST', '/global/uos.php?random=' + (new Date).getTime());
 		//xhr.setRequestHeader("X_FILENAME", file.name);
 		
-		console.log('uos.dropfiles',elementdata,formData);
+		console.log('uos.dropfiles',elementdata,postData);
 		
 		uosrequest.upload.addEventListener('progress', function(event) {
 			var progresspercent = (event.loaded / event.total) * 100;
@@ -935,24 +945,26 @@ uos.dropfiles = function($element,files) {
 			$.growl.notice({ title : 'Uploaded File(s)', message:  filenames.join(', ') + ' into ' + $element.attr('title'), location : 'br'  });	
 			
 			//$requestinfo.remove();
+			var data = JSON.parse(event.target.response);
 			
-			var $loadedcontent = $(event.target.response);
+  		uos.log('uos.dropfiles:response',event.target,data);
+			var $loadedcontent = $(data.content);
 		
-			//jQuery.each(data.elementdata, function(index,elementdata) {
-			//	var newelementid = '#'+index;
-			//	$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
-			//	if ($newelement.length>0) {
-			//		//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
-			//		uos.initializeelement($newelement,elementdata);
-			//	}
-			//});
+			jQuery.each(data.elementdata, function(index,elementdata) {
+				var newelementid = '#'+index;
+				$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
+				if ($newelement.length>0) {
+					//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
+					uos.initializeelement($newelement,elementdata);
+				}
+			});
 			
 			//uos.log(uos.getelementdata($loadedcontent))
 			$element.removeClass('uos-processing');
   		$element.replaceWith($loadedcontent); 
 		};
 		
-		uosrequest.send(formData);	
+		uosrequest.send(postData);	
 };
 
 
