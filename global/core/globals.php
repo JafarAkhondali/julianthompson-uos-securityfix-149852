@@ -94,7 +94,9 @@ define( 'UOS_GUID_FIELD_SEPARATOR','-');
 
 
 // Get Database from Virtual host / htaccess file
-define( 'UOS_DATABASE',					getenv('UOS_DATABASE'));
+define( 'UOS_DATABASE',				getenv('UOS_DATABASE'));
+define( 'UOS_BIN_GS',					getenv('UOS_BIN_GS'));
+define( 'UOS_BIN_IM',					getenv('UOS_BIN_IM'));
 
 define(	'UOS_REQUEST_TYPE_CLI',		'cli');
 define(	'UOS_REQUEST_TYPE_GET',		'get');
@@ -276,7 +278,7 @@ if (isset($argv)) {
 	}
 }
 
-
+$uos->request->bindir = PHP_BINDIR;
 
 
 // look in paths first

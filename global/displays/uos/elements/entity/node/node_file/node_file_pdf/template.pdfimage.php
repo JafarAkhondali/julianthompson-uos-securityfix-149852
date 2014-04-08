@@ -25,9 +25,9 @@ return $img;
 */
   //'private/myo2bill12.04.04.pdf.page-%04d.png'
   //ImageMagick convert command
-  //$exec = '/usr/local/bin/convert -append -fuzz 1% -trim -colorspace rgb -background white -density 300 -quality 100 -resize 50%';
-
-  //$exec = '/usr/local/bin/gs -sDEVICE=pngalpha -o %s.page-%04d.png -r144 %s';
+  //$exec = UOS_BIN_IM . ' -append -fuzz 1% -trim -colorspace rgb -background white -density 300 -quality 100 -resize 50%';
+  // /usr/local/bin/gs 
+  //$exec = UOS_BIN_GS . ' -sDEVICE=pngalpha -o %s.page-%04d.png -r144 %s';
   //echo $exec; die(); 
   
   //temp file
@@ -49,9 +49,9 @@ return $img;
 	
 	$childindex = (isset($uos->request->parameters['childindex']))?$uos->request->parameters['childindex']:1;
 	
-  //$command = sprintf('sudo /usr/local/bin/gs -sDEVICE=pngalpha -o "%spage-%%04d.png" -r144 "%s"; sudo chmod -R 775 "%s"',$targetpath,$filename,$targetpath);	
+  //$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -o "%spage-%%04d.png" -r144 "%s"; sudo chmod -R 775 "%s"',$targetpath,$filename,$targetpath);	
 	
-  $command = sprintf('/usr/local/bin/gs -sDEVICE=pngalpha -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
+  $command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
 
   //execute the command
   //echo $command;
