@@ -29,6 +29,7 @@ fi
 cd $uosbasedir/global/
 uosbasephp=$uosbasedir/global/uos.php
 uosdata=$uosbasedir/data
+uoscache=$uosbasedir/cache
 uosconfigfile=$uosdata/config/config.uos.bash
 
 uosconfigfound="[Missing]"
@@ -60,6 +61,11 @@ case "$1" in
 	'syncdata')
 		echo "Synching to $synctarget1"
 		scp -r $uosdata/* $synctarget1
+		;;
+		
+	'clearcache')
+		echo "Clearing cache $uoscache"
+		rm -rf $uoscache/*
 		;;
 	
 	*) 

@@ -50,14 +50,14 @@ return $img;
 	$childindex = (isset($uos->request->parameters['childindex']))?$uos->request->parameters['childindex']:1;
 	
   //$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -o "%spage-%%04d.png" -r144 "%s"; sudo chmod -R 775 "%s"',$targetpath,$filename,$targetpath);	
-	
-  $command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
+	if (!file_exists($targetpath.'page-'.$childindex.'.png')) {
+  	$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
 
-  //execute the command
-  //echo $command;
-	$commandoutput = array();
-  $response = exec($command,$commandoutput);
-  
+	  //execute the command
+	  //echo $command;
+		$commandoutput = array();
+	  $response = exec($command,$commandoutput);
+	}  
   //echo $command;
   //echo basename($pdffile) . '.page-.*\.png';
 	$pagefiles = find_files($targetpath, 'page-.*\.png', TRUE);
