@@ -11,6 +11,7 @@ class entity {
 	public		$children = array();
 	public		$actions = null;
 	public 		$scope = null;
+	public 		$indexproperty = null;
 	
 	function __construct($initializer=null) {
 
@@ -196,6 +197,13 @@ class entity {
       }
     } 
     return FALSE;
+  }
+  
+  public function setindexproperty($propertyname) {
+    if ($this->propertyexists($propertyname)) {  	
+    	return $this->indexproperty = $this->properties[$propertyname];
+    }
+    return false;
   }
   
   public function callaction($action,$parameters=NULL) {

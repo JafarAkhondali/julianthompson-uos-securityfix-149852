@@ -30,6 +30,10 @@ class field extends entity {
   	return "text";
   }
   
+  function getdbfieldvalue() {
+  	return $this->value;
+  }
+  
   public function __toString() {
     return is_object($this->value) ? print_r($this->value,TRUE) : (string) $this->value;
   }

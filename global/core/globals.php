@@ -248,6 +248,7 @@ if (isset($argv)) {
 				'title'=>$uploadedfile['name'],
 				'mime'=>$uploadedfile['type'],
 				'size'=>$uploadedfile['size'],
+				'checksum'=>md5_file($uploadedfile['tmp_name']),
 				'path'=>$uploadedfile['tmp_name'],
 			));//$uploadedfile);		
 		}

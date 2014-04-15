@@ -59,8 +59,15 @@ case "$1" in
 	  ;;
 	    
 	'syncdata')
-		echo "Synching to $synctarget1"
-		scp -r $uosdata/* $synctarget1
+		targetname="synctarget_$2_name"
+		targethost="synctarget_$2_host"
+		targetname=${!targetname}
+		targethost=${!targethost}
+		#if [ -z $targetname ]; then
+			echo "Synching to $targetname"
+			echo "$targethost"
+			scp -r $uosdata/* $targethost
+		#fi
 		;;
 		
 	'clearcache')

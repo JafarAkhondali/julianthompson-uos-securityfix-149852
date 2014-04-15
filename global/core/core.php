@@ -1103,3 +1103,43 @@ function diverse_array($vector) {
             $result[$key2][$key1] = $value2; 
     return $result; 
 } 
+
+
+function entity_db_describe($entity) {
+	$tables = array();
+	foreach($entity->properties as $property) {
+		$tables[($property->scope)][$property->key] = $property->getdbfieldtype();
+	}
+	$indexscope = $entity->indexproperty->scope;
+	$indexelements = array($indexscope.'_id'=> $entity->indexproperty->getdbfieldtype());
+	
+	foreach($tables as $scope=>$property) {
+		if ($scope!==$indexscope) {
+			$tables[$scope] = array_merge($indexelements, $tables[$scope]);
+		}
+	}
+	return $tables;
+}
+
+function entity_db_data($entity) {
+	$tables = array();
+	foreach($entity->properties as $property) {
+		$tables[($property->scope)][$property->key] = $property->getdbfieldvalue();
+	}
+	$indexscope = $entity->indexproperty->scope;
+	$indexelements = array($indexscope.'_id'=> &$tables[$indexscope][$entity->indexproperty->key]);
+	
+	foreach($tables as $scope=>$property) {
+		if ($scope!==$indexscope) {
+			$tables[$scope] = array_merge($indexelements, $tables[$scope]);
+		}
+	}
+	return $tables;
+}
+
+function entity_db_insert($entity) {
+	$tables = entity_db_data($entity);
+	foreach($tables as $scope=>$values) {
+		echo "INSERT INTO `".$scope."` (`".implode('`,`',array_keys($values))."`) VALUES ('".implode('\',\'',$values)."');\n";
+	}
+}

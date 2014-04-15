@@ -968,6 +968,13 @@ uos.dropfiles = function($element,files) {
 };
 
 
+uos.requirestylesheet = function(cssurl) {
+	if($('link[rel*=style][href="'+cssurl+'"]').length==0) {
+	    $("head").append('<link rel="stylesheet" type="text/css" href="'+cssurl+'">');
+	}
+};
+
+
 uos.microtime = function(get_as_float) {
   //  discuss at: http://phpjs.org/functions/microtime/
   // original by: Paulo Freitas
