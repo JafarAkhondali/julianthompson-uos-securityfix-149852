@@ -1105,7 +1105,7 @@ function diverse_array($vector) {
 } 
 
 
-function entity_db_describe($entity) {
+function db_entity_structure($entity) {
 	$tables = array();
 	foreach($entity->properties as $property) {
 		$tables[($property->scope)][$property->key] = $property->getdbfieldtype();
@@ -1121,7 +1121,11 @@ function entity_db_describe($entity) {
 	return $tables;
 }
 
-function entity_db_data($entity) {
+function db_entity_primary_key($entity) {
+	return $entity->indexproperty->key;
+}
+
+function db_entity_data($entity) {
 	$tables = array();
 	foreach($entity->properties as $property) {
 		$tables[($property->scope)][$property->key] = $property->getdbfieldvalue();
@@ -1137,9 +1141,23 @@ function entity_db_data($entity) {
 	return $tables;
 }
 
-function entity_db_insert($entity) {
-	$tables = entity_db_data($entity);
+function db_entity_insert($entity) {
+	$tables = db_entity_data($entity);
 	foreach($tables as $scope=>$values) {
 		echo "INSERT INTO `".$scope."` (`".implode('`,`',array_keys($values))."`) VALUES ('".implode('\',\'',$values)."');\n";
 	}
+}
+
+function db_create_tables($entity) {
+	$tables = db_entity_structure($entity);
+	$primarykey = ', PRIMARY KEY (`'.db_entity_primary_key($entity).'`)';
+	foreach($tables as $scope=>$values) {
+		$fielddata = array();
+		foreach($values as $key=>$value) {
+			$fielddata[] = '`' . $key . '` ' . $value;
+		}
+		$sql = "CREATE TABLE IF NOT EXISTS `".$scope."` (".implode(', ',$fielddata)."$primarykey);";
+		echo $sql;
+		$primarykey = '';
+	}	
 }
