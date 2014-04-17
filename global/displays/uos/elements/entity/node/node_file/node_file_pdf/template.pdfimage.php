@@ -50,7 +50,8 @@ return $img;
 	$childindex = (isset($uos->request->parameters['childindex']))?$uos->request->parameters['childindex']:1;
 	
   //$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -o "%spage-%%04d.png" -r144 "%s"; sudo chmod -R 775 "%s"',$targetpath,$filename,$targetpath);	
-	if (!file_exists($targetpath.'page-'.$childindex.'.png')) {
+  $childindexpadded = sprintf('%04d', $childindex);
+	if (!file_exists($targetpath.'page-'. $childindexpadded . '.png')) {
   	$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dUseCIEColor=true -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
 
 	  //execute the command
