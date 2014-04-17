@@ -1,6 +1,7 @@
 <?php
-
+include_once "core/const.php";
 include_once "core/globals.php";
+
 
 //register_shutdown_function('universe_shutdown');
 //set_error_handler('handleError');
@@ -52,8 +53,6 @@ function fetchentity($guid) {
 	}
 	return null;
 }
-
-
 
 function fetchentitychildren(&$entity) {
 	global $uos;
@@ -1095,6 +1094,7 @@ function setIfUnset(&$variable,$value) {
 	return (isset($variable))?$variable=$variable:$variable=$value;
 }
 
+
 //http://www.php.net/manual/en/reserved.variables.files.php
 function diverse_array($vector) { 
     $result = array(); 
@@ -1105,59 +1105,5 @@ function diverse_array($vector) {
 } 
 
 
-function db_entity_structure($entity) {
-	$tables = array();
-	foreach($entity->properties as $property) {
-		$tables[($property->scope)][$property->key] = $property->getdbfieldtype();
-	}
-	$indexscope = $entity->indexproperty->scope;
-	$indexelements = array($indexscope.'_id'=> $entity->indexproperty->getdbfieldtype());
-	
-	foreach($tables as $scope=>$property) {
-		if ($scope!==$indexscope) {
-			$tables[$scope] = array_merge($indexelements, $tables[$scope]);
-		}
-	}
-	return $tables;
-}
 
-function db_entity_primary_key($entity) {
-	return $entity->indexproperty->key;
-}
 
-function db_entity_data($entity) {
-	$tables = array();
-	foreach($entity->properties as $property) {
-		$tables[($property->scope)][$property->key] = $property->getdbfieldvalue();
-	}
-	$indexscope = $entity->indexproperty->scope;
-	$indexelements = array($indexscope.'_id'=> &$tables[$indexscope][$entity->indexproperty->key]);
-	
-	foreach($tables as $scope=>$property) {
-		if ($scope!==$indexscope) {
-			$tables[$scope] = array_merge($indexelements, $tables[$scope]);
-		}
-	}
-	return $tables;
-}
-
-function db_entity_insert($entity) {
-	$tables = db_entity_data($entity);
-	foreach($tables as $scope=>$values) {
-		echo "INSERT INTO `".$scope."` (`".implode('`,`',array_keys($values))."`) VALUES ('".implode('\',\'',$values)."');\n";
-	}
-}
-
-function db_create_tables($entity) {
-	$tables = db_entity_structure($entity);
-	$primarykey = ', PRIMARY KEY (`'.db_entity_primary_key($entity).'`)';
-	foreach($tables as $scope=>$values) {
-		$fielddata = array();
-		foreach($values as $key=>$value) {
-			$fielddata[] = '`' . $key . '` ' . $value;
-		}
-		$sql = "CREATE TABLE IF NOT EXISTS `".$scope."` (".implode(', ',$fielddata)."$primarykey);";
-		echo $sql;
-		$primarykey = '';
-	}	
-}
