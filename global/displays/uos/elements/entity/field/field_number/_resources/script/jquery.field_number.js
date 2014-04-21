@@ -37,6 +37,7 @@ function uostype_field_number_initialize($element) {
 				min: 0,
 				step: 5
 	}).on('slideStop', function(event) {
+		uos.log('slidestop');
 		/*
 		var $this = $(this);
 		var sliderdata = $this.data('slider');

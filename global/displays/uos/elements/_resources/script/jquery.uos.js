@@ -17,6 +17,8 @@ uos.types['global'] = {};
 
 uos.settings = {};
 
+uos.session = {};
+
 
 //console.log(el.element);
 
@@ -536,8 +538,7 @@ uos.buildDragHelper = function() {
 }
 
 
-uos.initialize  = function() {
-
+uos.initialize = function() {
 
 	//$(document).bind('keydown', 'Ctrl+s', saveChanges);
 	
@@ -576,6 +577,8 @@ uos.initialize  = function() {
 	}	
 
 	uos.buildToolbar();
+	
+	uos.getcurrentlocation();
 	//filtermessages('jmt');
 };
 
@@ -694,19 +697,7 @@ function saveChanges(e){
 }
 
 
-// Check for geolocation support
 
-if (navigator.geolocation) {
-
-// Use method getCurrentPosition to get coordinates
-
-	navigator.geolocation.getCurrentPosition(function (position) {
-
-		// Access them accordingly
-
-		uos.log(position.coords.latitude + ", " + position.coords.longitude);
-	});
-}
 /*
 Array.prototype.inArray = function(comparer) { 
     for(var i=0; i < this.length; i++) { 
@@ -987,4 +978,21 @@ uos.microtime = function(get_as_float) {
   var s = parseInt(now, 10);
 
   return (get_as_float) ? now : (Math.round((now - s) * 1000) / 1000) + ' ' + s;
+};
+
+uos.setcurrentlocation = function(coords) {
+
+};
+
+
+// Check for geolocation support
+uos.getcurrentlocation = function() {
+	if (navigator.geolocation) {
+	// Use method getCurrentPosition to get coordinates	
+		navigator.geolocation.getCurrentPosition(function (position) {
+			// Access them accordingly
+			uos.session.coordinates = (position.coords);
+			uos.log('uos.getcurrentlocation',uos.session.coordinates);
+		});
+	}
 };

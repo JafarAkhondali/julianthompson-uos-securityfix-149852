@@ -830,13 +830,23 @@ function rendernew($entity, $rendersettings = NULL) {
 		$render = (object) $rendersettings;
 	} else {
 		$render = new StdClass();	
-		if (is_string($rendersettings)) {
+		if (is_object($entity) && is_subclass_of($entity,'entity') && !empty($entity->displaymode)) {
+			$render->displaystring = $entity->displaymode;
+			$render->displaymode = $entity->displaymode;
+	//if ($render->displaystring=='slider.html') {
+	//	return print_r($render,TRUE);
+	//}
+		} elseif (is_string($rendersettings) && (!empty($rendersettings))) {
 			$render->displaystring = $rendersettings;
 		}
 	}	
+	
+
+	
 	setIfUnset($render->activerenderer, UOS_DEFAULT_DISPLAY);
 	
 	setIfUnset($render->displaystring, $uos->request->displaystring);
+
 
 	$render->output = '';
 	$render->finishprocessing = FALSE;
@@ -1103,6 +1113,9 @@ function diverse_array($vector) {
             $result[$key2][$key1] = $value2; 
     return $result; 
 } 
+
+
+
 
 
 
