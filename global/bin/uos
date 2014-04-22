@@ -64,9 +64,21 @@ case "$1" in
 		targetname=${!targetname}
 		targethost=${!targethost}
 		#if [ -z $targetname ]; then
-			echo "Synching to $targetname"
+			echo "Synching all data to $targetname"
 			echo "$targethost"
 			scp -r $uosdata/* $targethost
+		#fi
+		;;
+		
+	'syncconf')
+		targetname="synctarget_$2_name"
+		targethost="synctarget_$2_host"
+		targetname=${!targetname}
+		targethost=${!targethost}
+		#if [ -z $targetname ]; then
+			echo "Synching config to $targetname"
+			echo "$targethost"
+			scp -r $uosdata/config/* $targethost/config/
 		#fi
 		;;
 		
