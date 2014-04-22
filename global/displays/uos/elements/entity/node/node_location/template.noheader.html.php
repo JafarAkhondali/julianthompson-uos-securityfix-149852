@@ -23,7 +23,7 @@
 	  //var start = document.getElementById('start').value;
 	  
 	  //'kt19 8sl'
-	  var end = new google.maps.LatLng(51.341205, -0.271651);
+	  var end = new google.maps.LatLng(<?php print (string) $entity->latitude;?>,<?php print (string) $entity->longitude;?>);
 	  //var end = document.getElementById('end').value;
 	  var request = {
 	      origin:start,
