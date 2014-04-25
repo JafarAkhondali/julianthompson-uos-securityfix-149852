@@ -24,6 +24,6 @@ if ($entity->filename) {
 	$render->elementdata->dragfile = $entity->mimetype->value . ":" . $entity->filename->value . ":" . $dragfilefile;
 }
 
-$entity->intensity->displaymode = 'slider.html';
+$entity->intensity->displaystring = 'slider.html';
 
 addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/node_device/_resources/script/jquery.node_device.js");

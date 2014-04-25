@@ -6,7 +6,7 @@ class entity {
 	public		$properties = array();
 	
 	//public	$__log = array();
-	public		$displaymode = '';
+	public		$displaystring = '';
 	private		$parent = null;
 	public		$children = array();
 	public		$actions = null;

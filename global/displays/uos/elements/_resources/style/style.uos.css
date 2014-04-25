@@ -589,3 +589,42 @@ div.node_file_video div.video-container embed {
     width: 100%;
     height: 100%;
 }
+
+textarea.editvalue {
+	color: black;
+	width: 100%;
+}
+
+div.uos-element.display-noheader-html > i.fa {
+	font-size: 100px;
+	display: block;
+	float: none;
+	position: relative;
+}
+div.uos-element.display-noheader-html > h1 {
+	text-align: center;
+}
+div.uos-element.display-noheader-html > h2 {
+	text-align: center;
+	font-size: 0.9em;
+}
+
+div.uos-element.node_message.display-note-html {
+	background-color: #fff9d9;
+}
+
+div.uos-element.node_message.display-note-html > .field {
+	font-family: 'Shadows Into Light Two', 'cursive';
+	font-size: 16px;
+	margin: 0 20px;
+	border: none;
+	color: rgba(0,0,0,0.8);
+}
+
+div.uos-element.node_message.display-note-html > .field > label {
+	display: none;
+}
+
+div.uos-element.node_message.display-note-html > .field > .separator {
+	display: none;
+}

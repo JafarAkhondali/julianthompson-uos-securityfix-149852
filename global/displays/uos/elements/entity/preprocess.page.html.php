@@ -73,3 +73,5 @@ addoutputunique('resources/script/', "https://maps.googleapis.com/maps/api/js?v=
 addoutputunique('resources/style/', $render->rendererurl."elements/_resources/style/style.uos.css");
 
 addoutputunique('resources/style/', $render->rendererurl."elements/_resources/style/style.uos.css");
+
+addoutputunique('resources/style/', "http://fonts.googleapis.com/css?family=Shadows+Into+Light+Two");

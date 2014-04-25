@@ -93,7 +93,7 @@ uos.initializeelement = function($element,elementdata) {
 	$element.addClass('uos-initialized');
 	
 	//uos.logging = false;
-	//uos.log('uos.initializeelementx',$element.attr('id'),uos.getelementdata($element));
+	uos.log('uos.initializeelementx',$element.attr('id'),uos.getelementdata($element));
 	//uos.logging = false;
 }
 
@@ -157,43 +157,41 @@ uos.loadcontent = function($element,path) {
 			var resources = data.resources;
 			var elementdata = data.elementdata;
 			
-			uos.log('uos.loadcontent.response',data);
+			uos.log('uos.loadcontent.response',content, resources, elementdata);
 			
 			var $loadedcontent = $(content);
 			
-			jQuery.each(data.elementdata, function(index,elementdata) {
-				var newelementid = '#'+index;
-				$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
-				if ($newelement.length>0) {
-					//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
-					uos.initializeelement($newelement,elementdata);
-				}
-			});
+			//load scripts and stylesheets
+			//var scriptloads = uos.loadscripts(data.resources.script);
+			//uos.loadstyles(data.resources.style);
 			
-			//uos.log(uos.getelementdata($loadedcontent))
 			
-	  	$element.replaceWith($loadedcontent);
-		/*
-		jQuery.each(uos.elements, function(index,elementdata) {
-			var elementId = '#'+index;
-			$element = jQuery(elementId);	
+			// when scripts are loaded
+			jQuery.getScript(data.resources.script,function(){
+			//$.when.apply(scriptloads).done(function(){
+				//uos.log('loadedscript',data.elementdata);
+				//uos.log(uos);
 				
-		});
-	
-	  	var replacementid = $newelement.attr('id');
-	  	// remove data for current element
-	  	delete uos.elements[elementid];
-	  	//uos.elements[replacementid] = data.resources.json;
-	  	jQuery.extend(uos.elements, data.resources.json);
-	
-	  	//uos.log('loadcontent',elementdata,elementid,replacementid,uos.elements,$loadedcontent);
-	
-	  	//uos.initializeelement($loadedcontent,uos.elements[replacementid]);
-	  	*/
-	  		uos.log('uos.loadcontent.elementdata',uos.getelementdata($loadedcontent));
-	  		if (selected) $loadedcontent.addClass('selected');
-			});	
-  	}, 500);
+
+				// process elements				
+				jQuery.each(data.elementdata, function(index,elementdata) {
+					var newelementid = '#'+index;
+					$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
+					if ($newelement.length>0) {
+						//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
+						uos.log('$newelement',$newelement.html());
+						uos.initializeelement($newelement,elementdata);
+					}
+				});				
+				
+				$element.replaceWith($loadedcontent);				
+
+	  		uos.log('uos.loadcontent.elementdata',uos.getelementdata($newelement));
+	  		if (selected) $loadedcontent.addClass('selected');	
+	  		uos.buildToolbar();			
+			});			
+		});	
+  }, 500);
 
 }
 
@@ -204,11 +202,15 @@ uos.addBehaviours = function($element) {
 	var uostypetree = elementdata.typetree;
 	//uos.log('uos.addBehaviors',elementdata);
   var elementactions = {};
+  //console.log('addBehaviours', elementdata, uos.types);
 	//for (in= 0; index < a.length; ++index) {
+	//for (var utindex = uostypetree.length-1; utindex >=0; utindex--) {
 	for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
+		//uos.log('searching for '+searchtypename)
+	//for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
 		var searchtypename = uostypetree[utindex];
-		//console.log(searchtypename);
 		if(uos.types[searchtypename]) {
+	  	//console.log('found :',searchtypename,uos.types[searchtypename]);
 			var currenttype = uos.types[searchtypename];
 			if (currenttype.actions) {
 				uos.log('found actions for definition',uostype, searchtypename, currenttype.actions);
@@ -223,6 +225,8 @@ uos.addBehaviours = function($element) {
 				}
 				//uos.log('addBehavioursx', uostype, elementactions);
 			}
+		} else {
+	  	//console.log('not found :',searchtypename,uos.types[searchtypename]);		
 		}
 	}
 
@@ -238,9 +242,17 @@ uos.addBehaviours = function($element) {
 	uos.log('addBehaviours.finished', uostype, elementactions);
 };
 
+
+uos.loadstyles = function(styles) {
+	for (index = 0; index < styles.length; ++index) {
+	    console.log('uos.loadstyles',styles[index]);
+	}
+	//$('<link/>', {rel: 'stylesheet', href: 'myHref'}).appendTo('head');
+};	
+
 uos.addActions = function($element) {
 
-}
+};
 
 uos.log = function() {
 	if (uos.logging && console && console.log) {
@@ -748,6 +760,27 @@ function unique(list) {
   });
   return result;
 }
+
+/* enhance $.getSctipt to handle mutiple scripts */
+var getScript = jQuery.getScript;
+
+jQuery.getScript = function( resources, callback ) {
+
+	var counter = 0;
+	var length = resources.length;
+	var handler = function() { counter++; };
+	var deferreds = [];
+  $.ajaxSetup({ cache: true });	
+	for (var idx = 0 ; idx < length; idx++ ) {
+		deferreds.push(
+			getScript( resources[ idx ], handler )
+		);
+	}
+  $.ajaxSetup({ cache: false });	
+	jQuery.when.apply( null, deferreds ).then(function() {
+		callback&&callback();
+	});
+};
 
 
 // remove when we've updated all the variables

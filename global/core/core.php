@@ -37,6 +37,7 @@ function fetchentity($guid) {
 		//pretend to load from db
 		if (isset($uos->config->data->entities[$guid])) {
 			$propertyobject = $uos->config->data->entities[$guid];
+			$propertyobject->created = time();
 			$type = isset($propertyobject->type)?$propertyobject->type:'StdClass';
 			$entity = new $type($propertyobject);	
 			//fetchentitychildren($entity);
@@ -820,12 +821,14 @@ function getFileOutput($file,$variables) {
   return $output;	  
 }
 
-
+function render($entity, $rendersettings = NULL) {
+	return rendernew($entity, $rendersettings);
+}
 
 function rendernew($entity, $rendersettings = NULL) {
 
 	global $uos;
-
+	/*
 	if (is_array($rendersettings) || is_object($rendersettings)) {
 		$render = (object) $rendersettings;
 	} else {
@@ -840,9 +843,20 @@ function rendernew($entity, $rendersettings = NULL) {
 			$render->displaystring = $rendersettings;
 		}
 	}	
+	*/
 	
+	$render = new StdClass();	
+	
+	if (is_object($entity) && !empty($entity->displaystring)) {
+			$render->displaystring = $entity->displaystring;
+	} 
+	
+	if (is_array($rendersettings) || is_object($rendersettings)) {
+			$render = (object) ( (array) $render + (array) $rendersettings);
+	}	elseif (is_string($rendersettings) && (!empty($rendersettings))) {
+			$render->displaystring = $rendersettings;
+	}
 
-	
 	setIfUnset($render->activerenderer, UOS_DEFAULT_DISPLAY);
 	
 	setIfUnset($render->displaystring, $uos->request->displaystring);
@@ -863,7 +877,7 @@ function rendernew($entity, $rendersettings = NULL) {
 	get_type_displays($entity,$render->rendererpath);
 	
 	if (!isset($render->entityconfig->displays[$render->displaystring])) {
-		return "I can't show you that.";
+		return "I can't show you that. (".$render->displaystring.")";
 	}
 	
 	$render->display = $render->entityconfig->displays[$render->displaystring]; 
@@ -907,25 +921,34 @@ function rendernew($entity, $rendersettings = NULL) {
 		print_r($render);
 		die();
 	}
-		
+	
 	try {
+	
+		//echo $render->display->preprocess;
+		
 		if (property_exists($render->display,'preprocess')) {
 			$render->workingpath = dirname($render->display->preprocess);
 			$render->preprocessoutput = getFileOutput($render->display->preprocess,$rendervariables);
 			$render->output = &$render->preprocessoutput;
 		}
+		
+		
+
 		if (property_exists($render->display,'template')) {
 			$render->workingpath = dirname($render->display->template);
 			$render->templateoutput = getFileOutput($render->display->template,$rendervariables);
 			$render->output = $render->templateoutput;
 		}
+		//echo $render->display->template;
+		//echo "here";
+		//print_r($render->output);
+		//die();
 		if (property_exists($render->display,'wrapper')) {
 			$render->workingpath = dirname($render->display->wrapper);
 			$render->wrapperoutput = getFileOutput($render->display->wrapper,$rendervariables);
 			$render->output = $render->wrapperoutput;
 		}
-		//print_r($render);
-		//die();
+
 		if (property_exists($render->display,'transport')) {
 			$render->workingpath = dirname($render->display->transport);
 			$render->transportoutput = getFileOutput($render->display->transport,$rendervariables);
@@ -941,6 +964,7 @@ function rendernew($entity, $rendersettings = NULL) {
 	//$file = $render->rendererelements.'/uos/template.
 	//return getFileOutput($file,array('entity'=>&$entity,'render'=>&$render, 'uos'=>&$uos));
 }
+
 
 
 function get_type_info_old($entity) {

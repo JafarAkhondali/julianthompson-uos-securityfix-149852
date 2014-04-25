@@ -1,0 +1,1 @@
+<?php print date('jS F Y',$entity->value);?>

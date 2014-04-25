@@ -1,8 +1,10 @@
+<i class="fa fa-<?php print $render->entityconfig->icon;?> fa-stack-1x"></i> 
 <h1><?php print (string) $entity->title;?></h1>
 <h2>(<?php print (string) $entity->guid->value;?>)</h2>
 <?php //print rendernew($entity->properties,'html'); ?>
 <?php //print rendernew($entity->children,'html'); ?>
 <?php //print render($entity->getactions()); ?>
+<!--
 <pre>
 <?php print $render->display->preprocess;?>
 
@@ -12,5 +14,6 @@
 
 <?php print_r($render);?>
 </pre>
+-->
 
 <div class="clearboth"></div>	
