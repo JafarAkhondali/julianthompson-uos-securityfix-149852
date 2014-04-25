@@ -932,8 +932,7 @@ function rendernew($entity, $rendersettings = NULL) {
 			$render->output = &$render->preprocessoutput;
 		}
 		
-		
-
+	
 		if (property_exists($render->display,'template')) {
 			$render->workingpath = dirname($render->display->template);
 			$render->templateoutput = getFileOutput($render->display->template,$rendervariables);
