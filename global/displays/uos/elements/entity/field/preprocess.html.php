@@ -13,7 +13,7 @@ if ($entity->visible!==TRUE) {
 // equivalent of calling parent preprocess method
 include $render->rendererpath . '/elements/entity/preprocess.html.php';
 
-$render->elementdata->displaykey = 'field';
+//$render->elementdata->displaykey = 'field';
 
 //$render->attributes['draggable'] = "false";
 

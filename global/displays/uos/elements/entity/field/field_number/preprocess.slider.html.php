@@ -4,7 +4,7 @@
 // include parent behaviour
 include $render->rendererpath . '/elements/entity/field/preprocess.html.php';
 
-$render->elementdata->displaykey = 'field_number';
+//$render->elementdata->displaykey = 'field_number';
 
 // Add bootstrap switch libraries
 addoutputunique('resources/script/', $render->rendererurl . "elements/_resources/libraries/bootstrap-slider/dist/bootstrap-slider.min.js");

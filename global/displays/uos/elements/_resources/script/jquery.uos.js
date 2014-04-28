@@ -205,9 +205,9 @@ uos.addBehaviours = function($element) {
   var elementactions = {};
   //console.log('addBehaviours', elementdata, uos.displays, uosdisplaykey);
 	//for (in= 0; index < a.length; ++index) {
-	if (uos.displays[uosdisplaykey]) {
-		console.log('found : '+uosdisplaykey);
-	}
+	//if (uos.displays[uosdisplaykey]) {
+	//	console.log('found : '+uosdisplaykey);
+	//}
 	//for (var utindex = uostypetree.length-1; utindex >=0; utindex--) {
 	for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
 		//uos.log('searching for '+searchtypename)

@@ -46,7 +46,7 @@ function uostype_node_location_initialize($element) {
 			//function initialize() {
 			directionsDisplay = new google.maps.DirectionsRenderer();
 			var mapOptions = {
-			    zoom: 8,
+			    zoom: 10,
 			    scrollwheel: false,
 			    center: new google.maps.LatLng(latitude, longitude)
 			};

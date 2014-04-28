@@ -72,10 +72,9 @@ function uostype_entity_initialize($element) {
 	domelement.addEventListener('drop', uostype_entity_event_drop, false);
 
 	// bind some events
-	$elementheader = $element.find('.uos-header');
+	$elementheader = $element.children('.uos-header');
 	
 	if ($elementheader.length>0) {
-	
 		$elementheader.bind('click',function(event) {
 			uostype_entity_event_header_click($element,event);
 		});
@@ -122,9 +121,11 @@ function uostype_entity_event_click($element,event) {
 
 function uostype_entity_event_header_click($element, event) {
 	var elementdata = uos.getelementdata($element);
-	window.location = elementdata.clicktarget;
+	console.log(elementdata);
 	event.preventDefault();
-	event.stopPropagation();
+	event.stopPropagation();	
+	window.location = elementdata.clicktarget;
+
 }
 
 
