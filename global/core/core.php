@@ -1056,7 +1056,7 @@ function get_type_displays($entity, $rendererpath) {
 			$filelist = file_list($displaypath);
 			foreach ($filelist as $file) {
 				// we have found a template|preprocess|wrapper... file
-				if (preg_match('/([a-z]*)\.(.*)\.php$/', $file, $matches)>0) {
+				if (preg_match('/^([a-z]*)\.(.*)\.php$/', $file, $matches)>0) {
 					$filetype = $matches[1];
 					$displaystring = $matches[2];
 					if (!isset($displays[$displaystring])) {

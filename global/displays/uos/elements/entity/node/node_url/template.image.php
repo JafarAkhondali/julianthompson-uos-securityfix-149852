@@ -9,7 +9,7 @@
 		//$filename = $targetpath.$targetprefix.'-clipped.png';
 
 		$url = (string) $entity->url;
-		$url = "http://stackoverflow.com/questions/7878784/php-mkdir-permissions";
+		//$url = "http://stackoverflow.com/questions/7878784/php-mkdir-permissions";
 		//$url = 'http://www.google.com';// (string) $entity->url
 
 
