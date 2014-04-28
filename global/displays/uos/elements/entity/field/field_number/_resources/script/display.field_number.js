@@ -27,7 +27,7 @@ function uostype_field_number_initialize($element) {
 	//$element.find('.btn').button();
 	//$element.css('border','1px solid red');
 	//$element.find('.btn').css('border','1px solid red');
-	alert('here');
+	//alert('here');
 	$element.bind('click', function(event) {
 		event.stopPropagation();
 	});
