@@ -60,15 +60,8 @@ addoutputunique('resources/script/', $render->rendererurl."elements/_resources/s
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.base.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.uos.three.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/libraries/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js");
-//addoutputunique('resources/script/', $render->rendererurl."elements/entity/entity.resources/script/jquery.entity.js");
-//addoutputunique('resources/style/', $render->rendererurl."elements/entity/entity.resources/style/style.html.css");
-//addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/field.resources/script/jquery.field.js");
-//addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/field_boolean/field_boolean.resources/script/jquery.field_boolean.js");
-//addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/_resources/script/jquery.node.js");
-addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/node_device/_resources/script/jquery.node_device.js");
+//addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/node_device/_resources/script/jquery.node_device.js");
 addoutputunique('resources/script/', "https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false");
-
-//addoutputunique('resources/style/', "/global/displays/uos/libraries/bootstrap-switch-3.0/dist/css/bootstrap3/bootstrap-switch.min.css");
 
 addoutputunique('resources/style/', $render->rendererurl."elements/_resources/style/style.uos.css");
 

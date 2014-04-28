@@ -270,15 +270,32 @@ div.uos-element.node {
 	-webkit-transition: all 1s;
 	min-height: 90px;
 	position: relative;
-	border: 2px solid white;
-	border-radius: 40px;
-	overflow: hidden;
+	xborder: 2px solid white;
+	xborder-radius: 40px;
+	xoverflow: hidden;
 	color: rgba(255,255,255,0.6);
 }
 
 div.uos-element.node > div.uos-element.node,
-div.uos-element.node > div > div.uos-element.node{
+div.uos-element.node > div.uos-element-children > div.uos-element.node {
 	margin: 10px;
+}
+
+div.uos-element.node > div.uos-element-children > h2 {
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	font-size: 0.9em;
+	margin-top: 0;
+	opacity: 0.5;
+}
+
+div.uos-element.node > div.uos-element-children {
+	border: 1px solid rgba(255,255,255,0.2);
+	padding: 10px;
+}
+
+div.uos-element.node > div.uos-element-children.empty {
+	display:none;
 }
 
 div.uos-element .uos-header {

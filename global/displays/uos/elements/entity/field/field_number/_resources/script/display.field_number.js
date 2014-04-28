@@ -1,8 +1,8 @@
-uos.types['field_number'] = {};
+uos.displays['field_number'] = {};
 
-uos.types['field_number'].extends = null;
+uos.displays['field_number'].extends = null;
 
-uos.types['field_number'].actions = {
+uos.displays['field_number'].actions = {
 
 	init : {
 		title : 'Initialise',	
@@ -27,6 +27,7 @@ function uostype_field_number_initialize($element) {
 	//$element.find('.btn').button();
 	//$element.css('border','1px solid red');
 	//$element.find('.btn').css('border','1px solid red');
+	alert('here');
 	$element.bind('click', function(event) {
 		event.stopPropagation();
 	});

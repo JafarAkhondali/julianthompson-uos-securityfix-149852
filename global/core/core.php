@@ -854,7 +854,8 @@ function rendernew($entity, $rendersettings = NULL) {
 	if (is_array($rendersettings) || is_object($rendersettings)) {
 			$render = (object) ( (array) $render + (array) $rendersettings);
 	}	elseif (is_string($rendersettings) && (!empty($rendersettings))) {
-			$render->displaystring = $rendersettings;
+			//$render->displaystring = $rendersettings;
+			setIfUnset($render->displaystring, $rendersettings);
 	}
 
 	setIfUnset($render->activerenderer, UOS_DEFAULT_DISPLAY);
@@ -864,6 +865,7 @@ function rendernew($entity, $rendersettings = NULL) {
 
 	$render->output = '';
 	$render->finishprocessing = FALSE;
+	$render->finish = FALSE;
 	
 	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer, '/'); 
 	$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
@@ -908,7 +910,13 @@ function rendernew($entity, $rendersettings = NULL) {
 	
 	$render->cachepath = UOS_CACHE;// . '32745275472/'. $displaystring . '/'; 
 
-
+	//if ($render->elementtype=='field_number' && $entity->key=='intensity') {
+		//return print_r($entity,TRUE);
+		//return $render->display->preprocess.':'.$render->display->template.':'.$render->display->wrapper;
+		//return print_r($render);
+	//}
+	
+	
 	if (isset($uos->request->parameters['debugrender'])) {
 		print_r($uos->request);
 		print_r($entity);
@@ -930,19 +938,27 @@ function rendernew($entity, $rendersettings = NULL) {
 			$render->workingpath = dirname($render->display->preprocess);
 			$render->preprocessoutput = getFileOutput($render->display->preprocess,$rendervariables);
 			$render->output = &$render->preprocessoutput;
-		}
+		}	
 		
+		if ($render->finish) return $render->output;
 	
-		if (property_exists($render->display,'template')) {
+		if (property_exists($render->display,'template') && ($render->display->template!==FALSE)) {
 			$render->workingpath = dirname($render->display->template);
 			$render->templateoutput = getFileOutput($render->display->template,$rendervariables);
 			$render->output = $render->templateoutput;
 		}
+		
+		if (isset($render->elementdata)) {
+			addoutput('elementdata/'.$render->instanceid, $render->elementdata);
+		}
+		
+		if ($render->finish) return $render->output;
+
 		//echo $render->display->template;
 		//echo "here";
 		//print_r($render->output);
 		//die();
-		if (property_exists($render->display,'wrapper')) {
+		if (property_exists($render->display,'wrapper') && ($render->display->wrapper!==FALSE)) {
 			$render->workingpath = dirname($render->display->wrapper);
 			$render->wrapperoutput = getFileOutput($render->display->wrapper,$rendervariables);
 			$render->output = $render->wrapperoutput;

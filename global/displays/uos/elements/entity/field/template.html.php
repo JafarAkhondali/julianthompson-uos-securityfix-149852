@@ -1,1 +1,1 @@
-<?php print $entity;?>
+<?php print (string) $entity;?>

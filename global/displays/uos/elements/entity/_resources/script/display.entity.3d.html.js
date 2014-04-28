@@ -1,8 +1,8 @@
-uos.types['entity.3d.html'] = {};
+uos.displays['entity.3d.html'] = {};
 
-uos.types['entity.3d.html'].extends = null;
+uos.displays['entity.3d.html'].extends = null;
 
-uos.types['entity.3d.html'].actions = {
+uos.displays['entity.3d.html'].actions = {
 
 	init : {
 		title : 'Initialise',	

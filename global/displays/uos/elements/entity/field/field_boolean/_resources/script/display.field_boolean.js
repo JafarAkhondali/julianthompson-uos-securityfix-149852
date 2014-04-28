@@ -1,8 +1,8 @@
-uos.types['field_boolean'] = {};
+uos.displays['field_boolean'] = {};
 
-uos.types['field_boolean'].extends = null;
+uos.displays['field_boolean'].extends = null;
 
-uos.types['field_boolean'].actions = {
+uos.displays['field_boolean'].actions = {
 
 	init : {
 		title : 'Initialise',	

@@ -1,8 +1,8 @@
-uos.types['entity.edit.html'] = {};
+uos.displays['entity.edit.html'] = {};
 
-uos.types['entity.edit.html'].extends = null;
+uos.displays['entity.edit.html'].extends = null;
 
-uos.types['entity.edit.html'].actions = {
+uos.displays['entity.edit.html'].actions = {
 
 	init : {
 		title : 'Initialise',	

@@ -9,6 +9,7 @@ class field extends entity {
 	public $locked = FALSE;
 	public $required = FALSE;
 	public $indexfield = FALSE;
+	public $visible = TRUE;
 	
 	
 	function __construct($initializer=null) {

@@ -1,8 +1,8 @@
-uos.types['entity'] = {};
+uos.displays['entity'] = {};
 
-uos.types['entity'].extends = null;
+uos.displays['entity'].extends = null;
 
-uos.types['entity'].actions = {
+uos.displays['entity'].actions = {
 
 	init : {
 		title : 'Initialise',	

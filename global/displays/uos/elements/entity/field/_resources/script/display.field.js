@@ -1,8 +1,8 @@
-uos.types['field'] = {};
+uos.displays['field'] = {};
 
-uos.types['field'].extends = uos.types['entity'];
+uos.displays['field'].extends = uos.displays['entity'];
 
-uos.types['field'].actions = {
+uos.displays['field'].actions = {
 
 	init : {
 		title : 'Initialise',	

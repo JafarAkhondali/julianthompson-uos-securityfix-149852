@@ -1,8 +1,8 @@
-uos.types['node_device'] = {};
+uos.displays['node_device'] = {};
 
-uos.types['node_device'].extends = uos.types['node'];
+uos.displays['node_device'].extends = uos.displays['node'];
 
-uos.types['node_device'].actions = {
+uos.displays['node_device'].actions = {
 
 	deviceon : {
 		title : 'On',
@@ -20,6 +20,8 @@ uos.types['node_device'].actions = {
 
 function uostype_node_device_initialize($element) {
 	//$element.css('border','3px solid red');
+	uostype_entity_initialize($element);
+	/*
   var elementdata = uos.getelementdata($element); 
   var domelement = $element.get(0);
   
@@ -52,6 +54,7 @@ function uostype_node_device_initialize($element) {
 	}
 	
 	uos.log('uostype_node_device_initialize',$element.attr('id'),elementdata);
+	*/
 }		
 
 function uostype_node_device_on($element) {

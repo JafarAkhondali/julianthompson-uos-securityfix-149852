@@ -14,6 +14,7 @@ $render->attributes['title'] = (string) $entity->title;
 //print_r($uos->request->siteurl);
 $render->elementdata->clicktarget = $uos->request->hosturl . $entity->guid->value;
 
+
 $draglinkurl = $entity->guid->value . '.view.webloc';
 $draglinkfilename =  (string) $entity->title . ".webloc";
 $draglinkfilename = "http://universeos/2868744583.view.webloc";
@@ -25,4 +26,4 @@ if ($entity->filename) {
 	$render->elementdata->dragfile = $entity->mimetype->value . ":" . $entity->filename->value . ":" . $dragfilefile;
 }
 
-addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/_resources/script/jquery.node.js");
+addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/_resources/script/display.node.js");

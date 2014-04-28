@@ -10,4 +10,4 @@ addoutputunique('resources/script/', $render->rendererurl . "elements/_resources
 addoutputunique('resources/style/', $render->rendererurl. "elements/_resources/libraries/bootstrap-switch-3.0/dist/css/bootstrap3/bootstrap-switch.min.css");
 
 
-addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/field_boolean/_resources/script/jquery.field_boolean.js");
+addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/field_boolean/_resources/script/display.field_boolean.js");

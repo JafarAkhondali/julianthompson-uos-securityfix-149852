@@ -11,9 +11,9 @@ uos.elements = [];
 
 uos.libraries = {};
 
-uos.types = [];
+uos.displays = [];
 
-uos.types['global'] = {};
+uos.displays['global'] = {};
 
 uos.settings = {};
 
@@ -22,7 +22,7 @@ uos.session = {};
 
 //console.log(el.element);
 
-//uos.types.entity = function() {};
+//uos.displays.entity = function() {};
 
 
 
@@ -200,18 +200,23 @@ uos.addBehaviours = function($element) {
 	var uostype = elementdata.type;
 	var uosdisplay = elementdata.display;
 	var uostypetree = elementdata.typetree;
+	var uosdisplaykey = elementdata.displaykey;
 	//uos.log('uos.addBehaviors',elementdata);
   var elementactions = {};
-  //console.log('addBehaviours', elementdata, uos.types);
+  //console.log('addBehaviours', elementdata, uos.displays, uosdisplaykey);
 	//for (in= 0; index < a.length; ++index) {
+	if (uos.displays[uosdisplaykey]) {
+		console.log('found : '+uosdisplaykey);
+	}
 	//for (var utindex = uostypetree.length-1; utindex >=0; utindex--) {
 	for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
 		//uos.log('searching for '+searchtypename)
 	//for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
 		var searchtypename = uostypetree[utindex];
-		if(uos.types[searchtypename]) {
-	  	//console.log('found :',searchtypename,uos.types[searchtypename]);
-			var currenttype = uos.types[searchtypename];
+		
+		if(uos.displays[searchtypename]) {
+	  	//console.log('found :',searchtypename,uos.displays[searchtypename]);
+			var currenttype = uos.displays[searchtypename];
 			if (currenttype.actions) {
 				uos.log('found actions for definition',uostype, searchtypename, currenttype.actions);
 				for(var aindex in currenttype.actions) {
@@ -226,7 +231,7 @@ uos.addBehaviours = function($element) {
 				//uos.log('addBehavioursx', uostype, elementactions);
 			}
 		} else {
-	  	//console.log('not found :',searchtypename,uos.types[searchtypename]);		
+	  	//console.log('not found :',searchtypename,uos.displays[searchtypename]);		
 		}
 	}
 

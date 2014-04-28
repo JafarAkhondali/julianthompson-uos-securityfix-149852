@@ -1,8 +1,8 @@
-uos.types['node_location'] = {};
+uos.displays['node_location'] = {};
 
-uos.types['node_location'].extends = uos.types['node'];
+uos.displays['node_location'].extends = uos.displays['node'];
 
-uos.types['node_location'].actions = {
+uos.displays['node_location'].actions = {
 
 	directionsfrom : {
 		title : 'Directions from',

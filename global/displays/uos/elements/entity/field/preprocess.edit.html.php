@@ -7,4 +7,4 @@ include $render->rendererpath . '/elements/entity/field/preprocess.html.php';
 
 //$render->attributes['draggable'] = "false";
 
-addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/_resources/script/jquery.field.js");
+//addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/_resources/script/jquery.field.js");
