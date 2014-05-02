@@ -80,9 +80,9 @@ uos.initializeelement = function($element,elementdata) {
 	  //var elementdata = uos.getelementdata($element);
 	  
 	  //uos.log('uos-data', elementdata);
-	  uos.logging = false;
+	  //uos.logging = false;
 		uos.addBehaviours($element);
-		uos.logging = true;
+		//uos.logging = true;
 		
 		if (elementdata.actions.init) {
 			if (elementdata.actions.init.handler) elementdata.actions.init.handler($element);
@@ -93,7 +93,7 @@ uos.initializeelement = function($element,elementdata) {
 	$element.addClass('uos-initialized');
 	
 	//uos.logging = false;
-	uos.log('uos.initializeelementx',$element.attr('id'),uos.getelementdata($element));
+	//uos.log('uos.initializeelement',$element.attr('id'),uos.getelementdata($element));
 	//uos.logging = false;
 }
 
@@ -179,7 +179,7 @@ uos.loadcontent = function($element,path) {
 					$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
 					if ($newelement.length>0) {
 						//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
-						uos.log('$newelement',$newelement.html());
+						//uos.log('$newelement',$newelement.html());
 						uos.initializeelement($newelement,elementdata);
 					}
 				});				
@@ -198,7 +198,7 @@ uos.loadcontent = function($element,path) {
 uos.addBehaviours = function($element) {
   var elementdata = uos.getelementdata($element);
 	var uostype = elementdata.type;
-	var uosdisplay = elementdata.display;
+	var uosdisplay = elementdata.activedisplay;
 	var uostypetree = elementdata.typetree;
 	var uosdisplaykey = elementdata.displaykey;
 	//uos.log('uos.addBehaviors',elementdata);
@@ -213,7 +213,15 @@ uos.addBehaviours = function($element) {
 		//uos.log('searching for '+searchtypename)
 	//for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
 		var searchtypename = uostypetree[utindex];
-		
+		var searchdisplay = searchtypename + '.' + uosdisplay;
+		uos.log('uos.addBehaviours:search',searchdisplay);
+		if(uos.displays[searchdisplay]) {
+			uos.log('found:',searchdisplay);
+			elementactions = uos.displays[searchdisplay].actions;
+		} else {
+			uos.log('no actions found:',searchdisplay);		
+		}
+
 		if(uos.displays[searchtypename]) {
 	  	//console.log('found :',searchtypename,uos.displays[searchtypename]);
 			var currenttype = uos.displays[searchtypename];
@@ -236,11 +244,13 @@ uos.addBehaviours = function($element) {
 	}
 
 	// Clean - remove actions that aren't objects - overridden
+	
 	for(var aindex in elementactions) {
 		if (!elementactions[aindex]) {
 			delete elementactions[aindex];
 		}
 	}
+	
 	elementdata.actions = elementactions;
 	//jQuery.data($element,'uosActions',elementactions);
 	//$element.data('actions',);
@@ -607,7 +617,7 @@ uos.checkelementdata  = function() {
 		var newelementid = '#'+index;
 		$newelement = jQuery('body').find(newelementid);	
 		if ($newelement.length>0) {
-			uos.log('afterinit',$newelement.attr("id"),$newelement.attr("title"),uos.getelementdata($newelement));
+			//uos.log('afterinit',$newelement.attr("id"),$newelement.attr("title"),uos.getelementdata($newelement));
 		}
 		//uos.log(index, newelementid, elementdata);
 	});
