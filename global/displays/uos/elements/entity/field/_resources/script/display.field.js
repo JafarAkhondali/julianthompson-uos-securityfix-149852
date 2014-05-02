@@ -13,5 +13,5 @@ uos.displays['field'].actions = {
 
 function uostype_field_initialize($element,data) {
 	//$element.css('border','1px solid green');
-	//uos.log('uostype_field_initialize',$element.attr('id'),data);
+	uos.log('uostype_field_initialize',$element.attr('id'),data);
 }		
