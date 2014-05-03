@@ -16,5 +16,5 @@ include $render->rendererpath . '/elements/entity/preprocess.html.php';
 //$render->elementdata->displaykey = 'field';
 
 //$render->attributes['draggable'] = "false";
-
+addoutputunique('resources/style/', $render->rendererurl."elements/entity/field/_resources/style/display.field.css");
 addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/_resources/script/display.field.js");
