@@ -42,16 +42,24 @@ function uostype_node_location_initialize($element) {
 		  var longitude = $mapelement.data('longitude');
 			var directionsDisplay;
 			var directionsService = new google.maps.DirectionsService();
+			var locationLatLng = new google.maps.LatLng(latitude, longitude);
 	
 			//function initialize() {
 			directionsDisplay = new google.maps.DirectionsRenderer();
 			var mapOptions = {
-			    zoom: 10,
+			    zoom: 14,
 			    scrollwheel: false,
-			    center: new google.maps.LatLng(latitude, longitude)
+			    center: locationLatLng
 			};
 			  
 			var map = new google.maps.Map(mapelementdom, mapOptions);
+			
+		  marker = new google.maps.Marker({
+		    map:map,
+		    draggable:true,
+		    animation: google.maps.Animation.DROP,
+		    position: locationLatLng
+		  });
 			
 			directionsDisplay.setMap(map);
 
