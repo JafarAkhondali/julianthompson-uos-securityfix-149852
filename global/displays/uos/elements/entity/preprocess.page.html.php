@@ -48,6 +48,10 @@ addoutputunique('resources/style/',"//netdna.bootstrapcdn.com/bootstrap/3.1.1/cs
 addoutputunique('resources/script/',"//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js");
 
 
+addoutputunique('resources/script/',"//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css");
+
+addoutputunique('resources/style/',"//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js");
+
 // Font Awesome Local
 addoutputunique('resources/style/', UOS_LIBRARIES_URL . "font-awesome/css/font-awesome.css");
 

@@ -10,7 +10,7 @@
 	</div>
 	<i class="fa fa-stack-2x children-count"><?php print $render->childcount;?></i>
 	<div class="field-group field-group-info">
-		<h2 class="field field-title"><?php print $entity->title->value;?></h2>
+		<h2 class="field field-title"><?php //print $render->entityconfig->type;?></h2>
 		<span class="field field-type"><?php print $render->entityconfig->title;?> (<?php print $entity->guid->value;?>)</span> 
 	</div>
 </div>

@@ -38,6 +38,17 @@ uos.threeDim = function() {
 	uos_three($universeelement);	
 }
 
+uos.addcontent = function() {
+	//e.preventDefault();
+  //var url = $(this).attr('href')
+  //var url = "www.google.com";
+  //var modal_id = $(this).attr('data-target');
+  alert('gere');
+  //$.get(url, function(data) {
+  //    $(data).modal();
+  //});
+}
+
 
 // when we've sorted actions remove this?
 uos.global = {
@@ -48,8 +59,9 @@ uos.global = {
 	
 	actions: {
 		add : {
-			title : 'Add',		
-			icon : 'fa-plus-circle'	
+			title : 'Add content',		
+			icon : 'fa-plus-circle',
+			handler : uos.addcontent
 		},
 		trace : {
 			title : 'Trace',

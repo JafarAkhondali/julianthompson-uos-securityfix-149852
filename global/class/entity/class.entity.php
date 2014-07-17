@@ -17,33 +17,41 @@ class entity {
 
 		$this->callaction('build');
 		// call build object here - create fields
+		$this->initialize($initializer);
 		
-		$initializer = format_initializer($initializer);
-		//print_r($initializer);
-		//populate fields 
-		
-		//$this->properties['type'] = new field();
-		//$this->properties['type']->value = get_class($this);
-		
-		foreach($initializer as $fieldname=>$fieldvalue) {
-			//$field_initializer = array(
-				//'parent' => $this,
-				//'value' => $fieldvalue,
-				//'key' => $fieldname
-			//);
-			try {
-		    if ($this->propertyexists($fieldname)) {
-		      //$this->trace('__setpropertyvalue ('.$propertyname.') : '.$value);
-		      $this->properties[$fieldname]->value = $fieldvalue;
-		    } else {
-		    	$this->addproperty($fieldname,'field',array(
-		    		'value' => $fieldvalue
-		    	));
-		    }
-			} catch (Exception $e) {
-				trace('exception!');
+  }
+  
+  function initialize($initializer = null) {
+  	if ($initializer) {
+			$initializer = format_initializer($initializer);
+			//print_r($initializer);
+			//populate fields 
+			
+			//$this->properties['type'] = new field();
+			//$this->properties['type']->value = get_class($this);
+			
+			foreach($initializer as $fieldname=>$fieldvalue) {
+				//$field_initializer = array(
+					//'parent' => $this,
+					//'value' => $fieldvalue,
+					//'key' => $fieldname
+				//);
+				try {
+			    if ($this->propertyexists($fieldname)) {
+			      //$this->trace('__setpropertyvalue ('.$propertyname.') : '.$value);
+			      $this->properties[$fieldname]->value = $fieldvalue;
+			    } else {
+			    	/*
+			    	$this->addproperty($fieldname,'field',array(
+			    		'value' => $fieldvalue
+			    	));
+			    	*/
+			    }
+				} catch (Exception $e) {
+					trace('exception!');
+				}
+				//$this->properties[$fieldname]->value = $fieldvalue;
 			}
-			//$this->properties[$fieldname]->value = $fieldvalue;
 		}
   }
   

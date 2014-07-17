@@ -607,8 +607,15 @@ div.node_file_video div.video-container embed {
     height: 100%;
 }
 
+
+input, textarea {
+	background-color: rgba(255,255,255,0.1);
+	border:1px solid rgba(255,255,255,0.4);
+	color: white;
+}
+
 textarea.editvalue {
-	color: black;
+	xcolor: black;
 	width: 100%;
 }
 

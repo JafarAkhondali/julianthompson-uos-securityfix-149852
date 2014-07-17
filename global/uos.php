@@ -7,20 +7,30 @@ if (isset($uos->request->parameters['debugrequest'])) {
 	die();
 }
 
-$uos->universe = new node_universe($uos->config->data->universe);
+//$uos->universe = new node_universe($uos->config->data->universe);
+
+//print_r($uos->request->targetstring);die();
 
 // Find target
 //$target = false;
 if (!empty($uos->request->targetstring)) {
-	$target = fetchentity($uos->request->targetstring);
+	//$uos->universe
+	//$target = fetchentity($uos->request->targetstring);
+	//$target = $uos->universe->db_select_entity($uos->request->targetstring);
+	$target = $universe->db_select_entity($uos->request->targetstring);
 	if ($target) {
-		fetchentitychildren($target);
+		$children = ($universe->db_select_children((string) $target->id));
+		foreach($children as $child) {
+			$target->children[] = $child;
+		}
+		//$universe->db_select_children($target->id->value);
+		//fetchentitychildren($target);
   	$target->trigger($uos->request->action);
 		//addoutput('content', $target);
 		$uos->response->code = 200;
 	}
 }
-
+//print_r($target);die();
 //print_r($uos->request->displaystring);
 //print_r($uos->request);
 //print_r($uos->output);die();
