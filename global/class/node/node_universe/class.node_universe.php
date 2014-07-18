@@ -133,6 +133,10 @@ class node_universe extends node {
 	}
 	
 	
+	function is_guid($testvalue) {
+		return (preg_match('/^[0-9]{16}$/', $testvalue)>0);
+	}
+	
 	function db_clear_universe() {
 	
 		$connection = $this->db_connect();
@@ -149,14 +153,17 @@ class node_universe extends node {
 	
 		$connection = $this->db_connect();
 		$connection->SetFetchMode(ADODB_FETCH_ASSOC);
+		
+		$indextype = $this->is_guid($guid)?'guid':'id';
+		$indextype = 'guid';
 
-		$sql = 'SELECT * FROM `entity` WHERE guid="'.$guid.'" LIMIT 1';
+		$sql = 'SELECT * FROM `entity` WHERE '.$indextype.'="'.$guid.'" LIMIT 1';
 		$result = $connection->Execute($sql);	
 		
 		if ($result) {
 			
 			//return $result->fields;
-			
+			//print_r($result);
 			$type = $result->fields['type'];
 			
 			// this new type to just get table definition is wasteful

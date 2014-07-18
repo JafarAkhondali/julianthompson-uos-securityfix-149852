@@ -309,7 +309,10 @@ if (!isset($uos->request->session['history'])) {
 //print_r($uos->request);
 //die();
 
-$universe = fetchentity($uos->config->universeguid);
+//$universe = fetchentity($uos->config->universeguid);
+
+
+$universe = new node_universe($uos->config->data->universe);
 
 
 
