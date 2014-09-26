@@ -70,6 +70,9 @@ $uos->output['log'] = array();
 
 $uos->title = 'UniverseOS';
 
+
+$universe = new node_universe($uos->config->data->universe);
+
 // To test Browser Capabilities
 //useLibrary('browscap-php');
 //namespace uos\library
@@ -310,9 +313,6 @@ if (!isset($uos->request->session['history'])) {
 //die();
 
 //$universe = fetchentity($uos->config->universeguid);
-
-
-$universe = new node_universe($uos->config->data->universe);
 
 
 
