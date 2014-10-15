@@ -82,6 +82,7 @@ $uos->title = 'UniverseOS';
 //$browsercapabilities = new phpbrowscap\Browscap(UOS_TEMPORARY);
 
 $uos->request->action = UOS_DEFAULT_ACTION;
+$uos->request->serveraddress = $_SERVER['SERVER_ADDR'];
 
 // Build Input parameters
 
@@ -121,7 +122,13 @@ if (isset($argv)) {
 	$uos->request->urlpath = trim($parsedurl['path'],'/');
 	$uos->request->url = $uos->request->hosturl . $uos->request->urlpath;
 	
-	$uos->request->universename = $uos->request->hostname;
+	
+	if (($uos->request->hostname==$uos->request->serveraddress) || ($uos->request->hostname=='127.0.0.1') ) {
+		$uos->request->universename = $uos->request->hostname;
+	} else {
+		$uos->request->universename = 'localhost';
+	}
+	
 	
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
