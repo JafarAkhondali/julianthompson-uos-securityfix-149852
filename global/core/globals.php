@@ -124,9 +124,9 @@ if (isset($argv)) {
 	
 	
 	if (($uos->request->hostname==$uos->request->serveraddress) || ($uos->request->hostname=='127.0.0.1') ) {
-		$uos->request->universename = $uos->request->hostname;
-	} else {
 		$uos->request->universename = 'localhost';
+	} else {
+		$uos->request->universename = $uos->request->hostname;
 	}
 	
 	
