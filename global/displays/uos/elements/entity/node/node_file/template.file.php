@@ -1,5 +1,5 @@
 <?php 
-$filename = UOS_DATA.$entity->filepath->value;
+$filename = $entity->filepath->fullpath();
 
 readfile($filename);
 

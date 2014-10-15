@@ -64,7 +64,7 @@ $pdf->SetFont('dejavusans', '', 10);
 $pdf->setJPEGQuality(75);
 $pdf->SetAutoPageBreak(false, 0);
 //$pdf->SetXY(30,50);
-$pdf->Image(UOS_DATA.$entity->filepath, '', '', 0, 0, '', '', 'T', false, 300, 'C', false, false, 1, false, false, true);
+$pdf->Image($entity->filepath->fullpath(), '', '', 0, 0, '', '', 'T', false, 300, 'C', false, false, 1, false, false, true);
 
 $pdf->Ln(2);
 
@@ -72,7 +72,7 @@ $pdf->MultiCell(80, 0, $entity->description."\n", 1, 'J', 0, 1, '', '', true, 0)
 
 $pdf->Ln(2);
 
-$pdf->MultiCell(80, 0, UOS_DATA.$entity->filepath."\n", 1, 'J', 0, 1, '', '', true, 0);
+$pdf->MultiCell(80, 0, $entity->filepath->fullpath()."\n", 1, 'J', 0, 1, '', '', true, 0);
 
 $pdf->Ln(2);
 

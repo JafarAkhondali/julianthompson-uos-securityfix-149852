@@ -7,6 +7,10 @@ class node_universe extends node {
 	public $tags = array();
   
 
+  public function test() {
+  	return(file_exists($this->datapath) && $this->db_connect());
+  }
+
   public function db_connect() {
   	if (!$this->dbconnection) {
 			$this->dbconnection = NewADOConnection($this->dbconnector->value);
@@ -22,9 +26,18 @@ class node_universe extends node {
 		return $this->dbconnection->GetAssoc("SELECT * FROM node WHERE type LIKE 'node_%'");
 	}
 
+	function add($entity) {
+		$entity->guid = $this->createguid();
+		return $this->db_entity_insert($entity);
+	}
+
+/*
+	//moved to entity	
 	function db_entity_structure($entity) {
 		$tables = array();
-		foreach($entity->properties as $property) {
+		
+		$properties = $entity->getproperties();
+		foreach($properties as $property) {
 			if (is_subclass_of($property,'field')) {
 				$auto = ($entity->indexproperty->key==$property->key) ? ' NOT NULL AUTO_INCREMENT':'';
 				$tables[($property->scope)][$property->key] = $property->getdbfieldtype() . $auto;
@@ -41,15 +54,14 @@ class node_universe extends node {
 		return $tables;
 	}
 	
-	function add($entity) {
-		$entity->guid = $this->createguid();
-		return $this->db_entity_insert($entity);
-	}
+
 	
 	function db_entity_primary_key($entity) {
 		return $entity->indexproperty->key;
 	}
-	
+
+
+
 	function db_entity_data($entity) {
 		$tables = array();
 		foreach($entity->properties as $property) {
@@ -69,7 +81,7 @@ class node_universe extends node {
 		}
 		return $tables;
 	}
-	
+*/
 	function db_entity_insert($entity) {
 		$this->db_create_tables($entity);
 		$tables = $this->db_entity_data($entity);
@@ -91,8 +103,13 @@ class node_universe extends node {
 	}
 	
 	function db_create_tables($entity) {
-		$tables = $this->db_entity_structure($entity);
-		$primarykey = $this->db_entity_primary_key($entity);
+		//$tables = $this->db_entity_structure($entity);
+		$tables = $entity->___gettabledefinition();
+		//print_r($tables);
+		//$primarykey = $this->db_entity_primary_key($entity);
+		$primarykey = $entity->getindexproperty()->key;
+		//print_r($primarykey);
+
 		$primarykeystr = ($primarykey) ? ', PRIMARY KEY (`'.$primarykey.'`)' : '';
 		foreach($tables as $scope=>$values) {
 			$fielddata = array();
@@ -100,12 +117,45 @@ class node_universe extends node {
 				$fielddata[] = '`' . $key . '` ' . $value;
 			}
 			$sql = "CREATE TABLE IF NOT EXISTS `".$scope."` (".implode(', ',$fielddata)."$primarykeystr);";
-			//echo $sql;
+			print_r($sql);
 			$connection = $this->db_connect();
 			$result = $connection->Execute($sql);
+			if ($result) echo "Created $scope Table\n";
 			//print_r($result);
 			$primarykeystr = '';
 		}	
+	}
+	
+	function db_create($universename) {
+		//CREATE DATABASE testDB;
+			print_r($this->dbconnector->value);
+		$databasename = 'uos_'.str_replace(".","_",$universename);
+		$result = $this->db_query("CREATE DATABASE IF NOT EXISTS %s", $databasename);
+		if ($result) {
+			$this->dbconnection->close();
+			$this->dbconnection = NULL;
+			$this->dbconnector->value = $this->dbconnector->value .'/'.$databasename;
+			print_r($this->dbconnector->value);
+			$this->db_connect();	
+			//print_r(new entity);
+			$this->db_create_tables(new entity);
+			//$this->db_create_tables(new field);
+			$this->db_create_tables(new relationship);
+		}
+		
+		$universedatapath = UOS_GLOBAL_DATA . $universename . '/'; 
+		$universeconfigpath = $universedatapath . 'config.universe.php';
+		
+		umask(0);
+		
+		if (!file_exists($universedatapath)) {
+			mkdir($universedatapath,0777,TRUE);
+		}
+		if (!file_exists($universeconfigpath)) {
+			$config = sprintf("<?php\n\n\$uos->config->universe = (object) array(\n\t'dbconnector' => '%s',\n\t'datapath' => UOS_GLOBAL_DATA . '%s/',\n\t'title' => '%s'\n);\n", $this->dbconnector->value, $universename, $universename);
+			file_put_contents($universedatapath . 'config.universe.php', $config);
+			chmod($universeconfigpath, 0777);
+		}
 	}
 	
 	function createguid() {
@@ -124,10 +174,10 @@ class node_universe extends node {
 	}
 	
 	
-	function db_unique_guid() {
+	function db_unique_guid($table='entity') {
 		do {
 			$guid = $this->createguid();
-			$result = $this->db_query('SELECT id FROM `entity` WHERE guid="%d" LIMIT 1',$guid);
+			$result = $this->db_query('SELECT id FROM `%s` WHERE guid="%d" LIMIT 1',$table,$guid);
 		} while ($result->fields['id']);
 		return $guid;
 	}
@@ -244,6 +294,5 @@ class node_universe extends node {
 		//print count($entities);die();
 		return $entities;	
 	}
-
 
 } 

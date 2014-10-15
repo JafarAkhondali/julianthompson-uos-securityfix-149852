@@ -1,6 +1,6 @@
 <?php 
 //namespace PHPImageWorkshop;
-$filename = UOS_DATA.$entity->filepath->value;
+$filename = $entity->filepath->fullpath();
 
 $layer = PHPImageWorkshop\ImageWorkshop::initFromPath($filename);
 //$layer->applyFilter(IMG_FILTER_NEGATE);

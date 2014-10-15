@@ -1,6 +1,6 @@
 <?php 
 //print_r($entity);
-$filename = UOS_DATA.$entity->filepath->value;
+$filename = $entity->filepath->fullpath();
 
 //$image = new Imagick($filename);
 

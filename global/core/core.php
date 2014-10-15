@@ -1,7 +1,15 @@
 <?php
+
 include_once "core/const.php";
 include_once "core/globals.php";
 
+//print_r($uos);die();
+
+if (isset($uos->request->parameters['debugrequest'])) {
+	print_r($uos->request);
+	print_r($uos->output);
+	die();
+}
 
 //register_shutdown_function('universe_shutdown');
 //set_error_handler('handleError');
@@ -106,7 +114,6 @@ function classtopath($class) {
 function entity_class_tree($entity,$reverse=FALSE) {
 
   if ((gettype($entity)=='object') && is_universe_entity($entity)) {
-  
   	$currentclass = get_class($entity);
   	$classarray = array();    
     do {
@@ -119,7 +126,11 @@ function entity_class_tree($entity,$reverse=FALSE) {
 }
 
 function is_universe_entity($entity) {
-	return is_subclass_of($entity, UOS_BASE_CLASS);
+	return get_class($entity)==UOS_BASE_CLASS || is_subclass_of($entity, UOS_BASE_CLASS);
+}
+
+function is_uos_field($entity) {
+	return get_class($entity)=='field' || is_subclass_of($entity, 'field');
 }
 
 
@@ -827,7 +838,7 @@ function render($entity, $rendersettings = NULL) {
 
 function rendernew($entity, $rendersettings = NULL) {
 
-	global $uos;
+	global $uos,$universe;
 	/*
 	if (is_array($rendersettings) || is_object($rendersettings)) {
 		$render = (object) $rendersettings;
@@ -907,8 +918,10 @@ function rendernew($entity, $rendersettings = NULL) {
 	$render->displaynames = array_diff($render->displaynames, array('page.html'));
 	
 	$render->formatdisplaynames = preg_grep("/($render->displayformat|.*\.$render->displayformat)/i", $render->displaynames);
-	
-	$render->cachepath = UOS_CACHE;// . '32745275472/'. $displaystring . '/'; 
+
+	if (is_subclass_of($entity,'entity')) {
+		$render->cachepath = $universe->cachepath();// . '32745275472/'. $displaystring . '/'; 
+	}
 
 	//if ($render->elementtype=='field_number' && $entity->key=='intensity') {
 		//return print_r($entity,TRUE);
@@ -1152,6 +1165,11 @@ function diverse_array($vector) {
             $result[$key2][$key1] = $value2; 
     return $result; 
 } 
+
+function redirect($url='/') {
+	header("Location: " . $url);
+	exit;
+}
 
 
 

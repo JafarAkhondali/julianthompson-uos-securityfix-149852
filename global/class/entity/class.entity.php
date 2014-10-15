@@ -18,7 +18,6 @@ class entity {
 		$this->callaction('build');
 		// call build object here - create fields
 		$this->initialize($initializer);
-		
   }
   
   function initialize($initializer = null) {
@@ -73,6 +72,7 @@ class entity {
       //$this->trace('__setpropertyvalue ('.$propertyname.') : '.$value);
       return $this->properties[$propertyname]->value = $value;
     }
+    //if ($propertyname=='maxlength') { print_r($this); die(); }
     throw new Exception('Unknown property type : '.$propertyname);
     return false;
   }
@@ -146,33 +146,33 @@ class entity {
   public function getactions() {
   
   	global $uos;
-	$entityclass = get_class($this);
-  	trace('looking for actions for : '.$entityclass,'jmt');
-  	if (is_null($this->actions)) {		
-		trace('finding actions for : '.$entityclass,'jmt');
-  		if (!isset($uos->config->types[$entityclass])) {
-  			$uos->config->types[$entityclass] = new StdClass();  
-  		}
-		
-		if (!isset($uos->config->types[$entityclass]->actions)) {
-		
-			$actions = Array();
-			$classes = entity_class_tree($this,TRUE);
-			
-			//trace($classes);
-			foreach($classes as $class) {
-				$path = classtopath($class) . '_actions/';
-				trace('found action : '.$path,'jmt');
-				$actionfiles = file_list($path, 'action\..*\.php');
-				foreach ($actionfiles as $actionfile) {
-					$actionname = substr($actionfile,7,-4);
-					$actions[$actionname][$class] = $path.$actionfile;
+		$entityclass = get_class($this);
+			trace('looking for actions for : '.$entityclass,'jmt');
+			if (is_null($this->actions)) {		
+			trace('finding actions for : '.$entityclass,'jmt');
+				if (!isset($uos->config->types[$entityclass])) {
+					$uos->config->types[$entityclass] = new StdClass();  
 				}
+			
+			if (!isset($uos->config->types[$entityclass]->actions)) {
+			
+				$actions = Array();
+				$classes = entity_class_tree($this,TRUE);
+				//trace($classes);
+				foreach($classes as $class) {
+					$path = classtopath($class) . '_actions/';
+					trace('found action : '.$path,'jmt');
+					$actionfiles = file_list($path, 'action\..*\.php');
+					foreach ($actionfiles as $actionfile) {
+						$actionname = substr($actionfile,7,-4);
+						$actions[$actionname][$class] = $path.$actionfile;
+					}
+				}
+				$uos->config->types[$entityclass]->actions = $actions;
 			}
-			$uos->config->types[$entityclass]->actions = $actions;
+			$this->actions = &$uos->config->types[$entityclass]->actions;
 		}
-	    $this->actions = &$uos->config->types[$entityclass]->actions;
-	}
+	
     return $this->actions;
   }
   
@@ -235,6 +235,7 @@ class entity {
 
     	$response = new StdClass();
     	$classtree = entity_class_tree($this,TRUE);
+    	
     	//trace($classtree);
     	//trace($this->actions[$action]);
     	//die();
@@ -243,6 +244,7 @@ class entity {
     	foreach($this->actions[$action] as $classname => $actionfile) {
     		$this->scope = $classname;
       	$response->actionfiles[] = $actionfile; 
+      	//if (get_class($this)=='field') { print_r($this->actions);print_r($classtree);print_r($actionfile); }
       	trace('callaction  : '.$actionfile.' ('.$this->scope.')');  
       	if (file_exists($actionfile)) {
 		      try {
@@ -254,6 +256,7 @@ class entity {
 		      }
 	      }
       }
+      //if (get_class($this)=='field') { die; }
 
       //addoutput('output',$result);
       //addoutput('dump/',  ob_get_contents() );      
@@ -293,9 +296,43 @@ class entity {
   	}
   }
   
+	function getindexproperty() {
+		return $this->indexproperty;
+	}
+
+
+
+	function ___getdata() {
+		$tables = array();
+		$properties = $this->getproperties();
+		$indexfield = $this->getindexproperty();
+		
+		foreach($properties as $key=>$property) {
+			if (is_uos_field($property)) {
+				if ($indexfield->key!==$property->key) {
+								//print_r($key.':'.$property->scope."\n");
+					$tables[($property->scope)][$key] = $property->getdbfieldvalue();
+				}
+			}
+		}
+		$indexscope = $indexfield->scope;
+		
+		//$indexelements = array($indexscope.'_id'=> &$this->properties[$indexfield->key]->value);
+		
+		$indexelements = array($indexscope.'_id'=> &$properties[$indexfield->key]->value);		
+		foreach($tables as $scope=>$property) {
+			if ($scope!==$indexscope) {
+				$tables[$scope] = array_merge($indexelements, $tables[$scope]);
+			}
+		}
+		return $tables;
+	}
+  
+  
   public function __gettabledefinition() {
     $tables = array();
-    foreach($this->properties as $key=>$property) {
+    $properties = $this->getproperties();
+    foreach($properties as $key=>$property) {
       //if (!isset($tables[($property->scope)]) && ($property->parentclass!=='node')) {
       //  $tables[($property->scope)]['node_id'] = $this->__properties['id']->getdbfieldcreate('node'); 
       //}
@@ -308,8 +345,37 @@ class entity {
     return ($tables);
   }
   
+  
+	function ___gettabledefinition() {
+		$tables = array();
+		$indexfield = $this->getindexproperty();		
+		$properties = $this->getproperties();
+		//print_r($indexfield);die();
+		foreach($properties as $key=>$property) {
+			if (is_uos_field($property)) {
+				//print_r($property);
+				$auto = ($indexfield->key==$key) ? ' NOT NULL AUTO_INCREMENT':'';
+				$tables[($property->scope)][$key] = $property->getdbfieldtype() . $auto;
+			}
+		}
+		$indexscope = $indexfield->scope;
+		$indexelements = array($indexscope.'_id'=> $indexfield->getdbfieldtype());
+		
+		foreach($tables as $scope=>$property) {
+			if ($scope!==$indexscope) {
+				$tables[$scope] = array_merge($indexelements, $tables[$scope]);
+			}
+		}
+		return $tables;
+	}
+  
   public function __toString() {
     return (string) $this->type . '(' . (string) $this->guid . ')';
   }
+  
+  function cachepath() {
+  	global $uos;
+		return UOS_GLOBAL_CACHE . $uos->request->universename . '/' . $this->guid . '/';
+	}
   
 }		

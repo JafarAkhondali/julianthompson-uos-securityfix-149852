@@ -13,10 +13,23 @@ $uos->config->logging = TRUE;
 $uos->config->logtostdout = FALSE;
 $uos->config->types = Array();
 
+$uos->actions = array();
+
+$uos->request = new StdClass(); 
+//$uos->request->outputformat = new StdClass(); 
+$uos->request->parameters = array();
+
+$uos->response = new StdClass(); 
+
+$uos->output = new StdClass();
+$uos->output = array();
+
+$uos->output['log'] = array();
+
 $uos->libraries = Array();
 
 //Include the configuration file
-include_once UOS_CONFIG_FILE;
+include_once UOS_GLOBAL_CONFIG;
 
 //overwrite configuration settings
 $uos->config->logging = TRUE;
@@ -52,26 +65,13 @@ $uos->responsecodes = array(
 );
 
 
-
-$uos->actions = array();
-
-$uos->request = new StdClass(); 
-
-//$uos->request->outputformat = new StdClass(); 
-
-$uos->response = new StdClass(); 
-
 $uos->response->code = 404;  // Default to Not Found
 
-$uos->output = new StdClass();
-$uos->output = array();
 
-$uos->output['log'] = array();
 
 $uos->title = 'UniverseOS';
 
 
-$universe = new node_universe($uos->config->data->universe);
 
 // To test Browser Capabilities
 //useLibrary('browscap-php');
@@ -95,7 +95,6 @@ if (isset($argv)) {
 	$parsedurl = parse_url(trim($cliargs->url,'/'));
   $uos->request->urlpath = $parsedurl['path'];
   
-	$uos->request->parameters = array();
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
 	}
@@ -121,8 +120,8 @@ if (isset($argv)) {
 
 	$uos->request->urlpath = trim($parsedurl['path'],'/');
 	$uos->request->url = $uos->request->hosturl . $uos->request->urlpath;
-
-	$uos->request->parameters = array();
+	
+	$uos->request->universename = $uos->request->hostname;
 	
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
@@ -148,8 +147,9 @@ if (isset($argv)) {
 				'mime'=>$uploadedfile['type'],
 				'size'=>$uploadedfile['size'],
 				'checksum'=>md5_file($uploadedfile['tmp_name']),
-				'path'=>$uploadedfile['tmp_name'],
-			));//$uploadedfile);		
+				'filepath'=>$uploadedfile['tmp_name'],
+			));//$uploadedfile);
+			//print_r($uos->request->files);die();		
 		}
 	}	
 	//$uos->request->browser = $browsercapabilities->getBrowser(null, true);
@@ -178,7 +178,33 @@ if (isset($argv)) {
 	}
 }
 
-$uos->request->bindir = PHP_BINDIR;
+
+$uos->request->universeconfig = UOS_GLOBAL_DATA . $uos->request->universename.'/config.universe.php';
+
+$universe = FALSE;
+$uos->request->configfound = FALSE;
+
+if (file_exists($uos->request->universeconfig)) {
+	include_once $uos->request->universeconfig;
+
+
+	if (isset($uos->config->universe)) {
+		$uos->request->configfound = TRUE;
+		$uos->config->universe->guid = '0000000000000000';
+		$uos->request->universe = $universe = new node_universe($uos->config->universe);
+		if (!$universe->test()) {
+			die('Bad Universe');
+		}
+		// Data cache folder
+		//define( 'UOS_UNIVERSE_DATA',      			UOS_GLOBAL_DATA . 'cache/');
+
+		// Universe config folder
+		//define( 'UOS_UNIVERSE_CACHE',						UOS_GLOBAL_DATA . 'config/');
+	} 
+}
+
+
+//$uos->request->bindir = PHP_BINDIR;
 
 
 // look in paths first
@@ -192,6 +218,8 @@ if (isset($uos->config->data->aliases[$uos->request->urlpath])) {
 	//$uos->request->outputformat->format = $aliasdata->format;
 } else {
 
+  // url format
+  // http://julian.universeos/target/
 
   // for format 
   // http://julian.universeos/GUID/view/png
@@ -313,9 +341,10 @@ if (!isset($uos->request->session['history'])) {
 //die();
 
 //$universe = fetchentity($uos->config->universeguid);
+//Include the configuration file
 
 
-
+	
 
 
 

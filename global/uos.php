@@ -2,43 +2,53 @@
 
 include_once "./core/core.php";
 
-if (isset($uos->request->parameters['debugrequest'])) {
-	print_r($uos->request);
-	die();
-}
-
-//$uos->universe = new node_universe($uos->config->data->universe);
-
-//print_r($uos->request->targetstring);die();
-
-// Find target
-//$target = false;
-if (empty($uos->request->targetstring)) {
-
-	$target = $universe;
-	$target->id = 1;
+if (!$universe) {
+	//redirect('/global/uos.create.php');
+	print('universe not created : '.$uos->request->hostname);
+	$universe = new node_universe();
+	$universe->dbconnector->value  = 'mysql://' . $uos->config->globaldatabaseuser . ':' . $uos->config->globaldatabasepassword . '@' . $uos->config->globaldatabasehost;
+	$universe->db_create($uos->request->hostname);
 } else {
-	//$uos->universe
-	//$target = fetchentity($uos->request->targetstring);
-	//$target = $uos->universe->db_select_entity($uos->request->targetstring);
-	$target = $universe->db_select_entity($uos->request->targetstring);
+	//$entity = new field_boolean(array('id'=>4));
+	//print_r($entity);
+	//print_r($entity);
+	//print_r($entity->___gettabledefinition());
+	//print_r($entity->___getdata());
+	//$universe->db_create();
+	//die();
 	
-}
-
-//print_r($target);die();
-
-if ($target) {
-	$children = ($universe->db_select_children((string) $target->id));
-	foreach($children as $child) {
-		$target->children[] = $child;
+	//$uos->universe = new node_universe($uos->config->data->universe);
+	
+	//print_r($uos->request->targetstring);die();
+	
+	// Find target
+	//$target = false;
+	if (empty($uos->request->targetstring)) {
+	
+		$target = $universe;
+		$target->id = 1;
+	} else {
+		//$uos->universe
+		//$target = fetchentity($uos->request->targetstring);
+		//$target = $uos->universe->db_select_entity($uos->request->targetstring);
+		$target = $universe->db_select_entity($uos->request->targetstring);
+		
 	}
-	//$universe->db_select_children($target->id->value);
-	//fetchentitychildren($target);
-	$target->trigger($uos->request->action);
-	//addoutput('content', $target);
-	$uos->response->code = 200;
+	
+	//print_r($target);die();
+	
+	if ($target) {
+		$children = ($universe->db_select_children((string) $target->id));
+		foreach($children as $child) {
+			$target->children[] = $child;
+		}
+		//$universe->db_select_children($target->id->value);
+		//fetchentitychildren($target);
+		$target->trigger($uos->request->action);
+		//addoutput('content', $target);
+		$uos->response->code = 200;
+	}
 }
-
 //print_r($target);die();
 //print_r($uos->request->displaystring);
 //print_r($uos->request);

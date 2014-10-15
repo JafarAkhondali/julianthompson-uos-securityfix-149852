@@ -37,14 +37,18 @@ return $img;
   //$out = tempnam('','pdf');
   //unlink($out);
   //$out = "$out.png";
-	$filename = UOS_DATA.$entity->filepath->value;
-	$targetpath = $render->cachepath . $entity->filepath->value . '/';
-	
+	//print_r($entity);
+	$filename = $entity->filepath->fullpath();
+	//print_r($filename);die();
+	$targetpath = $render->cachepath;
+	//print_r('xxx');
+	print_r($targetpath);die();
 	//echo $filename;  
   //copy
   //copy($pdf,$tmp);
   if (!file_exists($targetpath)) {
 		@mkdir($targetpath,0777,TRUE);
+		//die('here');
 	}
 	
 	$childindex = (isset($uos->request->parameters['childindex']))?$uos->request->parameters['childindex']:1;
@@ -55,7 +59,7 @@ return $img;
   	$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dUseCIEColor=true -dFirstPage=%d -dLastPage=%d -o	%spage-%%04d.png -r144 %s; sudo chmod -R 775 %s',$childindex,$childindex,$targetpath,$filename,$targetpath);
 
 	  //execute the command
-	  //echo $command;
+	  echo $command;die();
 		$commandoutput = array();
 	  $response = exec($command,$commandoutput);
 	}  
@@ -63,9 +67,13 @@ return $img;
   //echo basename($pdffile) . '.page-.*\.png';
 	$pagefiles = find_files($targetpath, 'page-.*\.png', TRUE);
 	
-  //print_r($command);print_r($targetpath);print_r($commandoutput);print_r($response);print_r($entity);print_r($pagefiles);return;
+  //print_r($command);print_r($targetpath);print_r($commandoutput);print_r($response); print_r($entity); print_r($pagefiles); die();return;
 	
   sort($pagefiles);
+  //echo 'xxxxx';
+  //readfile($pagefiles[0]);
+  //die();
+  //print_r($pagefiles);die();
   //print_r($pagefiles);
   header("Content-type: image/png; charset=utf-8");
   header("HTTP/1.1 200 OK");

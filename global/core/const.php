@@ -1,5 +1,4 @@
 <?php
-
 /* Paths */
 
 // Universe sub path
@@ -69,19 +68,15 @@ define('UOS_DEFAULT_ACTION',	'view');
 
 
 // Data folder
-define( 'UOS_DATA',            UOS_ROOT . 'data/');
+define( 'UOS_GLOBAL_DATA',      UOS_ROOT . 'data/');
 
 
 // Data cache folder
-define( 'UOS_CACHE',      			UOS_ROOT . 'cache/');
-
-
-// Universe config folder
-define( 'UOS_DATA_CONFIG',			UOS_DATA . 'config/');
+define( 'UOS_GLOBAL_CACHE',      UOS_ROOT . 'cache/');
 
 
 // Universe config file
-define( 'UOS_CONFIG_FILE',			UOS_DATA_CONFIG . 'config.uos.php');
+define( 'UOS_GLOBAL_CONFIG',	UOS_GLOBAL_DATA . 'config.uos.php');
 
 // Universe config folder
 define( 'UOS_TEMPORARY',				'/tmp/');
