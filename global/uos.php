@@ -7,7 +7,7 @@ if (!$universe) {
 	print('universe not created : '.$uos->request->hostname);
 	$universe = new node_universe();
 	$universe->dbconnector->value  = 'mysql://' . $uos->config->globaldatabaseuser . ':' . $uos->config->globaldatabasepassword . '@' . $uos->config->globaldatabasehost;
-	$universe->db_create($uos->request->hostname);
+	$universe->db_create($uos->request->universename);
 } else {
 	//$entity = new field_boolean(array('id'=>4));
 	//print_r($entity);
