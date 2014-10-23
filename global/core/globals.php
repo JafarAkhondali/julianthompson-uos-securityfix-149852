@@ -11,6 +11,10 @@ $uos->config->debugmode = FALSE;
 $uos->config->showerrors = FALSE;
 $uos->config->logging = TRUE;
 $uos->config->logtostdout = FALSE;
+$uos->config->logtarget =  UOS_LOGTARGET_FILE;
+$uos->config->bindir = PHP_BINDIR;
+$uos->config->debugrequest = FALSE;
+
 $uos->config->types = Array();
 
 $uos->actions = array();
