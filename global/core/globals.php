@@ -139,6 +139,10 @@ if (isset($argv)) {
 		//$uos->request->action = 'drop';
 	  //$uos->request->commandtype = $uos->request->parameters['target'];
 		$uos->request->parameters = $uos->request->parameters + $_POST;
+		if (isset($uos->request->parameters['jsonparameters'])) {
+			$uos->request->parameters = $uos->request->parameters + (array) json_decode($uos->request->parameters['jsonparameters']);
+			unset($uos->request->parameters['jsonparameters']);
+		}
 	}
 
 	if(!empty($_FILES)) {
@@ -154,6 +158,7 @@ if (isset($argv)) {
 				'mime'=>$uploadedfile['type'],
 				'size'=>$uploadedfile['size'],
 				'checksum'=>md5_file($uploadedfile['tmp_name']),
+				'filename'=>$uploadedfile['name'],
 				'filepath'=>$uploadedfile['tmp_name'],
 			));//$uploadedfile);
 			//print_r($uos->request->files);die();		
@@ -184,6 +189,7 @@ if (isset($argv)) {
 		$uos->request->urlpath = implode('.',array($uos->request->target,$uos->request->action,$uos->request->displaystring));
 	}
 }
+
 
 
 $uos->request->universeconfig = UOS_GLOBAL_DATA . $uos->request->universename.'/config.universe.php';
@@ -350,7 +356,7 @@ if (!isset($uos->request->session['history'])) {
 //$universe = fetchentity($uos->config->universeguid);
 //Include the configuration file
 
-
+//print_r($uos->request);die();
 	
 
 

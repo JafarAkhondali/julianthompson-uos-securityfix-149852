@@ -2,29 +2,18 @@
 
 include_once "./core/core.php";
 
+
 if (!$universe) {
+
 	//redirect('/global/uos.create.php');
 	print('universe not created : '.$uos->request->hostname);
 	$universe = new node_universe();
 	$universe->dbconnector->value  = 'mysql://' . $uos->config->globaldatabaseuser . ':' . $uos->config->globaldatabasepassword . '@' . $uos->config->globaldatabasehost;
 	$universe->db_create($uos->request->universename);
+	
 } else {
-	//$entity = new field_boolean(array('id'=>4));
-	//print_r($entity);
-	//print_r($entity);
-	//print_r($entity->___gettabledefinition());
-	//print_r($entity->___getdata());
-	//$universe->db_create();
-	//die();
-	
-	//$uos->universe = new node_universe($uos->config->data->universe);
-	
-	//print_r($uos->request->targetstring);die();
-	
-	// Find target
-	//$target = false;
-	if (empty($uos->request->targetstring)) {
-	
+
+	if ( (empty($uos->request->targetstring)) || ($uos->request->targetstring=='0000000000000000') ) {
 		$target = $universe;
 		$target->id = 1;
 	} else {
@@ -35,11 +24,9 @@ if (!$universe) {
 		
 	}
 	
-	//print_r($target);die();
-	
 	if ($target) {
 		$children = ($universe->db_select_children((string) $target->id));
-		foreach($children as $child) {
+		  foreach($children as $child) {
 			$target->children[] = $child;
 		}
 		//$universe->db_select_children($target->id->value);
@@ -49,23 +36,23 @@ if (!$universe) {
 		$uos->response->code = 200;
 	}
 }
-//print_r($target);die();
-//print_r($uos->request->displaystring);
-//print_r($uos->request);
-//print_r($uos->output);die();
-//echo rendernew($uos->output, $uos->request->displaystring);
+	//print $uos->request->action;print_r($target);die();
+
 if (isset($uos->request->parameters['debugresponse'])) {
+	echo "DEBUG RESPONSE\n";
+	//print_r($uos);
 	print_r($uos->request);
-	print_r($_POST);
 	print_r($uos->output);
-	print_r($_FILES);
 	die();
 }
+
+//print_r($uos->output);die();
 
 // we found something do something otherwise be as silent as a ninja
 if (isset($uos->output['content'])) {
 	try {
-		$uos->response->content = rendernew($uos->output['content'],array(
+		$uos->response->content = rendernew($uos->output,array(
+		//$uos->response->content = rendernew($uos->output['content'],array(
 			//'debug'	=> TRUE,
 			'displaystring' => $uos->request->displaystring
 		));

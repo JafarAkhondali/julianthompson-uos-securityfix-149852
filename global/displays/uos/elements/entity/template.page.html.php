@@ -21,6 +21,10 @@
 <?php print rendernew($entity,'html');?>
 </div>
 
+<div id="dialog">
+
+</div>
+
 <div id="input">
 	<h2><i class="fa fa-sign-in"></i> Request</h2>
 	<?php //print render($uos->request);?>

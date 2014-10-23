@@ -3,13 +3,13 @@
 include_once "core/const.php";
 include_once "core/globals.php";
 
-//print_r($uos);die();
 
 if (isset($uos->request->parameters['debugrequest'])) {
 	print_r($uos->request);
-	print_r($uos->output);
 	die();
 }
+
+//print_r($uos->request);die();
 
 //register_shutdown_function('universe_shutdown');
 //set_error_handler('handleError');
@@ -631,7 +631,37 @@ function trace($message, $tags=NULL) {
   if ($uos->config->logtostdout) {
   	print render($logitem);
   }
-  addoutput('log/', $logitem);
+  if ($uos->config->logtarget == UOS_LOGTARGET_FILE) {
+  	writetrace($logitem);
+  } 
+  if ($uos->config->logtarget == UOS_LOGTARGET_CONTENT) {  
+  	addoutput('log/', $logitem);
+  }
+}
+
+function writetrace($logitem) {
+	global $uos;
+	static $file;
+	if (isset($uos->request->universe)) {
+	  $universecachepath = $uos->request->universe->getcachepath();
+	  
+	  if (!$file) {
+
+	  	if (!file_exists($universecachepath)) {
+				mkdir($universecachepath,0777,TRUE);
+	  	}
+		  $cachetracefile = $universecachepath . 'trace.log'; 
+		   
+	  	if (file_exists($cachetracefile)) {	
+	  		unlink($cachetracefile);
+	  	}
+	  	
+	  	$file = fopen($cachetracefile, 'a');  
+  	}
+  	fwrite($file, print_r($logitem,TRUE) . "\n");	
+  	//fclose($file);
+		//print_r($universecachepath);die();
+	}
 }
 
 function getcallerinfo() {
@@ -827,7 +857,7 @@ function getFileOutput($file,$variables) {
   } catch (Exception $e) {
   	$output = ob_get_clean();
   	// throw an exception here?
-    throw new Exception('Caught exception: '.  $e->getMessage());
+    throw new Exception('Caught exception: '.  $e->getMessage() . $file);
   } 	
   return $output;	  
 }
@@ -839,6 +869,9 @@ function render($entity, $rendersettings = NULL) {
 function rendernew($entity, $rendersettings = NULL) {
 
 	global $uos,$universe;
+	static $renderdepth = 0;
+	$renderdepth++;
+
 	/*
 	if (is_array($rendersettings) || is_object($rendersettings)) {
 		$render = (object) $rendersettings;
@@ -873,24 +906,25 @@ function rendernew($entity, $rendersettings = NULL) {
 	
 	setIfUnset($render->displaystring, $uos->request->displaystring);
 
-
 	$render->output = '';
 	$render->finishprocessing = FALSE;
 	$render->finish = FALSE;
 	
 	$render->rendererurl = addtopath(UOS_DISPLAYS_URL, $render->activerenderer, '/'); 
 	$render->rendererpath = addtopath(UOS_DISPLAYS, $render->activerenderer);
+	$render->renderdepth = $renderdepth;
 
 	$render->entityconfig = &get_type_info($entity);	
 	
 	$render->elementtype = $render->entitytype = $render->entityconfig->class;
 	
+
 	if (in_array($render->elementtype, array('string','integer'))) return (string) $entity;
 	
 	get_type_displays($entity,$render->rendererpath);
 	
 	if (!isset($render->entityconfig->displays[$render->displaystring])) {
-		return "I can't show you that. (".$render->displaystring.")";
+		return "I can't show you that. (".$render->displaystring.")\n Type '".$render->elementtype."' Supports : ".print_r($render->entityconfig->displays,TRUE);
 	}
 	
 	$render->display = $render->entityconfig->displays[$render->displaystring]; 
@@ -929,10 +963,11 @@ function rendernew($entity, $rendersettings = NULL) {
 		//return print_r($render);
 	//}
 	
+	if ($renderdepth>10) return "RENDER DEPTH REACHED\n".print_r($render,TRUE)."\n".print_r($uos->output['content'],TRUE);
 	
 	if (isset($uos->request->parameters['debugrender'])) {
-		print_r($uos->request);
-		print_r($entity);
+		//print_r($uos->request);
+		//print_r($entity);
 		print_r($render);
 		die();
 	}
@@ -987,7 +1022,7 @@ function rendernew($entity, $rendersettings = NULL) {
 		$render->output = 'Error : '.$e->getMessage().print_r($uos->request,TRUE).print_r($render,TRUE).':'.$render->displaystring;
 	}
 	
-
+	$renderdepth--;
 	return $render->output;
 	//$file = $render->rendererelements.'/uos/template.
 	//return getFileOutput($file,array('entity'=>&$entity,'render'=>&$render, 'uos'=>&$uos));
@@ -1171,6 +1206,59 @@ function redirect($url='/') {
 	exit;
 }
 
+function strip_html_attributes2($html,$attribs) {
+    $dom = new simple_html_dom();
+    $dom->load($html);
+    foreach($attribs as $attrib)
+        foreach($dom->find("*[$attrib]") as $e)
+            $e->$attrib = null; 
+    $dom->load($dom->save());
+    return $dom->save();
+}
+
+function strip_html_attributes($html,$attribs) {
+
+	//return $html;
+	$domd = new DOMDocument();
+	$domd->preserveWhiteSpace = false;
+	libxml_use_internal_errors(true);
+	$domd->loadHTML(strip_tags($html,'<p><h1><h2><h3><h4><img><div><uL><ol><li><em><a><span><a>'));
+	//$domd->loadHTML($html);
+
+	libxml_use_internal_errors(false);
+	
+	$domx = new DOMXPath($domd);
+	$items = $domx->query("//*[@style]");	
+	foreach($items as $item) {
+	  $item->removeAttribute("style");
+	}
+	
+	$domx = new DOMXPath($domd);
+	$items = $domx->query("//*[@class]");	
+	foreach($items as $item) {
+	  $item->removeAttribute("class");
+	}
+	
+	# remove <!DOCTYPE 
+	$domd->removeChild($domd->firstChild);            
+
+	//return print_r($domd->firstChild->firstChild->firstChild,TRUE);
+	/*
+	$xpath = new DOMXPath($domd);
+	$body = $xpath->query('//*');
+	$tags = array();
+	foreach($items as $item) {
+		$tags[] = $item->tagName;
+	}
+	return print_r($tags,TRUE);
+	*/
+	# remove <html><body></body></html> 
+	//$domd->replaceChild($domd->firstChild->firstChild, $domd->firstChild);
+	//$domd->replaceChild($domd->firstChild->firstChild, $domd->firstChild);
+	
+	//return $domd->saveHTML();
+	return preg_replace("/\s+/", " ", strip_tags($domd->saveHTML(),'<p><h1><h2><h3><h4><img><div><uL><ol><li><a>') );
+}
 
 
 

@@ -215,7 +215,7 @@ class entity {
   }
   
   public function callaction($action,$parameters=NULL) {
-  	global $uos;
+  	global $uos, $universe;
   	$result = NULL;
 		//if (get_class($this)=='node_person') $uos->config->logging = TRUE;
     $this->getactions();
@@ -251,7 +251,8 @@ class entity {
 		        //$result = @include $__actionfile;
 		        @include $actionfile;
 		      } catch (Exception $e) {
-		      	die('failed includes');
+		      	addoutput('content/',"Failed action :".$actionfile . ":". print_r($e,TRUE));
+		      	//die('failed includes');
 		        //$result = 'error';//$e;
 		      }
 	      }
@@ -368,6 +369,9 @@ class entity {
 		}
 		return $tables;
 	}
+	
+	function relocatefiles() {
+	}
   
   public function __toString() {
     return (string) $this->type . '(' . (string) $this->guid . ')';
@@ -375,7 +379,7 @@ class entity {
   
   function cachepath() {
   	global $uos;
-		return UOS_GLOBAL_CACHE . $uos->request->universename . '/' . $this->guid . '/';
+		return UOS_GLOBAL_CACHE . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/';
 	}
   
 }		

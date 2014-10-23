@@ -129,7 +129,7 @@ uos.initalizeallelements = function($content, elementsdata) {
 		uos.initializeelement($(this),elementdata);	
 	});
 	*/
-	uos.log(elementsdata);
+	//uos.log('uos.initalizeallelements',elementsdata);
 	jQuery.each(elementsdata, function(index,elementdata) {
 		var newelementid = '#'+index;
 		$newelement = $content.find(newelementid);	
@@ -226,19 +226,19 @@ uos.addBehaviours = function($element) {
 	//for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
 		var searchtypename = uostypetree[utindex];
 		var searchdisplay = searchtypename + '.' + uosdisplay;
-		uos.log('uos.addBehaviours:search',searchdisplay);
+		//uos.log('uos.addBehaviours:search',searchdisplay);
 		if(uos.displays[searchdisplay]) {
-			uos.log('found:',searchdisplay);
+			//uos.log('found:',searchdisplay);
 			elementactions = uos.displays[searchdisplay].actions;
 		} else {
-			uos.log('no actions found:',searchdisplay);		
+			//uos.log('no actions found:',searchdisplay);		
 		}
 
 		if(uos.displays[searchtypename]) {
 	  	//console.log('found :',searchtypename,uos.displays[searchtypename]);
 			var currenttype = uos.displays[searchtypename];
 			if (currenttype.actions) {
-				uos.log('found actions for definition',uostype, searchtypename, currenttype.actions);
+				//uos.log('found actions for definition',uostype, searchtypename, currenttype.actions);
 				for(var aindex in currenttype.actions) {
 					// if we haven't defined the action already (overwritten)
 					//console.log(elementactions);
@@ -266,7 +266,7 @@ uos.addBehaviours = function($element) {
 	elementdata.actions = elementactions;
 	//jQuery.data($element,'uosActions',elementactions);
 	//$element.data('actions',);
-	uos.log('addBehaviours.finished', uostype, elementactions);
+	//uos.log('addBehaviours.finished', uostype, elementactions);
 };
 
 
@@ -283,7 +283,7 @@ uos.addActions = function($element) {
 
 uos.log = function() {
 	if (uos.logging && console && console.log) {
-		//arguments[] = arguments.callee.caller.name;
+		//if (arguments.callee.caller.name) arguments.push(arguments.callee.caller.name);
 		console.log(arguments);
 	}
 };
@@ -338,6 +338,15 @@ uos.getSelectedTitles = function() {
 		titles.push($(this).attr('title'));
 	});
 	return titles;
+};
+
+uos.getSelectedGuids = function() {
+	var guids = [];
+	jQuery(UOS_ELEMENT_CLASS+'.selected').each(function() {
+		var elementdata = uos.getelementdata(jQuery(this));
+		guids.push(elementdata.guid);
+	});
+	return guids;
 };
 
 uos.getSelectedTypes = function() {
@@ -596,11 +605,11 @@ uos.initialize = function() {
 	$(document).bind('keydown', 'ctrl+c', handleCopy);
 	
   $(window).focus(function() {
-      uos.log('Focus');
+      //uos.log('Focus');
   });
 
   $(window).blur(function() {
-      uos.log('Blur');
+      //uos.log('Blur');
       $('body').removeClass('meta-pressed');
   });
   
@@ -781,7 +790,7 @@ var toType = function(obj) {
 //http://stackoverflow.com/questions/12551635/jquery-remove-duplicates-from-an-array-of-strings
 function unique(list) {
   var result = new Array();
-  uos.log('xxx',typeof(result));
+  //uos.log('xxx',typeof(result));
   $.each(list, function(i, e) {
     if ($.inArray(e, result) == -1) result.push(e);
   });
@@ -911,6 +920,82 @@ if (tests.dnd) {
 }
 */	
 
+
+uos.post = function(target,action,parameters) {
+
+  var postData = new FormData();
+  
+  var jsonparameters = JSON.stringify(parameters);
+  
+  postData.append("target", target);
+  
+  postData.append("action", action);
+
+  postData.append("display", 'uosio');
+  
+  postData.append("jsonparameters", jsonparameters);
+
+	//if (parameters.files) {
+  //	postData.append("files", parameters.files);  
+  //	delete parameters.files;
+  //}
+  
+	uos.log('uos.post:request',target,action,parameters);
+  
+	var uosrequest = new XMLHttpRequest();
+	uosrequest.open('POST', '/global/uos.php?random=' + (new Date).getTime());// + '&debugrequest');
+	//xhr.setRequestHeader("X_FILENAME", file.name);
+	
+	//console.log('uos.dropfiles',elementdata,postData);
+	
+	uosrequest.upload.addEventListener('progress', function(event) {
+		var progresspercent = (event.loaded / event.total) * 100;
+		//$progressslider.width(progresspercent+ '%');
+		console.log('Uploading: ' + (Math.round(progresspercent)+ '%'),event);
+	});
+	
+	uosrequest.onload = function(event) {
+		//$.growl.notice({ title : 'Uploaded File(s)', message:  filenames.join(', ') + ' into ' + $element.attr('title'), location : 'br'  });	
+		
+		//$requestinfo.remove();
+		var data = JSON.parse(event.target.response);
+		
+		uos.log('uos.post:response',event.target,data);
+		
+		//var $loadedcontent = jQuery(data.content);
+  	var datacontentclean = data.content.replace("(?s)<!--\\[if(.*?)\\[endif\\] *-->", "");
+  	
+  	uos.log('uos.post:datacontentclean',datacontentclean);	
+  	//var $datadom = jQuery('<body>'+data.content+'</body>').first().next();
+  	//var $datadom = jQuery('<body>'+data.content+'</body>').first();
+  	var $dialog = jQuery('#dialog');
+  	$dialog.append(data.content);
+  	uos.initalizeallelements($dialog, data.elementdata);  	
+
+		$dialog.each(function (index) {
+			BootstrapDialog.alert($(this));//$loadedcontent);
+		});
+		uos.log($dialog,data.elementdata);
+
+		/*
+		jQuery.each(data.elementdata, function(index,elementdata) {
+			var newelementid = '#'+index;
+			$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
+			if ($newelement.length>0) {
+				//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
+				uos.initializeelement($newelement,elementdata);
+			}
+		});
+		//uos.log(uos.getelementdata($loadedcontent))
+		$element.removeClass('uos-processing');
+		$element.replaceWith($loadedcontent); 
+		*/	
+	};
+
+	
+	uosrequest.send(postData);
+}
+
 uos.dropfiles = function($element,files) {
     //debugger;
 		var elementdata = uos.getelementdata($element);
@@ -979,7 +1064,7 @@ uos.dropfiles = function($element,files) {
 		//if (tests.formdata) {
 
 		var uosrequest = new XMLHttpRequest();
-		uosrequest.open('POST', '/global/uos.php?random=' + (new Date).getTime());
+		uosrequest.open('POST', '/global/uos.php?random=' + (new Date).getTime());// + '&debugresponse');
 		//xhr.setRequestHeader("X_FILENAME", file.name);
 		
 		console.log('uos.dropfiles',elementdata,postData);
@@ -999,8 +1084,14 @@ uos.dropfiles = function($element,files) {
 			var data = JSON.parse(event.target.response);
 			
   		uos.log('uos.dropfiles:response',event.target,data);
+  		
+  		//remove comments as fix?
+  		var datacontentclean = data.content.replace("(?s)<!--\\[if(.*?)\\[endif\\] *-->", "");
+  		//uos.log('uos.dropfiles:datacontentclean',datacontentclean);
+  		BootstrapDialog.alert(datacontentclean);
+  		/*
 			var $loadedcontent = $(data.content);
-		
+			
 			jQuery.each(data.elementdata, function(index,elementdata) {
 				var newelementid = '#'+index;
 				$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
@@ -1009,7 +1100,7 @@ uos.dropfiles = function($element,files) {
 					uos.initializeelement($newelement,elementdata);
 				}
 			});
-			
+			*/
 			//uos.log(uos.getelementdata($loadedcontent))
 			$element.removeClass('uos-processing');
   		$element.replaceWith($loadedcontent); 

@@ -26,9 +26,10 @@ class node_universe extends node {
 		return $this->dbconnection->GetAssoc("SELECT * FROM node WHERE type LIKE 'node_%'");
 	}
 
-	function add($entity) {
-		$entity->guid = $this->createguid();
-		return $this->db_entity_insert($entity);
+	public function add($entity) {
+		$entity->guid = $this->db_unique_guid();	
+		$entity->relocatefiles();
+		return ($this->db_entity_insert($entity))?$entity->guid->value:null;
 	}
 
 /*
@@ -83,11 +84,14 @@ class node_universe extends node {
 	}
 */
 	function db_entity_insert($entity) {
+		trace('ENTITY_INSERT');
 		$this->db_create_tables($entity);
-		$tables = $this->db_entity_data($entity);
+		//$tables = $this->db_entity_data($entity);
+		$tables = $entity->___getdata();
 		foreach($tables as $scope=>$values) {
 			$sql = "INSERT INTO `".$scope."` (`".implode('`,`',array_keys($values))."`) VALUES ('".implode('\',\'',$values)."');\n";
 			//echo $sql;
+			trace($sql);
 			$connection = $this->db_connect();
 			$result = $connection->Execute($sql);
 			if ($result) {
@@ -95,11 +99,12 @@ class node_universe extends node {
 				$entity->id->value = $insertid;
 				//echo "RESULT ".$insertid;
 			} elseif ($result===false) {
-				print 'error inserting: '.$connection->ErrorMsg();
+				//print 'error inserting: '.$connection->ErrorMsg();
+				throw new Exception('error inserting: '.$connection->ErrorMsg());
 			}
-
 			//print_r($result);
 		}
+		return true;
 	}
 	
 	function db_create_tables($entity) {
@@ -109,7 +114,7 @@ class node_universe extends node {
 		//$primarykey = $this->db_entity_primary_key($entity);
 		$primarykey = $entity->getindexproperty()->key;
 		//print_r($primarykey);
-
+		//die('create tables');
 		$primarykeystr = ($primarykey) ? ', PRIMARY KEY (`'.$primarykey.'`)' : '';
 		foreach($tables as $scope=>$values) {
 			$fielddata = array();
@@ -117,10 +122,10 @@ class node_universe extends node {
 				$fielddata[] = '`' . $key . '` ' . $value;
 			}
 			$sql = "CREATE TABLE IF NOT EXISTS `".$scope."` (".implode(', ',$fielddata)."$primarykeystr);";
-			print_r($sql);
+			trace($sql);
 			$connection = $this->db_connect();
 			$result = $connection->Execute($sql);
-			if ($result) echo "Created $scope Table\n";
+			//if ($result) echo "Created $scope Table\n";
 			//print_r($result);
 			$primarykeystr = '';
 		}	
@@ -135,7 +140,8 @@ class node_universe extends node {
 			$this->dbconnection->close();
 			$this->dbconnection = NULL;
 			$this->dbconnector->value = $this->dbconnector->value .'/'.$databasename;
-			print_r($this->dbconnector->value);
+			$this->title->value = $universename;
+			//print_r($this->dbconnector->value);
 			$this->db_connect();	
 			//print_r(new entity);
 			$this->db_create_tables(new entity);
@@ -148,6 +154,7 @@ class node_universe extends node {
 		
 		umask(0);
 		
+		// create file store
 		if (!file_exists($universedatapath)) {
 			mkdir($universedatapath,0777,TRUE);
 		}
@@ -156,6 +163,16 @@ class node_universe extends node {
 			file_put_contents($universedatapath . 'config.universe.php', $config);
 			chmod($universeconfigpath, 0777);
 		}
+		
+		// create cache
+		$universecachepath = UOS_GLOBAL_CACHE . $universename . '/';
+		if (!file_exists($universedatapath)) {
+			mkdir($universecachepath,0777,TRUE);
+		} 
+	}
+	
+	function getcachepath() {
+		return UOS_GLOBAL_CACHE . $this->title->value . '/';
 	}
 	
 	function createguid() {
@@ -166,14 +183,6 @@ class node_universe extends node {
 		return $rand;
 	}
 	
-	function db_query() {
-		$args = func_get_args();
-		$sql = call_user_func_array('sprintf',$args);
-		$connection = $this->db_connect();
-		return $connection->Execute($sql);
-	}
-	
-	
 	function db_unique_guid($table='entity') {
 		do {
 			$guid = $this->createguid();
@@ -182,10 +191,39 @@ class node_universe extends node {
 		return $guid;
 	}
 	
-	
 	function is_guid($testvalue) {
 		return (preg_match('/^[0-9]{16}$/', $testvalue)>0);
 	}
+	
+	function db_query() {
+		$args = func_get_args();
+		$sql = call_user_func_array('sprintf',$args);
+		$connection = $this->db_connect();
+		return $connection->Execute($sql);
+	}
+	
+	function guid_to_id($guidmixed) {
+		$guids = $this->normalize_guid_list($guidmixed);
+		$result = $this->db_query('SELECT id FROM `entity` WHERE guid IN (%d)',$table,implode(',',$guids));
+		while (!$result->EOF) {
+			$ids[]= $result->fields['id'];
+		}
+		return $ids;
+	}
+	
+	function normalize_guid_list($guids) {
+		if (is_string($guidmixed)) {
+				$guids = explode(',',$guidmixed);
+		}
+		
+		if (is_array($guids)) {			
+			return array_filter($guids, array($this, 'is_guid'));
+		}
+		
+		return null;
+	}
+	
+
 	
 	function db_clear_universe() {
 	
@@ -210,7 +248,7 @@ class node_universe extends node {
 		$sql = 'SELECT * FROM `entity` WHERE '.$indextype.'="'.$guid.'" LIMIT 1';
 		$result = $connection->Execute($sql);	
 		
-		if ($result) {
+		if ($result && !$result->EOF) {
 			
 			//return $result->fields;
 			//print_r($result);
@@ -261,8 +299,11 @@ class node_universe extends node {
 			$joins[] = sprintf("INNER JOIN `relationship` r%d ON r%d.to = entity.id AND r%d.from = %d",$key,$key,$key,$id);
 		}
 
-		$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship' AND entity.id != 1",implode(' ',$joins));
+		//$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship' AND entity.id != 1",implode(' ',$joins));
+		// universe no longer entity 1
+		$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship'",implode(' ',$joins));
 
+		trace($sql);
 		//print_r($ids);
 		//print_r($sql);die();
 		
@@ -281,6 +322,7 @@ class node_universe extends node {
 				}
 				
 				$sql = 'SELECT * FROM `entity` '.implode(' ',$joins).' WHERE id='.$result->fields['id'].' LIMIT 1';
+				trace($sql);
 				$eresult = $connection->Execute($sql);
 				if ($eresult) {	
 					unset($eresult->fields['entity_id']);		

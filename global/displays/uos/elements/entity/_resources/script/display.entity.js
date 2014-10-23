@@ -18,7 +18,8 @@ uos.displays['entity'].actions = {
 	
 	add : {
 		title : 'Add',		
-		icon : 'fa-plus-circle'	
+		icon : 'fa-plus-circle',
+		handler : uostype_entity_add	
 	},
 	
 	displayup : {
@@ -50,6 +51,12 @@ uos.displays['entity'].actions = {
 		handler : uos_three
 	},
 };
+
+
+function uostype_entity_add($element) {
+	//jQuery('<p>I want banana!</p>').modal();
+	BootstrapDialog.alert('I want banana!');
+}
 
 
 function uostype_entity_initialize($element) {
@@ -84,7 +91,7 @@ function uostype_entity_initialize($element) {
 		});
 	}
 	
-	uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
+	//uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
 }		
 
 
@@ -152,6 +159,7 @@ function uostype_entity_event_dragstart(event) {
 	}
 	uos.log(downloadurl);
 
+	event.dataTransfer.setData("application/uos",'12345678909876');
 	event.dataTransfer.setData("DownloadURL",downloadurl);
   event.dataTransfer.effectAllowed = 'move';
  
@@ -211,6 +219,9 @@ function uostype_entity_event_dragenter(event) {
   //if (e.stopPropagation) {
   event.stopPropagation(); // Stops some browsers from redirecting.
   //}
+
+	//uos.log(uostype_entity_identify_content(event));
+	
 	if (!uos.isSelected($element) && !uos.isParentOfSelected($element) && !uos.isChildOfSelected($element)) {
   //if ($(this)[0] != $(dragSrcEl)[0]) {
 	  //this.classList.add('over');
@@ -240,13 +251,13 @@ function uostype_entity_accept_selection($element) {
 	// test case - if selection contains a message we wont accept it
 	//if (selectiontypes.indexOf("node_message")>0) {
 	// test case - if first item is node_message ?!!
-	uos.log('uos.getSelectedTypes gave me',typeof(selectiontypes));
-	if (selectiontypes[0]=='node_message') {
-		uos.log('fuck off with ya fancy content types - I dont want your filthy messages');
-		$element.addClass('uos-blocking');
-	} else {
-		uos.log('good! your selection',selectiontypes,'doesnt contain those damn messages. phew!');	
-	}
+	//uos.log('uos.getSelectedTypes gave me',typeof(selectiontypes));
+	//if (selectiontypes[0]=='node_message') {
+	//	uos.log('fuck off with ya fancy content types - I dont want your filthy messages');
+	//	$element.addClass('uos-blocking');
+	//} else {
+	//	uos.log('good! your selection',selectiontypes,'doesnt contain those damn messages. phew!');	
+	//}
 	
 	uos.log('uostype_entity_accept_selection:',$element.attr('title'),elementdata.type, selectiontypes);
 }
@@ -269,7 +280,6 @@ function uostype_entity_event_dragleave(event) {
 }
 
 
-
 function uostype_entity_event_drop(event) {
   // this/e.target is current target element.
 	var $element = jQuery(this);
@@ -288,36 +298,67 @@ function uostype_entity_event_drop(event) {
   event.preventDefault();
   
   var data = event.dataTransfer.getData('text');
-  uos.log(data);
 
-  if (!uos.isSelected($element)) {
-  // Don't do anything if dropping the same column we're dragging.
-  //if (dragSrcEl != this) {
-    // Set the source column's HTML to the HTML of the column we dropped on.
-    //dragSrcEl.innerHTML = this.innerHTML;
-    //this.innerHTML = e.dataTransfer.getData('text/html');
-    // transfer data file?
-    if (event.dataTransfer.files.length>0) {
+	switch(uostype_entity_identify_content(event)) {
 
-			uos.dropfiles($element,event.dataTransfer.files);
+		//case 'text/uri-list' :
+			//$.growl.notice({ title : 'Dropped file(s)', message: 'Dropped : multiple files onto ' + $element.attr('title'), location : 'br' });
+			//uos.dropfiles($element,event.dataTransfer.files);		
+		//break;
 
-    } else {
-    
-    	//uos.dropnodes($element,uos.getSeletedElements);
-      //uos.log('node drop');
-    	//uos.log(e.dataTransfer);
-			var titles = uos.getSelectedTitles();
-    	$.growl.notice({ title : 'Dropped Node(s)', message: 'Dropped : ' + titles.join(', ') + ' onto ' + $element.attr('title'), location : 'br' });
-    	//uos.log(e.dataTransfer.getData('text/html'));
-    }
-  	$element.removeClass('dragging-target');    
-  }
-
+		// if we drop files		
+		case 'Files' :
+			uos.dropfiles($element,event.dataTransfer.files);		
+		break;
+		
+		// if we drop entities
+		case 'application/uos' :
+	  	if (!uos.isSelected($element)) {
+				var titles = uos.getSelectedTitles();
+	    	$.growl.notice({ title : 'Dropped Node(s)', message: 'Dropped : ' + titles.join(', ') + ' onto ' + $element.attr('title'), location : 'br' });
+	    	uos.post(elementdata.guid,'dropentity',{
+	    		content: uos.getSelectedGuids()
+	    	})
+	    	uos.log('uostype_entity_event_drop',elementdata.guid);
+	    }  
+		break;
+		
+    // if we drop content
+		default: 
+	    //uos.log(event.dataTransfer);
+	    //uos.log(event.dataTransfer.types); 
+	    //uos.log(event.dataTransfer.getData('text/plain'));//.match(/src\s*=\s*"(.+?)"/));
+	    //uos.log(event.dataTransfer.getData('text/html'));//.match(/src\s*=\s*"(.+?)"/));
+	    var content = {};
+	    for (var typeindex = 0; typeindex < event.dataTransfer.types.length; typeindex++) {
+	    	var mimetypename = event.dataTransfer.types[typeindex];
+	    	//content.push({
+	    	//	mimetype : mimetypename,
+	    	//	content : event.dataTransfer.getData(mimetypename)
+	    	//});
+	    	content[mimetypename] = event.dataTransfer.getData(mimetypename);
+	    }
+	    uos.log('uostype_entity_event_drop',content);
+	    var contenttext = event.dataTransfer.getData('text/plain');
+	    var contenttrimmed = (content.length>100) ? contenttext.substring(0, 100) + '...' : contenttext;
+	    $.growl.notice({ title : 'Dropped Content', message: 'Dropped : "' + contenttrimmed + '" onto ' + $element.attr('title'), location : 'br' }); 
+    	uos.post(elementdata.guid, 'dropcontent', {
+    			content: content,
+    	});  
+		break;
+	}
+  
+  $element.removeClass('dragging-target'); 
   $element.removeClass('dragging-noaccept');  
   $element.removeClass('uos-blocking');
   //jQuery('#universe-drag-helper').remove();
 
   return false;
+}
+
+function uostype_entity_identify_content(event) {
+	uos.log('uostype_entity_identifycontent : ' + event.dataTransfer.types[0], event.dataTransfer.types); 
+  return event.dataTransfer.types[0]; 
 }
 
 function uostype_entity_event_dragend(event) {
@@ -385,7 +426,7 @@ function class_entity_post() {
 	  	universe : 'julian'
 	  },
 	  success: function(e) {
-	  	uos.log(e);
+	  	uos.log('class_entity_post',e);
 	  },
 	  //dataType: dataType
 	});

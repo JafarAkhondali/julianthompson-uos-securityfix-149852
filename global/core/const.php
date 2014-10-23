@@ -88,6 +88,9 @@ define( 'UOS_BASE_CLASS',      'entity');
 define( 'UOS_GUID_FIELD_SEPARATOR','-');
 
 
+define( 'UOS_LOGTARGET_FILE',0);
+define( 'UOS_LOGTARGET_CONTENT',1);
+
 // Get Database from Virtual host / htaccess file
 define( 'UOS_DATABASE',				getenv('UOS_DATABASE'));
 define( 'UOS_BIN_GS',					getenv('UOS_BIN_GS'));

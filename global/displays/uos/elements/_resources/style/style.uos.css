@@ -652,3 +652,7 @@ div.uos-element.node_message.display-note-html > .field > label {
 div.uos-element.node_message.display-note-html > .field > .separator {
 	display: none;
 }
+
+div.bootstrap-dialog-message div.uos-element.node {
+	color: black;
+}

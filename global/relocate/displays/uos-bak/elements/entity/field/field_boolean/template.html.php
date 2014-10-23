@@ -1,0 +1,1 @@
+<input class="field-boolean-value" type="checkbox" checked>

@@ -10,6 +10,7 @@ class field extends entity {
 	public $required = FALSE;
 	public $indexfield = FALSE;
 	public $visible = TRUE;
+	public $displayname = null;
 	
 	
 	function __construct($initializer=null) {
