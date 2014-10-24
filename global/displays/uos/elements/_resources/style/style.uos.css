@@ -35,6 +35,10 @@ div.universetoolbar {
   border-bottom: 1px solid #6B8093;
 }
 
+#universetoolbar-tags {
+	background-color: rgba(0,0,0,0.2);
+}
+
 div.universetoolbar:last-child {
 	border-bottom: none;
 }
@@ -169,12 +173,19 @@ div.uos-tags ul li {
 	xbackground-color: rgba(255,255,255,0.8);
 	color: rgba(255,255,255,0.85);
 	border-radius: 15px;
-	border:3px solid rgba(255,255,255,0.75);
+	border:2px solid rgba(255,255,255,0.75);
 	float:left;
 	margin: 0;
-	margin-right: 5px;
+	margin-right: 2px;
 	padding: 2px 12px 2px 5px;
 	padding: 2px 8px;
+	padding: 1px 6px;
+	font-size: 10px;
+}
+
+div.uos-tags ul li i.fa {
+	font-size: 10px;
+	line-height: 14px;
 }
 
 div.uos-tags ul li.universe-entity {
