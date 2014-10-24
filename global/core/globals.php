@@ -11,10 +11,6 @@ $uos->config->debugmode = FALSE;
 $uos->config->showerrors = FALSE;
 $uos->config->logging = TRUE;
 $uos->config->logtostdout = FALSE;
-$uos->config->logtarget =  UOS_LOGTARGET_FILE;
-$uos->config->bindir = PHP_BINDIR;
-$uos->config->debugrequest = FALSE;
-
 $uos->config->types = Array();
 
 $uos->actions = array();
@@ -32,8 +28,12 @@ $uos->output['log'] = array();
 
 $uos->libraries = Array();
 
+if (file_exists(UOS_GLOBAL_CONFIG)) {
 //Include the configuration file
-include_once UOS_GLOBAL_CONFIG;
+	include_once UOS_GLOBAL_CONFIG;
+} else {
+	die('No universe Configuration :' . UOS_GLOBAL_CONFIG);
+}
 
 //overwrite configuration settings
 $uos->config->logging = TRUE;
