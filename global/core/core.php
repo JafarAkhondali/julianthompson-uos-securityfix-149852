@@ -224,7 +224,7 @@ function addtopath($path,$pathext) {
 
 
 function renderdisabled($entity, $rendermask=NULL) {
-	global $uos;
+	global $uos, $universe;
 
 	$content = '';
 	

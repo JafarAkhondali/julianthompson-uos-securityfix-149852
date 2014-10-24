@@ -326,7 +326,35 @@ uos.getSelectedElements = function() {
 };
 
 uos.updateSelectedCount = function() {
-	var count = uos.getSelectedElements().length;
+	var $selectedelements = uos.getSelectedElements();
+	var selectedtypes = uos.getSelectedTypes();
+	
+	var count = $selectedelements.length;
+
+
+	$("#uos-entity-icon").removeClass (function (index, css) {
+  	return (css.match (/(^|\s)fa-\S+/g) || []).join(' ');
+	});	
+	if (count<1) {
+		jQuery('#uos-entity-title').text('Nothing selected');	
+		jQuery('#uos-entity-type').text('');		
+	} else {
+		$firstelement = $selectedelements.first();
+		$elementdata = uos.getelementdata($firstelement);	
+		if (count==1) {	
+			uos.log('updateSelectedCount',$elementdata,selectedtypes);
+			jQuery('#uos-entity-title').text($firstelement.attr('title'));	
+			jQuery('#uos-entity-type').text($elementdata.typeinfo.title);	
+			jQuery('#uos-entity-icon').addClass('fa-'+$elementdata.typeinfo.icon);	
+		} else {
+			jQuery('#uos-entity-title').text('Multiple entities');	
+			if (selectedtypes.length>1) {
+				jQuery('#uos-entity-type').text('Mixed');		
+			}	else {
+				jQuery('#uos-entity-type').text($elementdata.typeinfo.title);		
+			}
+		}	
+	}
 	uos.log('updateSelectedCount', count);
 	jQuery('#universe-selected-count').text(count);	
 	uos.buildToolbar();
@@ -574,7 +602,7 @@ uos.overlay = function(toggle) {
 };
 
 uos.buildDragHelper = function() {
-  var iconcount = document.getElementById("universe-status-icon");
+  var iconcount = document.getElementById("uos-status-icon");
 	var draghelper = iconcount.cloneNode(true);
 	draghelper.id = "universe-drag-helper";
 	$(draghelper).addClass('drag-helper');
@@ -969,10 +997,10 @@ uos.post = function(target,action,parameters) {
   	//var $datadom = jQuery('<body>'+data.content+'</body>').first().next();
   	//var $datadom = jQuery('<body>'+data.content+'</body>').first();
   	var $dialog = jQuery('#dialog');
-  	$dialog.append(data.content);
+  	$dialog.empty().append(data.content);
   	uos.initalizeallelements($dialog, data.elementdata);  	
 
-		$dialog.each(function (index) {
+		$dialog.children().each(function (index) {
 			BootstrapDialog.alert($(this));//$loadedcontent);
 		});
 		uos.log($dialog,data.elementdata);

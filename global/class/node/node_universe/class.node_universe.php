@@ -31,6 +31,16 @@ class node_universe extends node {
 		$entity->relocatefiles();
 		return ($this->db_entity_insert($entity))?$entity->guid->value:null;
 	}
+	
+	public function tagcontent($entity, $tagentitiesid) {
+		foreach($tagentitiesid as $tagid) {
+			$relationship = new relationship(array(
+				'parent' => $entity->id,
+				'child' => $tagid
+			));
+			db_entity_insert($relationship);
+		}
+	}
 
 /*
 	//moved to entity	
@@ -309,7 +319,7 @@ class node_universe extends node {
 		
 		$result = $connection->Execute($sql);		
 		
-		while (!$result->EOF) {
+		while ($result && !$result->EOF) {
 				$type = $result->fields['type'];
 				// this new type to just get table definition is wasteful
 				$entity = new $type();
