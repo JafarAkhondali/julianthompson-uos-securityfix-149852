@@ -24,9 +24,12 @@ class field extends entity {
 		
 		foreach($initializer as $fieldname=>$fieldvalue) {
 			//if (isset($this->fieldname)) {
-			if ($this->propertyexists($fieldname)) {
-				$this->properties[$fieldname]->value = $fieldvalue;
-			}
+			if (property_exists($this,$fieldname)) {
+				$this->{$fieldname} = $fieldvalue;
+			}			
+			//if ($this->propertyexists($fieldname)) {
+			//	$this->properties[$fieldname]->value = $fieldvalue;
+			//}
 		}  
   }
   

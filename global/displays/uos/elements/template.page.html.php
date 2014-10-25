@@ -24,7 +24,7 @@
 				</div>
 				<i class="fa fa-stack-2x children-count" id="universe-selected-count">0</i>
 			</div>
-		<</div>
+		</div>
 		<div id="universetoolbar-tagbar">
 			<div id="uos-entity-title"><?php print $uos->request->universe->title;?></div>
 			<div id="uos-entity-type"><?php print $render->entityconfig->title;?></div>

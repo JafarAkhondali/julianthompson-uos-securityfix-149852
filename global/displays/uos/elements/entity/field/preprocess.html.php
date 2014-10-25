@@ -7,6 +7,7 @@ if ($entity->visible!==TRUE) {
 	//$render->display->wrapper = FALSE;
 	//return;
 	$render->finish = TRUE;
+	return;
 }
 
 // include parent behaviour

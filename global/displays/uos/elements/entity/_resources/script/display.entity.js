@@ -315,7 +315,7 @@ function uostype_entity_event_drop(event) {
 		case 'application/uos' :
 	  	if (!uos.isSelected($element)) {
 				var titles = uos.getSelectedTitles();
-	    	$.growl.notice({ title : 'Dropped Node(s)', message: 'Dropped : ' + titles.join(', ') + ' onto ' + $element.attr('title'), location : 'br' });
+	    	uos.notification({ title : 'Dropped Node(s)', message: 'Dropped : ' + titles.join(', ') + ' onto ' + $element.attr('title')});
 	    	uos.post(elementdata.guid,'dropentity',{
 	    		content: uos.getSelectedGuids()
 	    	})
@@ -340,8 +340,9 @@ function uostype_entity_event_drop(event) {
 	    }
 	    uos.log('uostype_entity_event_drop',content);
 	    var contenttext = event.dataTransfer.getData('text/plain');
-	    var contenttrimmed = (content.length>100) ? contenttext.substring(0, 100) + '...' : contenttext;
-	    $.growl.notice({ title : 'Dropped Content', message: 'Dropped : "' + contenttrimmed + '" onto ' + $element.attr('title'), location : 'br' }); 
+	    var contenttrimmed = '"' + ((contenttext.length>100) ? contenttext.substring(0, 100) + '...' : contenttext) + '"';
+	    if (contenttext=='') contenttrimmed = 'content'
+	    uos.notification({ title : 'Dropped Content', message: 'Dropped : ' + contenttrimmed + ' onto ' + $element.attr('title')}); 
     	uos.post(elementdata.guid, 'dropcontent', {
     			content: content,
     	});  

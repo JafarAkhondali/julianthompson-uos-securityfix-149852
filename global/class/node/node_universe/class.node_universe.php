@@ -123,6 +123,7 @@ class node_universe extends node {
 		//print_r($tables);
 		//$primarykey = $this->db_entity_primary_key($entity);
 		$primarykey = $entity->getindexproperty()->key;
+		$uniquekey = $entity->uniqueproperties;		
 		//print_r($primarykey);
 		//die('create tables');
 		$primarykeystr = ($primarykey) ? ', PRIMARY KEY (`'.$primarykey.'`)' : '';

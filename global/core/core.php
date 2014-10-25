@@ -963,7 +963,7 @@ function rendernew($entity, $rendersettings = NULL) {
 		//return print_r($render);
 	//}
 	
-	if ($renderdepth>10) return "RENDER DEPTH REACHED\n".print_r($render,TRUE)."\n".print_r($uos->output['content'],TRUE);
+	//if ($renderdepth>10) return "RENDER DEPTH REACHED\n".print_r($render,TRUE)."\n".print_r($uos->output['content'],TRUE);
 	
 	if (isset($uos->request->parameters['debugrender'])) {
 		//print_r($uos->request);

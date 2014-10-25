@@ -614,9 +614,54 @@ uos.buildDragHelper = function() {
 }
 
 
-uos.initialize = function() {
+uos.notification = function(options) {
 
-	//$(document).bind('keydown', 'Ctrl+s', saveChanges);
+
+	var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+	
+	if (Notification) {
+
+		Notification.requestPermission(function (permission) {
+			// console.log(permission);
+		});
+	
+		var instance = new Notification(
+			options.title, {
+					body: options.message
+			}
+		);
+	
+		instance.onclick = function () {
+			// Something to do
+		};
+		
+		instance.onerror = function () {
+			// Something to do
+		};
+		
+		instance.onshow = function () {
+		   var $this = this;
+       setTimeout(function(){
+          $this.close();
+       }, 3000);
+		};
+		
+		instance.onclose = function () {
+			// Something to do
+		};
+	
+	} else if ($.growl) {
+		$.growl.notice({ 
+			title : options.title, 
+			message:  options.message, 
+			location : 'br'  
+		});
+	}
+
+}
+
+
+uos.initialize = function() {
 	
 	$(document).bind('keyup keydown', handleKeyboardModifiers);
 	
@@ -653,6 +698,11 @@ uos.initialize = function() {
 	}	
 
 	uos.buildToolbar();
+	
+	uos.notification({
+		title : 'UniverseOS',
+		message : 'Initialized'
+	});
 	
 	uos.getcurrentlocation();
 	//filtermessages('jmt');
@@ -991,9 +1041,9 @@ uos.post = function(target,action,parameters) {
 		uos.log('uos.post:response',event.target,data);
 		
 		//var $loadedcontent = jQuery(data.content);
-  	var datacontentclean = data.content.replace("(?s)<!--\\[if(.*?)\\[endif\\] *-->", "");
+  	//var datacontentclean = data.content.replace("(?s)<!--\\[if(.*?)\\[endif\\] *-->", "");
   	
-  	uos.log('uos.post:datacontentclean',datacontentclean);	
+  	//uos.log('uos.post:datacontentclean',datacontentclean);	
   	//var $datadom = jQuery('<body>'+data.content+'</body>').first().next();
   	//var $datadom = jQuery('<body>'+data.content+'</body>').first();
   	var $dialog = jQuery('#dialog');
@@ -1072,13 +1122,18 @@ uos.dropfiles = function($element,files) {
 		$requestelement.append($progressindicator);
     
     $element.append($requestelement);
-        				  
+
+		uos.notification({ 
+			title : 'Dropped File(s)', 
+			message:  filenames.join(', ') + ' into ' + $element.attr('title'), 
+		});
+    /*    				  
 		$.growl.notice({ 
 			title : 'Dropped File(s)', 
 			message:  filenames.join(', ') + ' into ' + $element.attr('title'), 
 			location : 'br'  
 		});
-		
+		*/
 		// sort out preview
 		$element.addClass('uos-processing');
 		
@@ -1114,9 +1169,19 @@ uos.dropfiles = function($element,files) {
   		uos.log('uos.dropfiles:response',event.target,data);
   		
   		//remove comments as fix?
-  		var datacontentclean = data.content.replace("(?s)<!--\\[if(.*?)\\[endif\\] *-->", "");
+  		//var datacontentclean = data.content.replace("(?s)<!--\\[if(.*?)\\[endif\\] *-->", "");
   		//uos.log('uos.dropfiles:datacontentclean',datacontentclean);
-  		BootstrapDialog.alert(datacontentclean);
+  		//BootstrapDialog.alert(datacontentclean);
+  		
+  		
+	  	var $dialog = jQuery('#dialog');
+	  	$dialog.empty().append(data.content);
+	  	uos.initalizeallelements($dialog, data.elementdata);  	
+	
+			$dialog.children().each(function (index) {
+				BootstrapDialog.alert($(this));//$loadedcontent);
+			});
+			uos.log($dialog,data.elementdata);
   		/*
 			var $loadedcontent = $(data.content);
 			
@@ -1131,7 +1196,7 @@ uos.dropfiles = function($element,files) {
 			*/
 			//uos.log(uos.getelementdata($loadedcontent))
 			$element.removeClass('uos-processing');
-  		$element.replaceWith($loadedcontent); 
+  		//$element.replaceWith($loadedcontent); 
 		};
 		
 		uosrequest.send(postData);	
@@ -1175,3 +1240,13 @@ uos.getcurrentlocation = function() {
 		});
 	}
 };
+
+
+
+
+
+jQuery(document).ready(function() {
+//jQuery(window).load(function() {
+	uos.logging = true;
+  uos.initialize();
+});

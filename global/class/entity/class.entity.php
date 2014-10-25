@@ -12,6 +12,7 @@ class entity {
 	public		$actions = null;
 	public 		$scope = null;
 	public 		$indexproperty = null;
+	public		$uniqueproperties = null;
 	
 	function __construct($initializer=null) {
 
@@ -195,6 +196,7 @@ class entity {
           //$this->trace('Locked : '.$this->islocked());
           //$field->setlock($this->islocked());
           $field->key = $propertyname;
+          //$field->visible = FALSE;
           //trace($field);
           //trace('addproperty');
           $this->properties[$propertyname] = $field;
@@ -210,6 +212,14 @@ class entity {
   public function setindexproperty($propertyname) {
     if ($this->propertyexists($propertyname)) {  	
     	return $this->indexproperty = $this->properties[$propertyname];
+    }
+    return false;
+  }
+  
+  public function setuniqueproperty($propertynames) {
+    $filteredproperties = array_filter($propertynames, array($this,'propertyexists'));	
+    if (count($propertynames) == count($filteredproperties)) {
+    	return $this->uniqueproperties = $filteredproperties;
     }
     return false;
   }

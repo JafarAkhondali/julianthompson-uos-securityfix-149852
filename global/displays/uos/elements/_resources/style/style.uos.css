@@ -21,6 +21,11 @@ div.clearboth {
 	background-color: rgba(41,71,99,0.94);
 	width: 100%;
   z-index: 100;
+  -webkit-transition: height 1s; 
+  -moz-transition: height 1s; 
+  -ms-transition: height 1s; 
+  -o-transition: height 1s; 
+  transition: height 1s;  
 }
 
 div.universetoolbar {
@@ -32,12 +37,17 @@ div.universetoolbar {
 	color: rgba(255,255,255,0.6);
 	padding: 10px;
 	position: relative;
-  border-bottom: 1px solid #6B8093;
 }
 
 #universetoolbar-tags {
 	background-color: rgba(0,0,0,0.2);
 }
+
+
+#universetoolbar-actions {
+  border-top: 1px solid #6B8093;
+}
+
 
 div.universetoolbar:last-child {
 	border-bottom: none;
@@ -352,8 +362,7 @@ div.uos-tags ul li.universe-entity:after {
 
 
 div.uos-element.node {
-	xborder:1px solid grey;
-
+	border: 1px solid grey;
 	xxbackground-color: #cccccc;
 	margin-bottom:10px;
 	min-width:300px;
@@ -377,7 +386,7 @@ div.uos-element.node {
 
 div.uos-element.node > div.uos-element.node,
 div.uos-element.node > div.uos-element-children > div.uos-element.node {
-	margin: 10px;
+	xmargin: 10px;
 }
 
 div.uos-element.node > div.uos-element-children > h2 {
@@ -553,7 +562,7 @@ ul.array li {
 }
 
 div.node div.field {
-	border:1px solid rgba(255,255,255,0.2);
+	border-bottom:1px dotted rgba(255,255,255,0.2);
 	padding: 10px;
 }
 

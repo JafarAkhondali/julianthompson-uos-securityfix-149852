@@ -3,6 +3,7 @@ $contentguids = $universe->normalize_guid_list($uos->request->parameters['conten
 //$contentguids = $universe->guid_to_id($uos->request->parameters['content']);
 //addoutput('content/', "Dropped entities");
 $message = new node_message(array(
+	'title' => "Dropped entities",
 	'body' => "Dropped ".implode(',',$contentguids)  . " entities onto " . $this->title
 ));
 
