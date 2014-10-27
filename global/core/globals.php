@@ -207,8 +207,11 @@ if (file_exists($uos->request->universeconfig)) {
 
 	if (isset($uos->config->universe)) {
 		$uos->request->configfound = TRUE;
+		$uos->config->universe->id = 0;
 		$uos->config->universe->guid = '0000000000000000';
 		$uos->request->universe = $universe = new node_universe($uos->config->universe);
+		$universe->id = 0;
+		//print_r($universe);die();
 		if (!$universe->test()) {
 			die('Bad Universe');
 		}

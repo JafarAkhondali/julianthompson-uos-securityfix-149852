@@ -32,15 +32,20 @@ class node_universe extends node {
 		return ($this->db_entity_insert($entity))?$entity->guid->value:null;
 	}
 	
-	public function tagcontent($entity, $tagentitiesid) {
+	public function tagcontent($entity, $tagentitiesid) {		
 		foreach($tagentitiesid as $tagid) {
 			$relationship = new relationship(array(
-				'parent' => $entity->id,
-				'child' => $tagid
+				'parent' => $tagid,
+				'child' => $entity->id
 			));
-			db_entity_insert($relationship);
+			
+			trace('trying to insert relationship : '.$tagid,'tagcontent');
+			//$this->db_entity_insert($relationship);
+			$this->add($relationship);
+			$this->trace('inserted relationship');
 		}
 	}
+	
 
 /*
 	//moved to entity	
@@ -94,7 +99,7 @@ class node_universe extends node {
 	}
 */
 	function db_entity_insert($entity) {
-		trace('ENTITY_INSERT');
+		trace('ENTITY_INSERT','db_entity_insert');
 		$this->db_create_tables($entity);
 		//$tables = $this->db_entity_data($entity);
 		$tables = $entity->___getdata();
@@ -123,7 +128,7 @@ class node_universe extends node {
 		//print_r($tables);
 		//$primarykey = $this->db_entity_primary_key($entity);
 		$primarykey = $entity->getindexproperty()->key;
-		$uniquekey = $entity->uniqueproperties;		
+		//$uniquekey = $entity->uniqueproperties;		
 		//print_r($primarykey);
 		//die('create tables');
 		$primarykeystr = ($primarykey) ? ', PRIMARY KEY (`'.$primarykey.'`)' : '';
@@ -132,7 +137,7 @@ class node_universe extends node {
 			foreach($values as $key=>$value) {
 				$fielddata[] = '`' . $key . '` ' . $value;
 			}
-			$sql = "CREATE TABLE IF NOT EXISTS `".$scope."` (".implode(', ',$fielddata)."$primarykeystr);";
+			$sql = "CREATE TABLE IF NOT EXISTS `".$scope."` ( " . implode(', ',$fielddata) . $primarykeystr . ");";
 			trace($sql);
 			$connection = $this->db_connect();
 			$result = $connection->Execute($sql);
@@ -209,22 +214,27 @@ class node_universe extends node {
 	function db_query() {
 		$args = func_get_args();
 		$sql = call_user_func_array('sprintf',$args);
+		trace($sql,'Database query');
 		$connection = $this->db_connect();
 		return $connection->Execute($sql);
 	}
+
+
 	
 	function guid_to_id($guidmixed) {
 		$guids = $this->normalize_guid_list($guidmixed);
-		$result = $this->db_query('SELECT id FROM `entity` WHERE guid IN (%d)',$table,implode(',',$guids));
-		while (!$result->EOF) {
+		$result = $this->db_query('SELECT id FROM `entity` WHERE guid IN (%s)',implode(',',$guids));
+		while ($result && !$result->EOF)  {
 			$ids[]= $result->fields['id'];
+			$result->MoveNext();
 		}
+		$this->trace($ids);
 		return $ids;
 	}
 	
 	function normalize_guid_list($guids) {
-		if (is_string($guidmixed)) {
-				$guids = explode(',',$guidmixed);
+		if (is_string($guids)) {
+				$guids = explode(',',$guids);
 		}
 		
 		if (is_array($guids)) {			
@@ -294,9 +304,9 @@ class node_universe extends node {
 		$connection->SetFetchMode(ADODB_FETCH_ASSOC);
 		
   	$ids = array_unique(func_get_args());
-		
+		trace($ids,'db_select_children');
 		// remove universe id from array
-		if(($key = array_search(1, $ids)) !== false) {
+		if(($key = array_search(0, $ids)) !== false) {
     	unset($ids[$key]);
 		}
 		
@@ -307,7 +317,7 @@ class node_universe extends node {
 				
 		$joins = array();
 		foreach($ids as $key=>$id) {
-			$joins[] = sprintf("INNER JOIN `relationship` r%d ON r%d.to = entity.id AND r%d.from = %d",$key,$key,$key,$id);
+			$joins[] = sprintf("INNER JOIN `relationship` r%d ON r%d.child = entity.id AND r%d.parent = %d",$key,$key,$key,$id);
 		}
 
 		//$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship' AND entity.id != 1",implode(' ',$joins));

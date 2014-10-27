@@ -1,5 +1,7 @@
 <?php
 
+
+$tagentityids = $universe->guid_to_id(array($uos->request->parameters['target']));
 //$this->children[] = print_r($uos->request->filesd,TRUE);
 
 //foreach($uos->request->files as $file) {
@@ -9,7 +11,7 @@
 //}
 //$this->children = $uos->request->files;
 
-//trace('ANALW');
+trace($tagentityids,'ANALW');
 $guid = 'unset';
 
 foreach($uos->request->files as $file) {
@@ -17,6 +19,7 @@ foreach($uos->request->files as $file) {
 	$guid = $universe->add($file);
 	//throw new Exception('Division by zero.');
 	//addoutput('content', $guid);
+	$universe->tagcontent($file, $tagentityids);
 	addoutput('content/', $file);
 	//print_r($file);
 }

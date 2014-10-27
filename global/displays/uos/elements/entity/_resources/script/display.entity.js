@@ -55,7 +55,11 @@ uos.displays['entity'].actions = {
 
 function uostype_entity_add($element) {
 	//jQuery('<p>I want banana!</p>').modal();
-	BootstrapDialog.alert('I want banana!');
+	//BootstrapDialog.alert('I want banana!');
+	var elementdata = uos.getelementdata($element);
+	uos.post(elementdata.guid,'add',{
+		//debugrequest : true
+	});
 }
 
 

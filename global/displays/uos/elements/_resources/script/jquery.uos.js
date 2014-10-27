@@ -1159,6 +1159,11 @@ uos.dropfiles = function($element,files) {
 		});
 		
 		uosrequest.onload = function(event) {
+		
+			$element.removeClass('uos-processing');
+  		//$element.replaceWith($loadedcontent); 
+  		$element.find('.uos-request').remove();
+		
   		uos.log('uos.dropfiles:response',event.target);
 		  //progress.value = progress.innerHTML = 100;
 			$.growl.notice({ title : 'Uploaded File(s)', message:  filenames.join(', ') + ' into ' + $element.attr('title'), location : 'br'  });	
@@ -1195,8 +1200,7 @@ uos.dropfiles = function($element,files) {
 			});
 			*/
 			//uos.log(uos.getelementdata($loadedcontent))
-			$element.removeClass('uos-processing');
-  		//$element.replaceWith($loadedcontent); 
+
 		};
 		
 		uosrequest.send(postData);	

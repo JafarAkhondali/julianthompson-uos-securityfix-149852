@@ -26,7 +26,7 @@
 			</div>
 		</div>
 		<div id="universetoolbar-tagbar">
-			<div id="uos-entity-title"><?php print $uos->request->universe->title;?></div>
+			<div id="uos-entity-title"><?php print $entity['content']->title;?></div>
 			<div id="uos-entity-type"><?php print $render->entityconfig->title;?></div>
 		</div>
 		<div class="clearboth"></div>

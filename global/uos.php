@@ -15,7 +15,7 @@ if (!$universe) {
 
 	if ( (empty($uos->request->targetstring)) || ($uos->request->targetstring=='0000000000000000') ) {
 		$target = $universe;
-		$target->id = 1;
+		//$target->id = 1;
 	} else {
 		//$uos->universe
 		//$target = fetchentity($uos->request->targetstring);
@@ -25,10 +25,12 @@ if (!$universe) {
 	}
 	
 	if ($target) {
+		/*
 		$children = ($universe->db_select_children((string) $target->id));
 		  foreach($children as $child) {
 			$target->children[] = $child;
 		}
+		*/
 		//$universe->db_select_children($target->id->value);
 		//fetchentitychildren($target);
 		$target->trigger($uos->request->action);
@@ -49,7 +51,7 @@ if (isset($uos->request->parameters['debugresponse'])) {
 //print_r($uos->output);die();
 
 // we found something do something otherwise be as silent as a ninja
-if (isset($uos->output['content'])) {
+if (isset($uos->output)) {
 	try {
 		$uos->response->content = rendernew($uos->output,array(
 		//$uos->response->content = rendernew($uos->output['content'],array(

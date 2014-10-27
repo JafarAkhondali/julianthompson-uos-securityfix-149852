@@ -733,7 +733,7 @@ function file_list($path, $expression='.*', $dotfolders=FALSE) {
       }
       closedir($handle);
     }
-    trace('found path :'.$path);
+    //trace('found path :'.$path);
   } else {
     //trace('Cannot find path :'.$path,'file_list');
   }

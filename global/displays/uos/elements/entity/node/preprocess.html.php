@@ -23,7 +23,7 @@ $render->elementdata->draglink = "application/octet-stream:" . $render->attribut
 if ($entity->filename) {
 	//$dragfilefile = $uos->request->siteurl . $entity->filepath->value;
 	$dragfilefile = $uos->request->hosturl . '/'. $entity->guid->value . '.file';
-	$render->elementdata->dragfile = $entity->mimetype->value . ":" . $entity->filename->value . ":" . $dragfilefile;
+	//$render->elementdata->dragfile = $entity->mimetype->value . ":" . $entity->filename->value . ":" . $dragfilefile;
 }
 
 addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/_resources/script/display.node.js");

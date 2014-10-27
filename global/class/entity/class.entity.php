@@ -148,9 +148,9 @@ class entity {
   
   	global $uos;
 		$entityclass = get_class($this);
-			trace('looking for actions for : '.$entityclass,'jmt');
+			//trace('looking for actions for : '.$entityclass,'jmt');
 			if (is_null($this->actions)) {		
-			trace('finding actions for : '.$entityclass,'jmt');
+			//trace('finding actions for : '.$entityclass,'jmt');
 				if (!isset($uos->config->types[$entityclass])) {
 					$uos->config->types[$entityclass] = new StdClass();  
 				}
@@ -162,7 +162,7 @@ class entity {
 				//trace($classes);
 				foreach($classes as $class) {
 					$path = classtopath($class) . '_actions/';
-					trace('found action : '.$path,'jmt');
+					//trace('found action : '.$path,'jmt');
 					$actionfiles = file_list($path, 'action\..*\.php');
 					foreach ($actionfiles as $actionfile) {
 						$actionname = substr($actionfile,7,-4);
@@ -187,7 +187,7 @@ class entity {
 
     if (!$this->propertyexists($propertyname)) {
 
-      trace('addproperty : '. $propertyname . '(' . $fieldtypename . ') - ' . $this->scope);
+      //trace('addproperty : '. $propertyname . '(' . $fieldtypename . ') - ' . $this->scope);
       try {
         $field = new $fieldtypename($parameters);
         //if (is_subclass_of($field,'field')) {
@@ -231,9 +231,9 @@ class entity {
     $this->getactions();
     //print_r($this->actions[$action]);
     //print_r(gettype($this));
-		trace(get_class($this),'jmt');
+		//trace(get_class($this),'jmt');
 		//trace($this->title,'jmt');
-		trace(empty($this->actions)?'EMPTYACTONS':'','jmt');
+		//trace(empty($this->actions)?'EMPTYACTONS':'','jmt');
     if (isset($this->actions[$action])) {
     
       //$response->found = TRUE;
@@ -255,13 +255,14 @@ class entity {
     		$this->scope = $classname;
       	$response->actionfiles[] = $actionfile; 
       	//if (get_class($this)=='field') { print_r($this->actions);print_r($classtree);print_r($actionfile); }
-      	trace('callaction  : '.$actionfile.' ('.$this->scope.')');  
+      	//trace('callaction  : '.$actionfile.' ('.$this->scope.')');  
       	if (file_exists($actionfile)) {
 		      try {
 		        //$result = @include $__actionfile;
 		        @include $actionfile;
 		      } catch (Exception $e) {
-		      	addoutput('content/',"Failed action :".$actionfile . ":". print_r($e,TRUE));
+		      	trace('Caught exception : ' . print_r($e,TRUE) ,'action');
+		      	addoutput('content',"Failed action :".$actionfile . ":". print_r($e,TRUE));
 		      	//die('failed includes');
 		        //$result = 'error';//$e;
 		      }
@@ -274,7 +275,7 @@ class entity {
       //$response->output = ob_get_contents();
       //trace($harry);
       //ob_end_clean();
-      trace('processed action file');      
+      //trace('processed action file');      
       //$parameters['actionresult'] = $result;
       //$this->fireevent($action,$parameters,UNIVERSE_EVENT_POST);
 
