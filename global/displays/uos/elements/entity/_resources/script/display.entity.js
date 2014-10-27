@@ -377,13 +377,12 @@ function uostype_entity_event_dragend(event) {
 }
 
 
-
-
 function uostype_entity_event_header_dblclick($element, event) {
 	alert('dblclick header');
 	event.preventDefault();	
 	event.stopPropagation();
 }
+
 
 function uostype_entity_display_change($element, increment) {
 	var elementdata = uos.getelementdata($element);
@@ -401,8 +400,6 @@ function uostype_entity_display_change($element, increment) {
   //$requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> Adding files</h1>');
 	uos.loadcontent($element,"/"+elementdata.guid+".view.uosio?display="+newdisplay);
 }
-
-
 
 
 function uostype_entity_reload($element) {
