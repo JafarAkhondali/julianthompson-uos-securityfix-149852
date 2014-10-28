@@ -11,7 +11,7 @@ if (isset($uos->request->parameters['debugrequest'])) {
 
 //print_r($uos->request);die();
 
-//register_shutdown_function('universe_shutdown');
+register_shutdown_function('universe_shutdown');
 //set_error_handler('handleError');
 
 
@@ -684,25 +684,21 @@ function universe_shutdown() {
 	  echo "ERRORnr : " . $error['type']. " |Msg : ".$error['message']." |File : ".$error['file']. " |Line : " . $error['line'];
 	  die();
 	} 
-  
-	if (!isset($uos->shutdown)) {
-		$uos->shutdown = TRUE;	
-		// compress output if supported
-		ob_start();
+  /*
+	if (isset($uos->output)) {
 		try {
-			startrender();
+			$uos->response->content = rendernew($uos->output,array(
+			//$uos->response->content = rendernew($uos->output['content'],array(
+				//'debug'	=> TRUE,
+				'displaystring' => $uos->request->displaystring
+			));
 		} catch (Exception $e) {
-			ob_end_clean();
-	    echo('Caught exception: ' .  $e->getMessage() . "\n");
-	    die();
+			//$uos->response->code = 500;
+		  $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");
 		}
-		$content = ob_get_contents();
-		ob_end_clean();
-		ob_start("ob_gzhandler");
-		echo $content;
-	} else {
-		die('Something went wrong');
+		echo $uos->response->content;
 	}
+	*/
 }
 
 function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
@@ -716,6 +712,8 @@ function handleError($errno, $errstr, $errfile, $errline, array $errcontext) {
     $tags = array('error');
     $tags[] = isset($errormap[$errno])?$errormap[$errno]:'unknown';
 		trace($errstr,$tags);
+		die('handleError');
+		return true;
 }
 
 

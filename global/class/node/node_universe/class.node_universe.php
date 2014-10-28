@@ -133,6 +133,7 @@ class node_universe extends node {
 		//die('create tables');
 		$primarykeystr = ($primarykey) ? ', PRIMARY KEY (`'.$primarykey.'`)' : '';
 		foreach($tables as $scope=>$values) {
+			$uniquestr = ', UNIQUE KEY (pid, aid)'; // <- to be completed
 			$fielddata = array();
 			foreach($values as $key=>$value) {
 				$fielddata[] = '`' . $key . '` ' . $value;

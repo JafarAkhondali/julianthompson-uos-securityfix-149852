@@ -9,6 +9,7 @@ $message = new node_message(array(
 	'title' => "Dropped entities",
 	'body' => "Dropped " . implode(',',$tagentityids)  . " entities onto " . $this->title . ' (' . $this->id . ')'
 ));
+//trigger_error("(SQL)", E_USER_ERROR);
 //trace('xxxx','poo');
 $universe->tagcontent($this, $tagentityids);
 addoutput('content/', $message);

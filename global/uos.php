@@ -48,6 +48,9 @@ if (isset($uos->request->parameters['debugresponse'])) {
 	die();
 }
 
+
+// shutdown function called here
+
 //print_r($uos->output);die();
 
 // we found something do something otherwise be as silent as a ninja
