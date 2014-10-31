@@ -3,7 +3,7 @@
 $elementdata = isset($uos->output['elementdata'])?$uos->output['elementdata']:array();
 print json_encode( (object) array(
 	'content'=>$render->templateoutput,
-	'notifications'=>render($notifications),
+//	'notifications'=>render($notifications),
 	'elementdata'=>$elementdata,
 	'elementcount'=>count($elementdata),
 	'resources'=>(isset($uos->output['resources']))?$uos->output['resources']:Array()

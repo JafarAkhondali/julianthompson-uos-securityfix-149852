@@ -679,9 +679,9 @@ function universe_shutdown() {
   global $uos;
   
 	$error = error_get_last();
-	if (($error['type'] === E_ERROR) || ($error['type'] === E_USER_ERROR)|| ($error['type'] === E_USER_NOTICE)) {
+	if ( ($error['type'] === E_ERROR) || ($error['type'] === E_USER_ERROR) ) {
 	  //addoutput('content/',$error);
-	  echo "ERRORnr : " . $error['type']. " |Msg : ".$error['message']." |File : ".$error['file']. " |Line : " . $error['line'];
+	  echo "ERROR type : " . $error['type']. " | Msg : ".$error['message']." | File : ".$error['file']. " | Line : " . $error['line'];
 	  die();
 	} 
   /*

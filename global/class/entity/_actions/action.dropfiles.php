@@ -37,7 +37,7 @@ foreach($uos->request->files as $file) {
 	//print_r($matchingfiles);die();
 	if (count($matchingfiles)>0) {
 		addoutput('content/', 'Content already in universe ('.$file->title->value.').'); 	
-		addoutput('notifications/', 'Content already in universe ('.$file->title->value.').'); 	
+		//addoutput('notifications/', 'Content already in universe ('.$file->title->value.').'); 	
 		$universe->tagcontent($this,array($matchingfiles[0]->id->value));  
  	} else {
 	  $guid = $universe->add($file);
@@ -55,5 +55,5 @@ foreach($uos->request->files as $file) {
 //addoutput('content', $testthis);
 //addoutput('content', $foutput);
 
-addoutput('contento', 'dropfiles'.$guid.'--');
+//addoutput('contento', 'dropfiles'.$guid.'--');
 //addoutput('universe', $uos->universe);

@@ -1029,7 +1029,7 @@ uos.post = function($element,action,parameters,files) {
 		uos.log('files not found');
 	}
 	
-	$actionstatus = uos.addactionstatus($element,'Posting Action');
+	$actionstatus = uos.addactionstatus($element,'Posting Action '+elementdata.guid + '/' + action);
 
 	//if (parameters.files) {
   //	postData.append("files", parameters.files);  
@@ -1039,7 +1039,11 @@ uos.post = function($element,action,parameters,files) {
 	uos.log('uos.post:request',elementdata.guid,action,parameters);
   
 	var uosrequest = new XMLHttpRequest();
-	uosrequest.open('POST', '/global/uos.php?random=' + (new Date).getTime());// + '&debugrequest');
+	
+	var uosglobalurl = '/global/uos.php?random=' + (new Date).getTime();
+	//uosglobalurl += '&debugrequest';
+	//uosglobalurl += '&debugresponse';
+	uosrequest.open('POST', uosglobalurl);
 	//xhr.setRequestHeader("X_FILENAME", file.name);
 	
 	//console.log('uos.dropfiles',elementdata,postData);
@@ -1094,9 +1098,9 @@ uos.post = function($element,action,parameters,files) {
 }
 
 
-uos.addactionstatus = function($element,$requestinfo) {
+uos.addactionstatus = function($element,title,$requestinfo) {
 	var $requestelement = jQuery('<div class="uos-request"/>');
-	$requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> Adding files</h1>');
+	$requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> '+title+'</h1>');
 	var $requestinfo = jQuery('<div class="uos-request-info"/>');
 	$requestelement.append($requestinfo);
 	$progressindicator = jQuery('<div class="uos-progress-indicator"></div>');
