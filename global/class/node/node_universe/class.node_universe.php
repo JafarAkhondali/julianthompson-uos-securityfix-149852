@@ -18,25 +18,22 @@ class node_universe extends node {
 		return $this->dbconnection;
   }  
 
-	public function getentities($filter) {
-		$filter = format_initializer($filter);
-		return $filter;
-		$this->dbconnection->SetFetchMode(ADODB_FETCH_ASSOC);
-		$this->dbconnection->debug=TRUE;
-		return $this->dbconnection->GetAssoc("SELECT * FROM node WHERE type LIKE 'node_%'");
-	}
-
 	public function add($entity) {
 		$entity->guid = $this->db_unique_guid();	
 		$entity->relocatefiles();
 		return ($this->db_entity_insert($entity))?$entity->guid->value:null;
 	}
-	
+	/*
+	public function addtag($entity) {
+		$this->tags[$entity->guid->value] = $entity;
+	}
+	*/
+	// put tagentities in $entity
 	public function tagcontent($entity, $tagentitiesid) {		
 		foreach($tagentitiesid as $tagid) {
 			$relationship = new relationship(array(
-				'parent' => $tagid,
-				'child' => $entity->id
+				'parent' => $entity->id,
+				'child' => $tagid
 			));
 			
 			trace('trying to insert relationship : '.$tagid,'tagcontent');
@@ -297,12 +294,35 @@ class node_universe extends node {
 		}
 	}
 	
+	function db_search($searchobj, $count=FALSE) {
+
+		$operator = '=';
+
+		$wheres = array();
+
+		$joins = array();
+		
+		$order = array();
+
+		foreach($searchobj['where'] as $value) {
+			//list($tablename,$fieldname) = explode('.',$tablefield);
+			$tablename = $value['table']; 
+			if (!isset($joins[$tablename])) {
+				$joins[$tablename] = sprintf("INNER JOIN `%s` ON %s.entity_id = entity.id",$tablename,$tablename);
+			}
+			$wheres[] = sprintf("%s.%s %s '%s'",$value['table'],$value['field'],$value['operator'],$value['value']);	
+		}	
+		$selects = ($count)?'COUNT(*)':'DISTINCT entity.id,entity.type';
+		$joins = (empty($joins))? '' : implode(' ', $joins);
+		$wheres = (empty($wheres))? '' : ' WHERE ' . implode(' AND ', $wheres);
+		$order = (empty($order))? '' : ' ORDER BY ' . implode(',', $order);
+		
+		$sql = sprintf("SELECT %s FROM `entity` %s %s %s", $selects, $joins, $wheres, $order);
+		return $this->db_get_entities($sql);	
+	}
+	
 	
 	function db_select_children() {
-	
-		$entities = array();
-		$connection = $this->db_connect();
-		$connection->SetFetchMode(ADODB_FETCH_ASSOC);
 		
   	$ids = array_unique(func_get_args());
 		trace($ids,'db_select_children');
@@ -326,12 +346,19 @@ class node_universe extends node {
 		$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship'",implode(' ',$joins));
 
 		trace($sql);
-		//print_r($ids);
-		//print_r($sql);die();
 		
-		$result = $connection->Execute($sql);		
+		return $this->db_get_entities($sql);
+
+	}
+
+	public function db_get_entities($sql) {
+		$entities = array();
+		$connection = $this->db_connect();
+		$connection->SetFetchMode(ADODB_FETCH_ASSOC);
 		
-		while ($result && !$result->EOF) {
+		$result = $connection->Execute($sql);	
+		//return $sql;
+		while ($result && !$result->EOF) {	
 				$type = $result->fields['type'];
 				// this new type to just get table definition is wasteful
 				$entity = new $type();
@@ -353,10 +380,9 @@ class node_universe extends node {
 					$entities[] = $entity;	
 				}
 				$result->MoveNext();
-		}	
-		//die();
-		//print count($entities);die();
+		}		
 		return $entities;	
 	}
+	
 
 } 

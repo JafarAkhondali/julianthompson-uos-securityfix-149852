@@ -1,5 +1,7 @@
 <?php 
 
+//print_r($_POST);die();
+
 include_once "./core/core.php";
 
 

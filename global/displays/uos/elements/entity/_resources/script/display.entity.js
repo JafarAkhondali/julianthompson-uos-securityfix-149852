@@ -312,7 +312,10 @@ function uostype_entity_event_drop(event) {
 
 		// if we drop files		
 		case 'Files' :
-			uos.dropfiles($element,event.dataTransfer.files);		
+			//uos.dropfiles($element,event.dataTransfer.files);	
+	    uos.post($element,'dropfiles',{
+	    	content: uos.getSelectedGuids()
+	    },event.dataTransfer.files);
 		break;
 		
 		// if we drop entities
@@ -320,9 +323,9 @@ function uostype_entity_event_drop(event) {
 	  	if (!uos.isSelected($element)) {
 				var titles = uos.getSelectedTitles();
 	    	uos.notification({ title : 'Dropped Node(s)', message: 'Dropped : ' + titles.join(', ') + ' onto ' + $element.attr('title')});
-	    	uos.post(elementdata.guid,'dropentity',{
+	    	uos.post($element,'dropentity',{
 	    		content: uos.getSelectedGuids()
-	    	})
+	    	});
 	    	uos.log('uostype_entity_event_drop',elementdata.guid);
 	    }  
 		break;
@@ -347,7 +350,7 @@ function uostype_entity_event_drop(event) {
 	    var contenttrimmed = '"' + ((contenttext.length>100) ? contenttext.substring(0, 100) + '...' : contenttext) + '"';
 	    if (contenttext=='') contenttrimmed = 'content'
 	    uos.notification({ title : 'Dropped Content', message: 'Dropped : ' + contenttrimmed + ' onto ' + $element.attr('title')}); 
-    	uos.post(elementdata.guid, 'dropcontent', {
+    	uos.post($element, 'dropcontent', {
     			content: content,
     	});  
 		break;

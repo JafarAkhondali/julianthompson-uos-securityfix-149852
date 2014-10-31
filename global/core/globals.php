@@ -87,7 +87,6 @@ $uos->title = 'UniverseOS';
 
 $uos->request->action = UOS_DEFAULT_ACTION;
 $uos->request->serveraddress = $_SERVER['SERVER_ADDR'];
-
 // Build Input parameters
 
 // Command Line
@@ -137,7 +136,7 @@ if (isset($argv)) {
 	if(!empty($parsedurl['query'])) {
 		$uos->request->parameters = UrlToQueryArray($parsedurl['query']);
 	}
-	
+	//print_r($_REQUEST);die();
 	//Overwrite get variables with posted
 	if (!empty($_POST)) {
 		//$uos->request->action = 'drop';
@@ -188,10 +187,12 @@ if (isset($argv)) {
 	if(isset($uos->request->parameters['display'])) {	
 		$uos->request->displaystring = $uos->request->parameters['display'];
 	}
-	
+	//print_r($uos->request);print_r($_POST);die();	
 	if($uos->request->urlpath=='global/uos.php') {
 		$uos->request->urlpath = implode('.',array($uos->request->target,$uos->request->action,$uos->request->displaystring));
 	}
+	
+
 }
 
 

@@ -84,6 +84,7 @@ div.universetoolbar.uos-element-active {
 #universetoolbars #uos-status-icon {
 	float: left;
 	margin: 0;
+	position: relative;
 }
 
 #universetoolbar-status #uos-status-icon .field-icon {
@@ -95,6 +96,7 @@ div.universetoolbar.uos-element-active {
 #universetoolbars #universetoolbar-tagbar {
 	float: left;
 	margin: 0px 10px;
+	display:block;
 }
 #universetoolbars #universetoolbar-tagbar:after {
      visibility: hidden;
@@ -186,16 +188,15 @@ div.uos-tags ul li {
 	border:2px solid rgba(255,255,255,0.75);
 	float:left;
 	margin: 0;
-	margin-right: 2px;
-	padding: 2px 12px 2px 5px;
-	padding: 2px 8px;
+	margin-right: 1px;
 	padding: 1px 6px;
-	font-size: 10px;
+	font-size: 9px;
+	line-height: 9px;
 }
 
 div.uos-tags ul li i.fa {
-	font-size: 10px;
-	line-height: 14px;
+	font-size: 9px;
+	line-height: 9px;
 }
 
 div.uos-tags ul li.universe-entity {
@@ -638,6 +639,7 @@ div.node .uos-header i.children-count {
 #universetoolbar-status i.children-count {
 	left: 35px;
 	top: 30px;
+	position: absolute;
 }
 
 div.node.three-d .uos-header i.children-count {
@@ -745,16 +747,16 @@ textarea.editvalue {
 	width: 100%;
 }
 
-div.uos-element.display-noheader-html > i.fa {
+div.uos-element.display-teaser-html > i.fa {
 	font-size: 100px;
 	display: block;
 	float: none;
 	position: relative;
 }
-div.uos-element.display-noheader-html > h1 {
+div.uos-element.display-teaser-html > h1 {
 	text-align: center;
 }
-div.uos-element.display-noheader-html > h2 {
+div.uos-element.display-tease-html > h2 {
 	text-align: center;
 	font-size: 0.9em;
 }

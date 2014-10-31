@@ -999,26 +999,44 @@ if (tests.dnd) {
 */	
 
 
-uos.post = function(target,action,parameters) {
+uos.post = function($element,action,parameters,files) {
+
+	var elementdata = uos.getelementdata($element);
 
   var postData = new FormData();
   
   var jsonparameters = JSON.stringify(parameters);
   
-  postData.append("target", target);
+  postData.append("target", elementdata.guid);
   
   postData.append("action", action);
 
   postData.append("display", 'uosio');
   
   postData.append("jsonparameters", jsonparameters);
+  
+  uos.log('uos.post',files);
+  
+  if (files instanceof FileList) {
+  	uos.log('files found');
+		for (var i = 0; i < files.length; i++) {
+		  uos.log("Dropped File : ", files[i]);
+		  //filenames.push(files[i].name + ' (' + uos.getReadableFileSizeString(files[i].size) + ')');
+		  //$requestinfo.append('<div class="uos-file"><i class="fa fa-file-text"></i><div class="uos-file-title">'+files[i].name+'</div>');
+		  postData.append("files[]", files[i]);
+		}
+	} else {
+		uos.log('files not found');
+	}
+	
+	$actionstatus = uos.addactionstatus($element,'Posting Action');
 
 	//if (parameters.files) {
   //	postData.append("files", parameters.files);  
   //	delete parameters.files;
   //}
   
-	uos.log('uos.post:request',target,action,parameters);
+	uos.log('uos.post:request',elementdata.guid,action,parameters);
   
 	var uosrequest = new XMLHttpRequest();
 	uosrequest.open('POST', '/global/uos.php?random=' + (new Date).getTime());// + '&debugrequest');
@@ -1029,12 +1047,13 @@ uos.post = function(target,action,parameters) {
 	uosrequest.upload.addEventListener('progress', function(event) {
 		var progresspercent = (event.loaded / event.total) * 100;
 		//$progressslider.width(progresspercent+ '%');
+		uos.updateactionprogress($element,progresspercent);
 		console.log('Uploading: ' + (Math.round(progresspercent)+ '%'),event);
 	});
 	
 	uosrequest.onload = function(event) {
 		//$.growl.notice({ title : 'Uploaded File(s)', message:  filenames.join(', ') + ' into ' + $element.attr('title'), location : 'br'  });	
-		
+		uos.removeactionstatus($element);
 		//$requestinfo.remove();
 		var data = JSON.parse(event.target.response);
 		
@@ -1074,6 +1093,34 @@ uos.post = function(target,action,parameters) {
 	uosrequest.send(postData);
 }
 
+
+uos.addactionstatus = function($element,$requestinfo) {
+	var $requestelement = jQuery('<div class="uos-request"/>');
+	$requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> Adding files</h1>');
+	var $requestinfo = jQuery('<div class="uos-request-info"/>');
+	$requestelement.append($requestinfo);
+	$progressindicator = jQuery('<div class="uos-progress-indicator"></div>');
+	$progressslider = jQuery('<div class="uos-progress-slider"></div>');
+	$progressindicator.append($progressslider);
+	$requestelement.append($progressindicator);
+	$element.append($requestelement);
+}
+
+uos.updateactionprogress = function($element,progresspercent) {
+	$progressslider = $element.find('div.uos-progress-slider');
+	$progressslider.width(progresspercent+ '%');
+}
+
+uos.updateactioninfo = function($element,$requestinfo) {
+	$requestinfo = $element.find('div.uos-request-info');
+	$requestelement.append($requestinfo);
+}
+
+uos.removeactionstatus = function($element) {
+	$element.find('div.uos-request').remove();
+}
+
+
 uos.dropfiles = function($element,files) {
     //debugger;
 		var elementdata = uos.getelementdata($element);
@@ -1086,30 +1133,29 @@ uos.dropfiles = function($element,files) {
     
     var postData = new FormData();
     
-		//postData.append('files', files);
-		
     postData.append("target", elementdata.guid);
     
     postData.append("action", 'dropfiles');
 
     postData.append("display", 'uosio');
+		
+		//postData.append("file", files[0]);
+
+		console.log('uos.dropfiles',elementdata, postData);
     
+		//postData.append('files', files);
     //postData.append("debugrequest", '1');
     //postData.append("debugresponse", '1');
     //postData.append("debugrender", '1');
     
     var $requestinfo = jQuery('<div class="uos-request-info"/>');
-    
+
 		for (var i = 0; i < files.length; i++) {
 		  uos.log("Dropped File : ", files[i]);
 		  filenames.push(files[i].name + ' (' + uos.getReadableFileSizeString(files[i].size) + ')');
 		  $requestinfo.append('<div class="uos-file"><i class="fa fa-file-text"></i><div class="uos-file-title">'+files[i].name+'</div>');
 		  postData.append("files[]", files[i]);
 		}
-		
-		//postData.append("file", files[0]);
-
-		console.log('uos.dropfiles',elementdata, postData);
 
     $requestelement.append($requestinfo);
     
@@ -1148,6 +1194,7 @@ uos.dropfiles = function($element,files) {
 
 		var uosrequest = new XMLHttpRequest();
 		uosrequest.open('POST', '/global/uos.php?random=' + (new Date).getTime());// + '&debugresponse');
+		//uosrequest.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 		//xhr.setRequestHeader("X_FILENAME", file.name);
 		
 		console.log('uos.dropfiles',elementdata,postData);
@@ -1155,7 +1202,7 @@ uos.dropfiles = function($element,files) {
 		uosrequest.upload.addEventListener('progress', function(event) {
 			var progresspercent = (event.loaded / event.total) * 100;
 			$progressslider.width(progresspercent+ '%');
-			console.log('Uploading: ' + (Math.round(progresspercent)+ '%'),event);
+			//console.log('Uploading: ' + (Math.round(progresspercent)+ '%'),event);
 		});
 		
 		uosrequest.onload = function(event) {
@@ -1202,7 +1249,7 @@ uos.dropfiles = function($element,files) {
 			//uos.log(uos.getelementdata($loadedcontent))
 
 		};
-		
+		uosrequest.setRequestHeader("Content-Type","multipart/form-data");
 		uosrequest.send(postData);	
 };
 

@@ -7,7 +7,7 @@ $tagentityids = $universe->guid_to_id($uos->request->parameters['content']);
 //throw new Exception('Division by zero.');
 $message = new node_message(array(
 	'title' => "Dropped entities",
-	'body' => "Dropped " . implode(',',$tagentityids)  . " entities onto " . $this->title . ' (' . $this->id . ')'
+	'body' => "Dropped entities (" . implode(',',$tagentityids)  . ")  onto " . $this->title . ' (' . $this->id . ':' . $this->guid . ')'
 ));
 //trigger_error("(SQL)", E_USER_ERROR);
 //trace('xxxx','poo');

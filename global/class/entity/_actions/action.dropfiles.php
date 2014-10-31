@@ -15,13 +15,36 @@ trace($tagentityids,'ANALW');
 $guid = 'unset';
 
 foreach($uos->request->files as $file) {
-	$foutput[] = $file->title->value;
-	$guid = $universe->add($file);
-	//throw new Exception('Division by zero.');
-	//addoutput('content', $guid);
-	$universe->tagcontent($file, $tagentityids);
-	addoutput('content/', $file);
-	//print_r($file);
+
+	$searchobj = array(
+ 		'where' => array(
+			0 => array(
+				'table' => 'node_file',
+				'field' => 'checksum',
+				'operator' => '=',
+				'value' => $file->checksum->value
+			),
+			1 => array(
+				'table' => 'node_file',
+				'field' => 'size',
+				'operator' => '=',
+				'value' => $file->size->value
+			),
+ 		)
+ 	);
+ 	
+ 	$matchingfiles = $universe->db_search($searchobj);
+	//print_r($matchingfiles);die();
+	if (count($matchingfiles)>0) {
+		addoutput('content/', 'Content already in universe ('.$file->title->value.').'); 	
+		addoutput('notifications/', 'Content already in universe ('.$file->title->value.').'); 	
+		$universe->tagcontent($this,array($matchingfiles[0]->id->value));  
+ 	} else {
+	  $guid = $universe->add($file);
+		$universe->tagcontent($this, array($file->id->value));
+		addoutput('content/', $file); 			
+ 	}
+
 }
 
 

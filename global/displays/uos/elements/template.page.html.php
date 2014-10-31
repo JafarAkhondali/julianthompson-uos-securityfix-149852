@@ -16,14 +16,12 @@
 
 	<div id="universetoolbar-status" class="universetoolbar uos-element-active">
 		<div class="uos-element" id="uos-status-icon">
-			<div class="uos-header">
-				<div class="field-icon">
-					<span class="fa-stack fa-lg">
-					  <i class="fa fa-<?php print $render->entityconfig->icon;?> fa-stack-1x" id="uos-entity-icon"></i>
-					</span>
-				</div>
-				<i class="fa fa-stack-2x children-count" id="universe-selected-count">0</i>
+			<div class="field-icon">
+				<span class="fa-stack fa-lg">
+				  <i class="fa fa-<?php print $render->entityconfig->icon;?> fa-stack-1x" id="uos-entity-icon"></i>
+				</span>
 			</div>
+			<i class="fa fa-stack-2x children-count" id="universe-selected-count">0</i>
 		</div>
 		<div id="universetoolbar-tagbar">
 			<div id="uos-entity-title"><?php print $entity['content']->title;?></div>

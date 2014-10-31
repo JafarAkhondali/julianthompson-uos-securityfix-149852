@@ -392,5 +392,15 @@ class entity {
   	global $uos;
 		return UOS_GLOBAL_CACHE . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/';
 	}
+	
+  function datapath() {
+  	global $uos;
+		return UOS_GLOBAL_DATA . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/';
+	}
+	
+  function dataurl() {
+  	global $uos;
+		return '/data/' . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/';
+	}
   
 }		
