@@ -69,6 +69,7 @@ if (isset($parameters['uploadedfiles'][0])) {
 	$output->sourceid = $parameters['sourceid'];
 	
 	$output->addproperty('file', 'field_file', array());
+	$output->addproperty('uploadedurl', 'field_text', array('value'=>'unset'));
 	$output->addproperty('confirm', 'field_boolean', array('value'=>0));
 	$output->addproperty('parameters', 'field_text', array('value'=>print_r($parameters,TRUE), 'usereditable'=>FALSE));
 	$output->displaystring = 'edit.html';
