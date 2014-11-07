@@ -4,16 +4,7 @@
 // Set up the default UOS structure
 $uos = new StdClass();
 
-
-// Setup config object default 
-$uos->config = new StdClass();
-$uos->config->debugmode = FALSE;
-$uos->config->showerrors = FALSE;
-$uos->config->logging = TRUE;
-$uos->config->logtostdout = FALSE;
-$uos->config->types = Array();
-
-$uos->actions = array();
+//$uos->actions = array();
 
 $uos->request = new StdClass(); 
 //$uos->request->outputformat = new StdClass(); 
@@ -28,11 +19,14 @@ $uos->output['log'] = array();
 
 $uos->libraries = Array();
 
-if (file_exists(UOS_GLOBAL_CONFIG)) {
+
+include_once UOS_GLOBAL_CONFIG;
+
+if (file_exists(UOS_LOCAL_CONFIG)) {
 //Include the configuration file
-	include_once UOS_GLOBAL_CONFIG;
+	include_once UOS_LOCAL_CONFIG;
 } else {
-	die('No universe Configuration :' . UOS_GLOBAL_CONFIG);
+	die('No universe Configuration :' . UOS_LOCAL_CONFIG);
 }
 
 //overwrite configuration settings
@@ -150,22 +144,25 @@ if (isset($argv)) {
 
 	if(!empty($_FILES)) {
 		$uploadedfiles = diverse_array($_FILES["files"]);
+
 		//$uos->request->filesd = $uploadedfiles;
 		//$uos->request->files = $_FILES;
 		foreach($uploadedfiles as $uploadedfile) {
 			//$uploadedfile['type'] = 'node_file';
 			//$uos->request->files[] = print_r($uploadedfile,TRUE);
 			//$uos->request->files[] = $uploadedfile;
-			$uos->request->files[] = new node_file(array(
+			$uos->request->files[] = $uos->request->parameters['uploadedfiles'][] = new node_file(array(
 				'title'=>$uploadedfile['name'],
 				'mime'=>$uploadedfile['type'],
 				'size'=>$uploadedfile['size'],
 				'checksum'=>md5_file($uploadedfile['tmp_name']),
 				'filename'=>$uploadedfile['name'],
 				'filepath'=>$uploadedfile['tmp_name'],
-			));//$uploadedfile);
-			//print_r($uos->request->files);die();		
+			)); 
+			//$uploadedfile);
 		}
+		//print_r($uploadedfiles);
+		//print_r($uos->request->files);echo file_get_contents($uploadedfiles[0]['tmp_name']);die();		
 	}	
 	//$uos->request->browser = $browsercapabilities->getBrowser(null, true);
   //$uos->request->urlpath = trim($_SERVER['REQUEST_URI'],'/');
@@ -195,6 +192,7 @@ if (isset($argv)) {
 
 }
 
+$uos->request->debugmode = (isset($uos->request->parameters['debugmode']))?$uos->request->parameters['debugmode']:null;
 
 
 $uos->request->universeconfig = UOS_GLOBAL_DATA . $uos->request->universename.'/config.universe.php';

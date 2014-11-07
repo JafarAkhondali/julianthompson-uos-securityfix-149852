@@ -27,10 +27,17 @@ function uostype_field_boolean_initialize($element) {
 	//$element.find('.btn').button();
 	//$element.css('border','1px solid red');
 	//$element.find('.btn').css('border','1px solid red');
-	$element.bind('click', function(event) {
-		event.stopPropagation();
-	});
+	//$element.bind('click', function(event) {
+	//	event.stopPropagation();
+	//});
 	
-	$switch = $element.find('.field-boolean-value');
+	$switch = $element.find('.toggle-switch input[type=checkbox]');
 	$switch.bootstrapSwitch();
-}
+	//.on('switchChange.bootstrapSwitch', function(e,data) {
+	//	alert(data.value);
+	//
+	$switch.on('switch-change.bootstrapSwitch', function (e, data) {
+    var $el = $(data.el)
+      , value = data.value;
+    console.log(e, $el, value);
+});}

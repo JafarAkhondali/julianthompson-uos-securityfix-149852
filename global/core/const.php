@@ -44,6 +44,9 @@ define( 'UOS_LIBRARIES',      UOS_GLOBAL . 'libraries/');
 define( 'UOS_LIBRARIES_URL',    UOS_GLOBAL_URL . 'libraries/');
 
 
+// Classes folder - update convention to match UOS_PATH_XXXX
+define( 'UOS_PATH_CORE',        UOS_GLOBAL . 'core/');
+
 // Classes folder
 define( 'UOS_CLASSES',         UOS_GLOBAL . 'class/');
 
@@ -76,7 +79,9 @@ define( 'UOS_GLOBAL_CACHE',      UOS_ROOT . 'cache/');
 
 
 // Universe config file
-define( 'UOS_GLOBAL_CONFIG',	UOS_GLOBAL_DATA . 'config.uos.php');
+define( 'UOS_GLOBAL_CONFIG',	UOS_PATH_CORE . 'config.uos.php');
+
+define( 'UOS_LOCAL_CONFIG',	UOS_GLOBAL_DATA . 'config.uos.php');
 
 // Universe config folder
 define( 'UOS_TEMPORARY',				'/tmp/');
@@ -101,3 +106,7 @@ define(	'UOS_REQUEST_TYPE_GET',		'get');
 define(	'UOS_REQUEST_TYPE_POST',	'post');
 
 define(	'UOS_ERROR_NOT_FOUND',	NULL);
+
+define( 'UOS_DEBUGMODE_REQUEST', 'request');
+define( 'UOS_DEBUGMODE_RESPONSE', 'response');
+define( 'UOS_DEBUGMODE_RENDER',  'render');

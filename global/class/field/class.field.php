@@ -2,7 +2,7 @@
 # field class definition file
 class field extends entity {
 	public $value = null;  
-	private $parent = null;
+	public $parent = null;
 	public $key = null;
 	public $guid = null;
 	public $title = '';
@@ -10,7 +10,9 @@ class field extends entity {
 	public $required = FALSE;
 	public $indexfield = FALSE;
 	public $visible = TRUE;
+	public $usereditable = TRUE;
 	public $displayname = null;
+	public $initialvalue = null;
 	
 	
 	function __construct($initializer=null) {
@@ -31,10 +33,19 @@ class field extends entity {
 			//	$this->properties[$fieldname]->value = $fieldvalue;
 			//}
 		}  
+		
+		if ( (is_null($this->value)) && $this->initialvalue) {
+			$this->setvalue($this->initialvalue);
+		}
   }
   
   function isvalid() {
+  	if ($this->required && !$this->isvalueset()) return FALSE;
   	return TRUE;
+  }
+  
+  function isvalueset() {
+  	return !is_null($this->value);
   }
   
   function getdbfieldtype() {
@@ -142,6 +153,10 @@ class field extends entity {
     	
     }
     return $properties;
+  }
+  
+  public function setvalue($value) {
+  	$this->value = $value;
   }
   
 	function getindexproperty() {

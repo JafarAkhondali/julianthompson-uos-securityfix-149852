@@ -1,5 +1,6 @@
 <!-- start : <?php print $render->entityconfig->class;?> -->
 <<?php print $render->wrapperelement;?> <?php print display_uos_attributestostring($render->attributes);?>>
+
 <!-- start wrapper : <?php print $render->display->wrapper;?> -->
 <div class="uos-header">
 	<div class="field-icon">
@@ -15,6 +16,8 @@
 	</div>
 </div>
 <?php print $render->templateoutput;?>
+
 <!-- end wrapper : <?php print $render->display->wrapper;?>-->
+
 </<?php print $render->wrapperelement;?>>
 <!-- end : <?php print $render->entityconfig->class;?> -->

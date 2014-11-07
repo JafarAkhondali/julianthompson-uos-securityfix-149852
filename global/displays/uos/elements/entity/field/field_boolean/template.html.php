@@ -1,1 +1,2 @@
-<input class="field-boolean-value" type="checkbox" checked>
+<?php
+include $render->rendererpath . '/elements/entity/field/field_boolean/template.edit.html.php';

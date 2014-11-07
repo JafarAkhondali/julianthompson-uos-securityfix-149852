@@ -733,11 +733,11 @@ function handleKeyboardModifiers(e) {
 }
 
 function handleBackspace(e) {
-	uos.log('Delete nodes');
+	uos.log('Delete selected item event?');
   //if (e.stopPropagation) {
   //  e.stopPropagation(); // Stops some browsers from redirecting.
   //}
-  e.preventDefault();
+  //e.preventDefault();
 }
 
 function handleTab(e) {
@@ -1001,17 +1001,46 @@ if (tests.dnd) {
 
 uos.post = function($element,action,parameters,files) {
 
-	var elementdata = uos.getelementdata($element);
+	if ($element instanceof jQuery) {
+
+		var elementdata = uos.getelementdata($element);
+		var elementguid = elementdata.guid;
+	
+	} else if (typeof $element=='string') {
+		var elementguid = $element;
+	} else {
+		alert('POST FUNCTION ERROR');
+	}
 
   var postData = new FormData();
   
   var jsonparameters = JSON.stringify(parameters);
   
-  postData.append("target", elementdata.guid);
+  postData.append("target", elementguid);
   
   postData.append("action", action);
 
   postData.append("display", 'uosio');
+  
+  var debugmode = null;
+  
+  if (isShiftHeld() && isMetaHeld()) {
+  	postData.append("debugrender", '1');  
+  	postData.append("debugmode", 'render');
+	  debugmode = 'render';
+  } else {  
+	  if (isShiftHeld()) {
+	  	postData.append("debugrequest", '1');
+	  	postData.append("debugmode", 'request');
+	  	debugmode = 'request';
+	  } else if (isMetaHeld()) {
+	  	postData.append("debugresponse", '1');  
+	  	postData.append("debugmode", 'response');
+	  	debugmode = 'response';
+	  }
+  }
+  
+  postData.append("sourceid", '#'+$element.attr('id'));
   
   postData.append("jsonparameters", jsonparameters);
   
@@ -1029,18 +1058,18 @@ uos.post = function($element,action,parameters,files) {
 		uos.log('files not found');
 	}
 	
-	$actionstatus = uos.addactionstatus($element,'Posting Action '+elementdata.guid + '/' + action);
+	$actionstatus = uos.addactionstatus($element,'Posting Action ' + elementguid + '/' + action);
 
 	//if (parameters.files) {
   //	postData.append("files", parameters.files);  
   //	delete parameters.files;
   //}
   
-	uos.log('uos.post:request',elementdata.guid,action,parameters);
+	uos.log('uos.post:request',elementdata.guid,action,parameters,jsonparameters);
   
 	var uosrequest = new XMLHttpRequest();
 	
-	var uosglobalurl = '/global/uos.php?random=' + (new Date).getTime();
+	var uosglobalurl = '/global/uos.php?random=' + (new Date).getTime() + ((debugmode)? "&debugmode="+debugmode:"")
 	//uosglobalurl += '&debugrequest';
 	//uosglobalurl += '&debugresponse';
 	uosrequest.open('POST', uosglobalurl);
@@ -1055,48 +1084,71 @@ uos.post = function($element,action,parameters,files) {
 		console.log('Uploading: ' + (Math.round(progresspercent)+ '%'),event);
 	});
 	
-	uosrequest.onload = function(event) {
-		//$.growl.notice({ title : 'Uploaded File(s)', message:  filenames.join(', ') + ' into ' + $element.attr('title'), location : 'br'  });	
-		uos.removeactionstatus($element);
-		//$requestinfo.remove();
-		var data = JSON.parse(event.target.response);
-		
-		uos.log('uos.post:response',event.target,data);
-		
-		//var $loadedcontent = jQuery(data.content);
-  	//var datacontentclean = data.content.replace("(?s)<!--\\[if(.*?)\\[endif\\] *-->", "");
-  	
-  	//uos.log('uos.post:datacontentclean',datacontentclean);	
-  	//var $datadom = jQuery('<body>'+data.content+'</body>').first().next();
-  	//var $datadom = jQuery('<body>'+data.content+'</body>').first();
-  	var $dialog = jQuery('#dialog');
-  	$dialog.empty().append(data.content);
-  	uos.initalizeallelements($dialog, data.elementdata);  	
-
-		$dialog.children().each(function (index) {
-			BootstrapDialog.alert($(this));//$loadedcontent);
-		});
-		uos.log($dialog,data.elementdata);
-
-		/*
-		jQuery.each(data.elementdata, function(index,elementdata) {
-			var newelementid = '#'+index;
-			$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
-			if ($newelement.length>0) {
-				//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
-				uos.initializeelement($newelement,elementdata);
-			}
-		});
-		//uos.log(uos.getelementdata($loadedcontent))
-		$element.removeClass('uos-processing');
-		$element.replaceWith($loadedcontent); 
-		*/	
-	};
+	uosrequest.onload = uos.responsehander;
 
 	
 	uosrequest.send(postData);
 }
 
+
+uos.responsehander = function(event) {
+	//$.growl.notice({ title : 'Uploaded File(s)', message:  filenames.join(', ') + ' into ' + $element.attr('title'), location : 'br'  });	
+	//uos.removeactionstatus($element);
+	//$requestinfo.remove();
+	
+	//jQuery(event)
+	// if not a valid json object make data
+	try {
+		var data = JSON.parse(event.target.response);
+	} catch(e) {
+		var data = {
+			sourceid : "",
+			target : "",
+			elementdata : null, 
+			content : '<div><pre>'+event.target.response+'</pre></div>'
+		};
+	}
+
+	uos.log('uos.post:response',event.target,data);
+	
+	if (data.sourceid) {
+		uos.log('uos.post:sourceid');	
+		uos.removeactionstatus(jQuery(data.sourceid));	
+	} else {
+		uos.log('uos.post:nosourceid');
+	}
+	
+	var $dialog = jQuery('#dialog');
+	$dialog.empty().append(data.content);
+	
+	if (data.elementdata) {
+		uos.initalizeallelements($dialog, data.elementdata);  	
+	}
+	
+	BootstrapDialog.closeAll();
+
+	$dialog.children().each(function (index) {
+		//BootstrapDialog.alert($(this));//$loadedcontent);
+		BootstrapDialog.show({
+			message : $(this)
+		});//$loadedcontent);
+	});
+	uos.log($dialog,data.elementdata);
+
+	/*
+	jQuery.each(data.elementdata, function(index,elementdata) {
+		var newelementid = '#'+index;
+		$newelement = $loadedcontent.find(newelementid).addBack(newelementid);	
+		if ($newelement.length>0) {
+			//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
+			uos.initializeelement($newelement,elementdata);
+		}
+	});
+	//uos.log(uos.getelementdata($loadedcontent))
+	$element.removeClass('uos-processing');
+	$element.replaceWith($loadedcontent); 
+	*/	
+}
 
 uos.addactionstatus = function($element,title,$requestinfo) {
 	var $requestelement = jQuery('<div class="uos-request"/>');

@@ -11,4 +11,13 @@ class field_text extends field {
   		return 'text';
   	}
   }
+  
+  function getdbfieldvalue() {
+  	return addslashes($this->value);
+  }
+  
+  
+  function isvalueset() {
+  	return !empty($this->value);
+  }
 } 

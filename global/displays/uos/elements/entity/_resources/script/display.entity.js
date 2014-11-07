@@ -37,9 +37,10 @@ uos.displays['entity'].actions = {
 		title : 'Edit',	
 		icon : 'fa-pencil'					
 	},
-	remove : {
-		title : 'Delete',			
-		icon : 'fa-trash-o'					
+	destroy : {
+		title : 'Destroy',			
+		icon : 'fa-trash-o',
+		handler: uostype_entity_destroy				
 	},
 	save : {
 		title : 'Save',		
@@ -50,14 +51,34 @@ uos.displays['entity'].actions = {
 		icon : 'fa-globe',
 		handler : uos_three
 	},
+	test : {
+		title : 'Test',
+		icon : 'fa-globe',
+		handler : uostype_entity_testaction
+	},
 };
 
 
 function uostype_entity_add($element) {
 	//jQuery('<p>I want banana!</p>').modal();
 	//BootstrapDialog.alert('I want banana!');
-	var elementdata = uos.getelementdata($element);
-	uos.post(elementdata.guid,'add',{
+	//var elementdata = uos.getelementdata($element);
+	uos.post($element,'add',{
+		//debugrequest : true
+	});
+}
+
+function uostype_entity_testaction($element) {
+	//jQuery('<p>I want banana!</p>').modal();
+	//BootstrapDialog.alert('I want banana!');
+	//var elementdata = uos.getelementdata($element);
+	uos.post($element,'test',{
+		//debugrequest : true
+	});
+}
+
+function uostype_entity_destroy($element) {
+	uos.post($element,'destroy',{
 		//debugrequest : true
 	});
 }
@@ -95,10 +116,55 @@ function uostype_entity_initialize($element) {
 		});
 	}
 	
+	$element.find('form').click(function(event) { 
+		event.stopPropagation();
+	});
+	
+
+	uostype_entity_processform($element);
 	//uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
 }		
 
-
+function uostype_entity_processform($element) {
+	$element.find('form').submit(function(event) { 
+		event.preventDefault();
+		$form = jQuery(this);
+		var parameters = {};
+		var files = new Array();
+		var action = {};
+		action['action']='unknown';
+		$targetelement = $element;
+		$form.find('input[type=text],input[type=hidden],textarea,select').each(function() {
+			jQuery(this).css('border','1px solid red');
+			var keyname = jQuery(this).attr('name');
+			var keyvalue = jQuery(this).val();
+			var systemproperties = ['target','action','sourceid'];
+			if (systemproperties.indexOf(keyname)<0) {
+				parameters[keyname] = keyvalue;
+				uos.log('uostype_entity_initialize:param',keyname,keyvalue);
+			} else {
+				action[keyname] = keyvalue;
+				uos.log('uostype_entity_initialize:data',keyname,keyvalue);
+			}
+			
+		});
+		
+		$form.find('input[type=file]').each(function() {
+			var keyname = jQuery(this).attr('name');
+			files = this.files;
+			//var keyvalue = jQuery(this).val();	
+			uos.log(this,jQuery(this));	
+		});
+		
+		if (action['sourceid']) {
+			$targetelement = jQuery(action.sourceid);
+		}
+		
+		uos.log('uostype_entity_initialize:parameters',action, parameters, files);
+		uos.post($targetelement,action.action,parameters,files);
+		//alert('done');
+	});
+}
 
 function uostype_entity_event_click($element,event) {
 

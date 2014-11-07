@@ -7,7 +7,7 @@ class entity {
 	
 	//public	$__log = array();
 	public		$displaystring = '';
-	private		$parent = null;
+	public		$parent = null;
 	public		$children = array();
 	public		$actions = null;
 	public 		$scope = null;
@@ -39,7 +39,7 @@ class entity {
 				try {
 			    if ($this->propertyexists($fieldname)) {
 			      //$this->trace('__setpropertyvalue ('.$propertyname.') : '.$value);
-			      $this->properties[$fieldname]->value = $fieldvalue;
+			      $this->properties[$fieldname]->setvalue($fieldvalue);
 			    } else {
 			    	/*
 			    	$this->addproperty($fieldname,'field',array(
@@ -73,8 +73,9 @@ class entity {
       //$this->trace('__setpropertyvalue ('.$propertyname.') : '.$value);
       return $this->properties[$propertyname]->value = $value;
     }
+    //$this->{'$'.$propertyname} = $value; 
     //if ($propertyname=='maxlength') { print_r($this); die(); }
-    throw new Exception('Unknown property type : '.$propertyname);
+    //throw new Exception('Unknown property type : '.$propertyname);
     return false;
   }
 
@@ -243,7 +244,8 @@ class entity {
       //return;//
       
 
-    	$response = new StdClass();
+    	$_response = new StdClass();
+    	$_response->actionfiles = array();
     	$classtree = entity_class_tree($this,TRUE);
     	
     	//trace($classtree);
@@ -252,8 +254,8 @@ class entity {
     	
       //ob_start();    	
     	foreach($this->actions[$action] as $classname => $actionfile) {
-    		$this->scope = $classname;
-      	$response->actionfiles[] = $actionfile; 
+    		$this->scope = $classname;   	
+      	$_response->actionfiles[] = $actionfile; 
       	//if (get_class($this)=='field') { print_r($this->actions);print_r($classtree);print_r($actionfile); }
       	//trace('callaction  : '.$actionfile.' ('.$this->scope.')');  
       	if (file_exists($actionfile)) {
@@ -295,7 +297,7 @@ class entity {
  
   protected function removeproperty($propertyname) {
     if ($this->propertyexists($propertyname)) {
-    	unset($this->__properties[$propertyname]);
+    	unset($this->properties[$propertyname]);
     }  	
   }
 
@@ -387,20 +389,81 @@ class entity {
   public function __toString() {
     return (string) $this->type . '(' . (string) $this->guid . ')';
   }
+
+  function classpath($suffix='') {
+  	return classtopath(get_class($this)) . $suffix;
+	}
   
-  function cachepath() {
+  function cachepath($suffix='') {
   	global $uos;
-		return UOS_GLOBAL_CACHE . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/';
+		return UOS_GLOBAL_CACHE . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/' . $suffix;
 	}
 	
-  function datapath() {
+  function datapath($suffix='') {
   	global $uos;
-		return UOS_GLOBAL_DATA . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/';
+		return UOS_GLOBAL_DATA . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/' . $suffix;
 	}
 	
-  function dataurl() {
+  function dataurl($suffix='') {
   	global $uos;
-		return '/data/' . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/';
+		return '/data/' . $uos->request->universename . '/' . $this->type . '/' . $this->guid . '/' . $suffix;
+	}
+	
+	function isvalid() {
+		foreach($this->properties as $key=>$field) {
+			if (!$field->isvalid()) return FALSE;
+		}
+		return TRUE;
+	}
+	
+	function invalidproperties() {
+		$invalidproperties = array();
+		foreach($this->properties as $key=>$field) {
+			if (!$field->isvalid()) $invalidproperties[$key]=$field;
+		}
+		return $invalidproperties;
+	}
+	
+	public function mimeoutputtypes() {
+  
+  	global $uos;
+  	$mimetypes = array();
+		$mimetypepath = $this->classpath('_mimetypes/');
+		//if (is_dir($mimetypepath)) {
+		//	return $mimetypepath;	
+		//}
+		if ($mimefiles = find_files($mimetypepath, 'mime\..*\.php')) {
+			foreach ($mimefiles as $filepath) {
+				if (preg_match('/mime\.(.*)\.php/', basename($filepath), $matches) > 0) {
+					$mimekey = str_replace('_','/',$matches[1]);
+					$mimetypes[$mimekey] = $filepath; 
+				}
+			}
+		}
+		//return rglob($mimetypepath);
+		return $mimetypes;
+	}
+	
+	function getasmime($mimetype, $force=FALSE) {
+		$output = null;
+		$cachefile = $this->cachepath($mimetype.'/0.output');
+		if (!file_exists($cachefile)) {
+			//mkdir(dirname($cachefile),0777,TRUE);
+			$mimetypes = $this->mimeoutputtypes();
+			if (isset($mimetypes[$mimetype])) {
+					//return($mimetypes[$mimetype]);
+	        ob_start();
+	        include $mimetypes[$mimetype];
+	        //echo "here";
+	      	$output = ob_get_contents();
+	      	ob_end_clean();
+	      	$output .= $mimetypes[$mimetype];
+	      	//file_put_contents($cachefile,$output);
+			}
+		} else {
+			$output = file_get_contents($cachefile);
+		}
+		return $output;
 	}
   
 }		

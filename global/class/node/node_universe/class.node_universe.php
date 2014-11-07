@@ -23,6 +23,27 @@ class node_universe extends node {
 		$entity->relocatefiles();
 		return ($this->db_entity_insert($entity))?$entity->guid->value:null;
 	}
+	
+	public function destroy($entity) {	
+		$entity->relocatefiles();
+		recursiveDelete($entity->cachepath());
+		recursiveDelete($entity->datapath());	
+		$this->removerelationships($entity);	
+		return $this->db_entity_destroy($entity);
+		//return ($this->db_entity_delete($entity))?$entity->guid->value:null;
+	}
+	
+	public function destroy_universe() {	
+		//$entity->relocatefiles();
+		recursiveDelete(UOS_GLOBAL_DATA . $this->title->value);
+		$this->db_clear_universe();
+		$this->writeconfig($this->title->value);
+		$this->db_initialize();
+		//$this->removerelationships($entity);	
+		//return $this->db_entity_destroy($entity);
+		//return ($this->db_entity_delete($entity))?$entity->guid->value:null;
+		return "destroyed :" . $this->title->value;
+	}
 	/*
 	public function addtag($entity) {
 		$this->tags[$entity->guid->value] = $entity;
@@ -41,6 +62,20 @@ class node_universe extends node {
 			$this->add($relationship);
 			$this->trace('inserted relationship');
 		}
+	}
+	
+	public function removerelationships($entity, $type='ALL') {
+		$entityid = $entity->id->value;
+		$sql = sprintf('SELECT id,type FROM `relationship` JOIN `entity` ON `relationship`.`entity_id` = `entity`.`id`  WHERE `relationship`.`parent`=%d OR `relationship`.`child`=%d;',$entityid,$entityid);
+		$connection = $this->db_connect();
+		$result = $connection->Execute($sql);
+		while($result && !$result->EOF) {
+			//$sql .= "<br>\n" . $result->fields['id'];
+			$tempentity = new relationship($result->fields);
+			$sql .= '<br>ed:'.$this->db_entity_destroy($tempentity);
+			$result->MoveNext();
+		}
+		return $sql;
 	}
 	
 
@@ -119,6 +154,25 @@ class node_universe extends node {
 		return true;
 	}
 	
+	
+	
+	function db_entity_destroy($entity) {
+		$tables = $entity->___getdata();	
+		$primarykey = $entity->getindexproperty();
+		$tables = array_reverse($tables);
+		$connection = $this->db_connect();
+		foreach($tables as $scope=>$value) {
+			$keyfield = ($primarykey->scope==$scope)?$primarykey->key : $primarykey->scope.'_'.$primarykey->key;
+			$sql = sprintf("DELETE FROM `%s` WHERE `%s`.`%s` = %d;",$scope,$scope,$keyfield,$entity->id->value);
+			$result = $connection->Execute($sql);
+			$allsql .= ($sql . "\n" . print_r($result,TRUE));
+		}
+
+		//return $sql;
+		return $allsql;
+		return TRUE;
+	}
+	
 	function db_create_tables($entity) {
 		//$tables = $this->db_entity_structure($entity);
 		$tables = $entity->___gettabledefinition();
@@ -145,6 +199,12 @@ class node_universe extends node {
 		}	
 	}
 	
+	function db_initialize() {
+		$this->db_create_tables(new entity);
+		//$this->db_create_tables(new field);
+		$this->db_create_tables(new relationship);	
+	}
+	
 	function db_create($universename) {
 		//CREATE DATABASE testDB;
 			print_r($this->dbconnector->value);
@@ -158,11 +218,14 @@ class node_universe extends node {
 			//print_r($this->dbconnector->value);
 			$this->db_connect();	
 			//print_r(new entity);
-			$this->db_create_tables(new entity);
-			//$this->db_create_tables(new field);
-			$this->db_create_tables(new relationship);
+			$this->db_initialize();
 		}
 		
+		$this->writeconfig($universename);
+
+	}
+	
+	function writeconfig($universename) {
 		$universedatapath = UOS_GLOBAL_DATA . $universename . '/'; 
 		$universeconfigpath = $universedatapath . 'config.universe.php';
 		
@@ -182,7 +245,7 @@ class node_universe extends node {
 		$universecachepath = UOS_GLOBAL_CACHE . $universename . '/';
 		if (!file_exists($universedatapath)) {
 			mkdir($universecachepath,0777,TRUE);
-		} 
+		} 	
 	}
 	
 	function getcachepath() {

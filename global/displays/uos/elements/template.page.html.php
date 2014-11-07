@@ -1,3 +1,9 @@
+<?php
+if (isset($entity['content'])) {
+	$content = $entity['content'];
+} 
+$entitytitle = (isset($content->title)) ? $content->title : 'Not known';
+?>
 <div id="universetoolbars">
 
 	<div id="universetoolbar-tags" class="universetoolbar uos-element-active">
@@ -24,7 +30,7 @@
 			<i class="fa fa-stack-2x children-count" id="universe-selected-count">0</i>
 		</div>
 		<div id="universetoolbar-tagbar">
-			<div id="uos-entity-title"><?php print $entity['content']->title;?></div>
+			<div id="uos-entity-title"><?php print $entitytitle;?></div>
 			<div id="uos-entity-type"><?php print $render->entityconfig->title;?></div>
 		</div>
 		<div class="clearboth"></div>
@@ -38,7 +44,7 @@
 </div>
 
 <div id="container">
-<?php print rendernew($entity['content'],'html');?>
+<?php print rendernew($content,'html');?>
 </div>
 
 <div id="dialog">

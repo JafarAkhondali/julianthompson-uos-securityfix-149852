@@ -1,8 +1,15 @@
 <?php 
 
-//print_r($_POST);die();
-
 include_once "./core/core.php";
+
+if ($uos->request->debugmode==UOS_DEBUGMODE_REQUEST) {
+	echo "DEBUG REQUEST\n";
+	print_r($uos->request);
+	die();
+}
+
+register_shutdown_function('universe_shutdown');
+//set_error_handler('handleError');
 
 
 if (!$universe) {
@@ -35,17 +42,17 @@ if (!$universe) {
 		*/
 		//$universe->db_select_children($target->id->value);
 		//fetchentitychildren($target);
-		$target->trigger($uos->request->action);
+		$target->trigger($uos->request->action,$uos->request->parameters);
 		//addoutput('content', $target);
 		$uos->response->code = 200;
 	}
 }
-	//print $uos->request->action;print_r($target);die();
 
-if (isset($uos->request->parameters['debugresponse'])) {
+
+if ($uos->request->debugmode==UOS_DEBUGMODE_RESPONSE) {
 	echo "DEBUG RESPONSE\n";
 	//print_r($uos);
-	print_r($uos->request);
+	//print_r($uos->request);
 	print_r($uos->output);
 	die();
 }
@@ -58,7 +65,7 @@ if (isset($uos->request->parameters['debugresponse'])) {
 // we found something do something otherwise be as silent as a ninja
 if (isset($uos->output)) {
 	try {
-		$uos->response->content = rendernew($uos->output,array(
+		$uos->response->content = render($uos->output,array(
 		//$uos->response->content = rendernew($uos->output['content'],array(
 			//'debug'	=> TRUE,
 			'displaystring' => $uos->request->displaystring

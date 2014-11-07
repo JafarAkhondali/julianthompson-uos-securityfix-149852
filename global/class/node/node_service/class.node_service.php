@@ -1,6 +1,6 @@
 <?php
 # node_url class definition file
-class node_service extends node {
+abstract class node_service extends node {
   
 
 

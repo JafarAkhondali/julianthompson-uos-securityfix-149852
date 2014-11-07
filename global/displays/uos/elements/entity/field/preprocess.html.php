@@ -6,9 +6,13 @@ if ($entity->visible!==TRUE) {
 	//$render->display->template = FALSE;	
 	//$render->display->wrapper = FALSE;
 	//return;
-	$render->finish = TRUE;
-	return;
+	//$render->finish = TRUE;
+	//return;
 }
+
+if (!isset($render->attributes)) $render->attributes = array();
+$render->attributes['id'] = $render->instanceid;
+$render->attributes['class'] = $render->classtreestring;
 
 // include parent behaviour
 // equivalent of calling parent preprocess method

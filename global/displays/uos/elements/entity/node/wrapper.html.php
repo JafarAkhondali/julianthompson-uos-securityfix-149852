@@ -15,6 +15,7 @@
 	</div>
 </div>
 <?php print $render->templateoutput;?>
+
 <!-- end wrapper : <?php print $render->display->wrapper;?>-->
 </<?php print $render->wrapperelement;?>>
 <!-- end : <?php print $render->entityconfig->class;?> -->
