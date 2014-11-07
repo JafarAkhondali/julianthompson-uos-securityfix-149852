@@ -19,4 +19,15 @@ class node_file extends node {
 			}
 		}
 	}
+	
+	
+	function getasmime($mimetype, $force=FALSE) {
+		if ($this->mime->value==$mimetype) {
+			//return $this->filepath->fullpath();
+			return file_exists($this->filepath->fullpath())?"Exists":"Doesn't";		
+			//return file_get_contents($this->filepath->fullpath()); 
+		}
+		return parent::getasmime($mimetype, $force);
+	}
+	
 } 
