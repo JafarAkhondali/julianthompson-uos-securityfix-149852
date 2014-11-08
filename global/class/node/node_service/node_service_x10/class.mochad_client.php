@@ -1,27 +1,30 @@
 <?php
-# node_note class definition file
-class node_service_x10 extends node_service {
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
 
+error_reporting(-1);
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
+define('MOCHAD_CLIENT_NEWLINE', "\n");
+define('MOCHAD_CLIENT_DATA_FILE', './data/mochaddata');
+
+class mochad_client {
+
+	private $host = "127.0.0.1";
+	private $port = "1099";
 	private $socket = NULL;
 	public $status = array();
 	private $selected = array();
 	public $dummyoutput = FALSE;
 	public $log = array();
-
-
-	public function fetchchildren() {
-		$response = $this->sendcommand(FALSE);
-		$this->addproperty('info','field_text',array('value'=>print_r($response,TRUE)));
-		foreach($response->status as $code => $status) {
-			
-			$this->children[] = new node_device(array(
-				'title'=>'Untitled Device ('.$code.')',
-				'x10key'=>substr($code,1),
-				'x10housecode'=> substr($code,0,1),
-				'source'=>$this->guid->value.'/'.$code
-			));
-		}
+	
+	
+	function __construct($host="127.0.0.1",$port="1099") {
+		$this->host = $host;
+		$this->port = $port;	
+		$this->loaddata();
 	}
+	
 	
 	function connect() {
 		if (!$this->dummyoutput) {
@@ -31,7 +34,8 @@ class node_service_x10 extends node_service {
 			}  
 		}	
 	}
-	
+
+
 	function close() {
 		if (!$this->dummyoutput) fclose($this->socket); 
 		$this->socket = NULL;
@@ -216,9 +220,10 @@ class node_service_x10 extends node_service {
 					//echo ($response->data).':';
 			}
 		}
-		//$this->savedata();
+		$this->savedata();
 		return $this->status;
 	}
 
+}
 
-} 
+
