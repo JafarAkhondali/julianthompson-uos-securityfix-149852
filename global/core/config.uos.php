@@ -155,5 +155,5 @@ $uos->config->types = array(
 	'node_service_x10' => (object) array(
 		'title'=>'X10 Controller',
 		'icon'=>'bolt'
-	),
+	)
 );
