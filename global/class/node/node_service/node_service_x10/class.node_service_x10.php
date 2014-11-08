@@ -26,7 +26,7 @@ class node_service_x10 extends node_service {
 	function connect() {
 		if (!$this->dummyoutput) {
 			if (gettype($this->socket)!='resource') {
-				$url = "tcp://{$this->host}:{$this->port}";
+				$url = "tcp://{$this->host->value}:{$this->port->value}";
 				$this->socket = stream_socket_client($url, $errno, $errstr, 0); 
 			}  
 		}	
@@ -124,16 +124,6 @@ class node_service_x10 extends node_service {
 	  
 	  return $this->sendcommand($commands);
 	}
-	
-	private function savedata() {
-		file_put_contents(MOCHAD_CLIENT_DATA_FILE, serialize($this->status));
-	}
-	
-	private function loaddata() {
-		if (file_exists(MOCHAD_CLIENT_DATA_FILE)) {
-			$this->status = unserialize(file_get_contents(MOCHAD_CLIENT_DATA_FILE));
-		}
-	}
 
 	private function process_responses($responses) {
 		$responselen = count($responses);
@@ -216,7 +206,6 @@ class node_service_x10 extends node_service {
 					//echo ($response->data).':';
 			}
 		}
-		//$this->savedata();
 		return $this->status;
 	}
 
