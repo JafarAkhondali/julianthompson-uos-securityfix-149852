@@ -12,14 +12,17 @@ class node_service_x10 extends node_service {
 	public function fetchchildren() {
 		$this->addproperty('info','field_text',array('value'=>print_r($response,TRUE)));
 		$response = $this->sendcommand(FALSE);
-		foreach($response->status as $code => $status) {
+		$this->info->value .= $response;
+		if ($response) {
+			foreach($response->status as $code => $status) {
 			
-			$this->children[] = new node_device(array(
-				'title'=>'Untitled Device ('.$code.')',
-				'x10key'=>substr($code,1),
-				'x10housecode'=> substr($code,0,1),
-				'source'=>$this->guid->value.'/'.$code
-			));
+				$this->children[] = new node_device(array(
+					'title'=>'Untitled Device ('.$code.')',
+					'x10key'=>substr($code,1),
+					'x10housecode'=> substr($code,0,1),
+					'source'=>$this->guid->value.'/'.$code
+				));
+			}
 		}
 	}
 	
@@ -32,7 +35,9 @@ class node_service_x10 extends node_service {
 			}  
 		}	else {
 			$this->info->value = 'Dummy connection';
+			$this->socket = FALSE;
 		}
+		return $this->socket;
 	}
 	
 	function close() {
@@ -66,18 +71,19 @@ class node_service_x10 extends node_service {
 
 
 	function sendcommand($command) {
-	  $this->connect();
-	  if (!$command) $command=array();
-	  if (!is_array($command)) $command = array($command);
-	  $command[] = 'st';
-	  $commandimploded = implode(MOCHAD_CLIENT_NEWLINE, $command) . MOCHAD_CLIENT_NEWLINE;
+		if ($this->connect()) {
+
+	  		if (!$command) $command=array();
+	  		if (!is_array($command)) $command = array($command);
+	  		$command[] = 'st';
+	  	$commandimploded = implode(MOCHAD_CLIENT_NEWLINE, $command) . MOCHAD_CLIENT_NEWLINE;
 		if (!$this->dummyoutput) {
 			fwrite($this->socket, $commandimploded);
-	    stream_set_timeout($this->socket, 1);
-	    usleep(800);
-    }
-    $responses = $this->readresponse(1500000, "End status");
-    //$this->close(); 
+	    		stream_set_timeout($this->socket, 1);
+	    		usleep(800);
+    		}
+    		$responses = $this->readresponse(1500000, "End status");
+    		//$this->close(); 
 		$this->process_responses($responses);
 		$responseobj = new StdClass();
 		$responseobj->command = $command;
@@ -85,6 +91,9 @@ class node_service_x10 extends node_service {
 		$responseobj->status = $this->status;
 		$responseobj->log = $this->log;
 		return $responseobj;
+		}
+		return FALSE;
+	
 	}
 	
 	function logentry($logentry) {
