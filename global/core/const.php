@@ -110,3 +110,5 @@ define(	'UOS_ERROR_NOT_FOUND',	NULL);
 define( 'UOS_DEBUGMODE_REQUEST', 'request');
 define( 'UOS_DEBUGMODE_RESPONSE', 'response');
 define( 'UOS_DEBUGMODE_RENDER',  'render');
+
+define(	'UOS_NEWLINE', "\n");

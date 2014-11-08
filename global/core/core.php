@@ -4,6 +4,12 @@ include_once "core/const.php";
 include_once "core/globals.php";
 include_once "displays/default/display.php";
 
+//ini_set('display_errors',1);
+//ini_set('display_startup_errors',1);
+
+//error_reporting(-1);
+//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
 
 function __autoload($classname='') {
   $classpath = getclassfile($classname);
