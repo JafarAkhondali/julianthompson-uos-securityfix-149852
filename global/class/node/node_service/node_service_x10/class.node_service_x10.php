@@ -10,8 +10,8 @@ class node_service_x10 extends node_service {
 
 
 	public function fetchchildren() {
-		$response = $this->sendcommand(FALSE);
 		$this->addproperty('info','field_text',array('value'=>print_r($response,TRUE)));
+		$response = $this->sendcommand(FALSE);
 		foreach($response->status as $code => $status) {
 			
 			$this->children[] = new node_device(array(
@@ -27,6 +27,7 @@ class node_service_x10 extends node_service {
 		if (!$this->dummyoutput) {
 			if (gettype($this->socket)!='resource') {
 				$url = "tcp://{$this->host->value}:{$this->port->value}";
+				$this->info->value = $url;
 				$this->socket = stream_socket_client($url, $errno, $errstr, 0); 
 			}  
 		}	
