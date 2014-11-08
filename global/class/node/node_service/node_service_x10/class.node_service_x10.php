@@ -72,25 +72,24 @@ class node_service_x10 extends node_service {
 
 	function sendcommand($command) {
 		if ($this->connect()) {
-
 	  		if (!$command) $command=array();
 	  		if (!is_array($command)) $command = array($command);
 	  		$command[] = 'st';
-	  	$commandimploded = implode(MOCHAD_CLIENT_NEWLINE, $command) . MOCHAD_CLIENT_NEWLINE;
-		if (!$this->dummyoutput) {
-			fwrite($this->socket, $commandimploded);
-	    		stream_set_timeout($this->socket, 1);
-	    		usleep(800);
-    		}
-    		$responses = $this->readresponse(1500000, "End status");
-    		//$this->close(); 
-		$this->process_responses($responses);
-		$responseobj = new StdClass();
-		$responseobj->command = $command;
-		$responseobj->response = $responses;
-		$responseobj->status = $this->status;
-		$responseobj->log = $this->log;
-		return $responseobj;
+	  		$commandimploded = implode(UOS_NEWLINE, $command) . UOS_NEWLINE;
+			if (!$this->dummyoutput) {
+				fwrite($this->socket, $commandimploded);
+	    			stream_set_timeout($this->socket, 1);
+	    			usleep(800);
+    			}
+    			$responses = $this->readresponse(1500000, "End status");
+    			//$this->close(); 
+			$this->process_responses($responses);
+			$responseobj = new StdClass();
+			$responseobj->command = $command;
+			$responseobj->response = $responses;
+			$responseobj->status = $this->status;
+			$responseobj->log = $this->log;
+			return $responseobj;
 		}
 		return FALSE;
 	
