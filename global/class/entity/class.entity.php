@@ -385,6 +385,19 @@ class entity {
 	
 	function relocatefiles() {
 	}
+	
+	function afterupdate() {
+	
+	}
+	
+	public function fetchchildren() {
+		global $universe;
+		$children = $universe->db_select_children((string) $this->id);
+		foreach($children as $child) {
+			$this->children[] = $child;
+		}	
+		return $this->children;
+	}
   
   public function __toString() {
     return (string) $this->type . '(' . (string) $this->guid . ')';
@@ -444,21 +457,41 @@ class entity {
 		return $mimetypes;
 	}
 	
+	
 	function getasmime($mimetype, $force=FALSE) {
+
 		$output = null;
+
 		$cachefile = $this->cachepath($mimetype.'/0.output');
+		
+		$cachedir = dirname($cachefile);
+		
 		if (!file_exists($cachefile)) {
-			//mkdir(dirname($cachefile),0777,TRUE);
+		
+			if (!file_exists($cachedir)) {
+				mkdir($cachedir,0777,TRUE);
+			}
+
 			$mimetypes = $this->mimeoutputtypes();
+			
+			//return print_r($mimetypes);
+			
 			if (isset($mimetypes[$mimetype])) {
-					//return($mimetypes[$mimetype]);
-	        ob_start();
-	        include $mimetypes[$mimetype];
-	        //echo "here";
-	      	$output = ob_get_contents();
-	      	ob_end_clean();
-	      	$output .= $mimetypes[$mimetype];
-	      	//file_put_contents($cachefile,$output);
+				//file_put_contents($cachefile,$output);
+				//return($mimetypes[$mimetype]);
+				//$ob_file_callback = function($buffer) use ($cachefile) { fwrite($cachefile, $buffer); }; ob_start($ob_file_callback);
+				//call $output_callback every 1MB of output buffered.
+				ob_start();
+				//ob_start($ob_file_callback, 1048576);
+        include $mimetypes[$mimetype];
+        //echo 'Including '.$mimetypes[$mimetype];
+      	$output = ob_get_contents();
+      	ob_clean();
+      	//$output .= 
+      	//$output = $cachefile;
+      	file_put_contents($cachefile,$output);
+			} else {
+				$output = 'no mime found';
 			}
 		} else {
 			$output = file_get_contents($cachefile);

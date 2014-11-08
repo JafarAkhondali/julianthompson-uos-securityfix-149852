@@ -14,7 +14,13 @@ class node_file extends node {
 						mkdir($datapath,0777,TRUE);
 					}
 					$newpath = $datapath.$this->filename;
-					move_uploaded_file($property->value,$newpath);
+					
+					if (is_uploaded_file($property->value)) {
+						move_uploaded_file($property->value,$newpath);
+					} else {
+						rename($property->value,$newpath);
+					}
+					
 					$property->value = $key . '/' . $this->filename;
 			}
 		}
@@ -24,8 +30,8 @@ class node_file extends node {
 	function getasmime($mimetype, $force=FALSE) {
 		if ($this->mime->value==$mimetype) {
 			//return $this->filepath->fullpath();
-			return file_exists($this->filepath->fullpath())?"Exists":"Doesn't";		
-			//return file_get_contents($this->filepath->fullpath()); 
+			//return file_exists($this->filepath->fullpath())?"Exists":"Doesn't";		
+			return $this->filepath->fullpath(); 
 		}
 		return parent::getasmime($mimetype, $force);
 	}

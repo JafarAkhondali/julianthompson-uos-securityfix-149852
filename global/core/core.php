@@ -934,3 +934,32 @@ function rglob($pattern, $flags = 0) {
 }
 
 
+
+function getremotefile($remotepath,$targetpath=FALSE) {
+
+	$filename = '/tmp/uos_'.basename($remotepath);
+	
+	if(!@copy($remotepath, $filename)) {
+    $errors= error_get_last();
+    return FALSE; //"COPY ERROR: ".$errors['type'] . $errors['message'] . ':' . $remotepath . ':' . $filename;
+	} else {
+	  return $filename;
+	}
+	
+}
+
+function identifyfile($filepath) {
+	$finfo = finfo_open(FILEINFO_MIME_TYPE);
+	$mime = finfo_file($finfo, $filepath);
+	finfo_close($finfo);
+	return array(
+		'mime'=>$mime, 
+		'size'=>filesize($filepath), 
+		'title'=>basename($filepath),
+		'filename'=>basename($filepath),
+		'filepath'=>$filepath,
+		'checksum'=>md5_file($filepath)
+	);	
+}
+
+

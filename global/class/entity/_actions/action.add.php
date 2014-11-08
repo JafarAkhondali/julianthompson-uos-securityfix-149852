@@ -1,9 +1,33 @@
 <?php
 
 if (isset($parameters['uploadedfiles'][0])) {
+
 	$output = $parameters['uploadedfiles'][0];
 	$guid = $universe->add($output);
-} else if (isset($parameters['type'])) {
+
+} else if (isset($parameters['source']) && (!empty($parameters['source']))) {
+
+	$output = new node_form();
+	
+	$output->addproperty('info','field_text', array('value'=>''));
+	
+	if(filter_var($parameters['source'], FILTER_VALIDATE_URL) !== FALSE) {
+		$output->title = "Add url " . $parameters['source'] . " to " . $this->title . '?';
+		
+		$tempfile = getremotefile($parameters['source']);
+		if ($tempfile) {
+			$fileinfo = identifyfile($tempfile);
+			$fileinfo['source'] = $parameters['source'];
+			$newfile = new node_file($fileinfo);
+			$output = $newfile;
+			$guid = $universe->add($output);
+		}
+
+	} else {
+		$output->title = "Invalid URL (". $parameters['source'] .") : " . $this->title . '?';	
+	}
+
+} else if (isset($parameters['type']) && (!empty($parameters['type']))) {
 
 	$type = $parameters['type'];
 	$typeconfig = $uos->config->types[$type];
@@ -36,6 +60,7 @@ if (isset($parameters['uploadedfiles'][0])) {
 	
 		//if (is_subclass_of($key, UOS_BASE_CLASS)) {
 		//if (is_creatable_entity($key)) {
+		$typelist['unset'] = '<option value="">Nothing</option>';
 		if (in_array($key,array(
 			'unknown',
 			'double',
@@ -60,9 +85,9 @@ if (isset($parameters['uploadedfiles'][0])) {
 
 	$output = new node_form();
 
-	$output->title = "Add to " . $this->title . '?';
+	$output->title = "What do you want to add to '" . $this->title . "' ?";
 	
-	$output->description = '<p>What do you want to add to '.$this->title.'</p><select name="type">' . implode("\n",$typelist) . '</select>';
+	$output->description = '<select name="type">' . implode("\n",$typelist) . '</select>';
 	
 	$output->action = 'add';
 	$output->target = $this->guid->value;

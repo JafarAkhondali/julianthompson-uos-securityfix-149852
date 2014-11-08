@@ -1,5 +1,6 @@
 <i class="fa fa-<?php print $render->entityconfig->icon;?> fa-stack-1x"></i> 
-<?php print rendernew( ( isset($entity->properties['title']) ? $entity->properties['title'] : $entity->type ) ,'html'); ?>
+<?php print render( ( isset($entity->properties['title']) ? $entity->properties['title'] : $entity->type ) ,'html'); ?>
+
 <?php 
 $imagepath = FALSE;
 switch ($entity->mime) {
@@ -22,6 +23,10 @@ switch ($entity->mime) {
 <?php if ($imagepath) : ?>
 <img src="<?php print $imagepath;?>" width="100%">
 <?php endif; ?>
+<?php if (isset($entity->properties['body'])) : ?>
+<?php print render($entity->properties['body'],'html'); ?>
+<?php endif; ?>
+
 <?php //print render($entity->getactions()); ?>
 <!--
 <pre>
