@@ -27,8 +27,8 @@ class node_service_x10 extends node_service {
 		if (!$this->dummyoutput) {
 			if (gettype($this->socket)!='resource') {
 				$url = "tcp://{$this->host->value}:{$this->port->value}";
-				$this->info->value = $url;
 				$this->socket = stream_socket_client($url, $errno, $errstr, 0); 
+				$this->info->value = $url . print_r($this->socket,TRUE);
 			}  
 		}	
 	}
