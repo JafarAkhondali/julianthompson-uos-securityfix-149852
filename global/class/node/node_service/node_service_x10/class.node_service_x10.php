@@ -30,7 +30,9 @@ class node_service_x10 extends node_service {
 				$this->socket = stream_socket_client($url, $errno, $errstr, 0); 
 				$this->info->value = $url . print_r($this->socket,TRUE);
 			}  
-		}	
+		}	else {
+			$this->info->value = 'Dummy connection';
+		}
 	}
 	
 	function close() {
