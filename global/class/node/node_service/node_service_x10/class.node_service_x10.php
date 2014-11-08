@@ -82,6 +82,7 @@ class node_service_x10 extends node_service {
 	    			usleep(800);
     			}
     			$responses = $this->readresponse(1500000, "End status");
+			return print_r($responses,TRUE);
     			//$this->close(); 
 			$this->process_responses($responses);
 			$responseobj = new StdClass();
