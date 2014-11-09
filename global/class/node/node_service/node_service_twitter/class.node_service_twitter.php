@@ -7,8 +7,10 @@ class node_service_twitter extends node_service {
 		global $uos;
 	
 		$twitter = $this->gettwitteroauth();
-				
+		$this->addproperty('testi','field_text',array('value'=>print_r($twitter,TRUE)));
+		return;
 		$tweets = $twitter->get('https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=x_a_i_o&count=10');
+
 		foreach($tweets as &$tweet) {
 			$this->children[] = new node_message_tweet($tweet);
 		}	
@@ -20,7 +22,7 @@ class node_service_twitter extends node_service {
 	}
 	
 	public function fetchchildren() {
-		return $this->fetchentitytweets();
+		$this->fetchentitytweets();
 	}
 
 } 

@@ -6,13 +6,22 @@ class node_service_google extends node_service {
 
 		global $uos;
 		
-		$hostname = '{imap.gmail.com:993/imap/ssl}INBOX';
-		$username = 'davidwalshblog@gmail.com';
-		$password = 'davidwalsh';
-		
+		//$hostname = '{imap.gmail.com:993/imap/ssl}INBOX';
+		//$username = 'davidwalshblog@gmail.com';
+		//$password = 'davidwalsh';
+
+	
+
 		/* try to connect */
-		$inbox = imap_open($hostname,$username,$password) or die('Cannot connect to Gmail: ' . imap_last_error());
-		
+		try {
+			$inbox = @imap_open($this->hostname->value,$this->username->value,$this->password->value);
+		} catch(Exception $e) {
+			$inbox = FALSE;
+		}
+		// or die('Cannot connect to Gmail: ' . imap_last_error());
+		$this->addproperty('imap','field_text',array('value'=>print_r($inbox,TRUE)));
+		$this->addproperty('testi','field_text',array('value'=>print_r(imap_last_error(),TRUE)));
+		//return TRUE;		
 		/* grab emails */
 		$emails = imap_search($inbox,'ALL');
 		
@@ -31,16 +40,22 @@ class node_service_google extends node_service {
 				/* get information specific to this email */
 				$overview = imap_fetch_overview($inbox,$email_number,0);
 				$message = imap_fetchbody($inbox,$email_number,2);
-				
-				/* output the email header information */
+				$emailnode = new node_message(array(
+				  'title' => $overview[0]->subject,
+				  'body' => $message
+				));
+				$this->children[] = $emailnode;
+				/*
+				// output the email header information 
 				$output.= '<div class="toggler '.($overview[0]->seen ? 'read' : 'unread').'">';
 				$output.= '<span class="subject">'.$overview[0]->subject.'</span> ';
 				$output.= '<span class="from">'.$overview[0]->from.'</span>';
 				$output.= '<span class="date">on '.$overview[0]->date.'</span>';
 				$output.= '</div>';
 				
-				/* output the email body */
+				// output the email body
 				$output.= '<div class="body">'.$message.'</div>';
+				*/
 			}
 	
 		}

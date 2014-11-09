@@ -12,7 +12,7 @@ class node_service_x10 extends node_service {
 	public function fetchchildren() {
 		$this->addproperty('info','field_text',array('value'=>print_r($response,TRUE)));
 		$response = $this->sendcommand(FALSE);
-		$this->info->value .= $response;
+		$this->info->value .= print_r($this->status,TRUE);
 		if ($response) {
 			foreach($response->status as $code => $status) {
 			

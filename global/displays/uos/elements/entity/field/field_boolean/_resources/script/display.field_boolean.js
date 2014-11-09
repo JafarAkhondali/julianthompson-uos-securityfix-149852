@@ -31,13 +31,13 @@ function uostype_field_boolean_initialize($element) {
 	//	event.stopPropagation();
 	//});
 	
-	$switch = $element.find('.toggle-switch input[type=checkbox]');
+	$switch = $element.find('.toggle-switch');
 	$switch.bootstrapSwitch();
 	//.on('switchChange.bootstrapSwitch', function(e,data) {
 	//	alert(data.value);
 	//
-	$switch.on('switch-change.bootstrapSwitch', function (e, data) {
+	$switch.on('switch-change', function (e, data) {
     var $el = $(data.el)
       , value = data.value;
-    console.log(e, $el, value);
+    console.log('sc',e, $el, value);
 });}
