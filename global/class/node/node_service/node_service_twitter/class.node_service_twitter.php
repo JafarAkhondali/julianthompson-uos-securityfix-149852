@@ -18,5 +18,9 @@ class node_service_twitter extends node_service {
 		includeLibrary('twitteroauth');
 		return new TwitterOAuth($this->consumerkey->value, $this->consumersecret->value, $this->accesstoken->value, $this->accesstokensecret->value);
 	}
+	
+	public function fetchchildren() {
+		return $this->fetchentitytweets();
+	}
 
 } 
