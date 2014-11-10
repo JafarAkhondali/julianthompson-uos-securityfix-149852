@@ -7,7 +7,9 @@ class field_datetime extends field {
  	
  	
   public function setvalue($timestring) {
-  	$time = strtotime($timestring);
+  	//$this->value = 'xxxx';
+    //throw new Exception('setvalue');
+  	$time = (is_numeric($timestring)) ? $timestring : strtotime($timestring);
   	$this->value = date('Y-m-d H:i:s',$time);
   }
 } 

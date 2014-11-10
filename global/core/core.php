@@ -600,12 +600,13 @@ function includeLibrary($librarykey) {
 		$library = $librarykeyexploded[0];
 		$librarypath = UOS_LIBRARIES. $library .'/';	
 		$libraryconfigfile = $librarypath . 'library.uos.php';
-		//echo $libraryconfigfile;
+		
 		if (file_exists($libraryconfigfile)) {
+		
 			include_once $libraryconfigfile;
-			//print_r($config);
+			
 			if (isset($config[$librarykey])) {
-				//echo "here";
+				//print_r($config[$librarykey]);
 				foreach($config[$librarykey] as $libraryfile) {
 					include_once $libraryfile;
 				}
@@ -617,6 +618,7 @@ function includeLibrary($librarykey) {
 		  $uos->libraries[$librarykey] = FALSE;
 		}
 	}
+	//die();
 	return $uos->libraries[$librarykey];
 }
 
