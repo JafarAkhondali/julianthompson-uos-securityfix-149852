@@ -19,6 +19,10 @@ if (isset($parameters['uploadedfiles'][0])) {
 			$fileinfo = identifyfile($tempfile);
 			$fileinfo['source'] = $parameters['source'];
 			$newfile = new node_file($fileinfo);
+			$newfile->addproperty('infox','field_text');
+			if ($newfile->mime->value=='image/jpeg') {
+				//$newfile->infox->value = print_r(exif_read_data($tempfile),TRUE);
+			}
 			$output = $newfile;
 			$guid = $universe->add($output);
 		}
@@ -72,7 +76,7 @@ if (isset($parameters['uploadedfiles'][0])) {
 			'string',
 			'relationship',
 			'node_universe'))) continue;
-		if (is_subclass_of($key, 'node')) {
+		if (is_subclass_of($key, 'node') || ($key=='node')) {
 			$class = new ReflectionClass($key);
 			if (!$class->isAbstract()) {
 				//$typelist[$key] = '<option value="'.$key.'"><i class="fa fa-'.$type->icon.'"></i> <span class="title">' . $type->title . '</span></option>';
