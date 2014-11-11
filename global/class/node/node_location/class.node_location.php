@@ -12,13 +12,17 @@ class node_location extends node {
 		      $Lat = $xml->result->geometry->location->lat;
 		      $Lon = $xml->result->geometry->location->lng;
 		      $LatLng = "$Lat,$Lon";
-		      $this->latitude->value = $Lat;
-		      $this->longitude->value = $Lon;
+		      $this->latitude->value = (string) $Lat[0];
+		      $this->longitude->value = (string) $Lon[0];
 		  }
 	  }
   }
   
 	function afterupdate() {
 		$this->getgeolocation();
+	}
+	
+	public function fetchchildren() {
+		$this->getgeolocation();	
 	}
 } 

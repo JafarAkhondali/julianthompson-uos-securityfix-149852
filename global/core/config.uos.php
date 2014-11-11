@@ -80,6 +80,10 @@ $uos->config->types = array(
 		'title'=>'Light',
 		'icon'=>'lightbulb-o'
 	),
+	'node_device_xbmc' => (object) array(
+		'title'=>'Media Centre',
+		'icon'=>'play-circle'
+	),
 	'node_file' => (object) array(
 		'title'=>'File',
 		'icon'=>'file-o'
@@ -116,6 +120,10 @@ $uos->config->types = array(
 		'title'=>'Message',
 		'icon'=>'envelope'
 	),
+	'node_message_email' => (object) array(
+		'title'=>'Email',
+		'icon'=>'envelope'
+	),
 	'node_message_tweet' => (object) array(
 		'title'=>'Tweet',
 		'icon'=>'envelope'
@@ -128,13 +136,25 @@ $uos->config->types = array(
 		'title'=>'Service',
 		'icon'=>'bullseye'
 	),
+	'node_service_email' => (object) array(
+		'title'=>'Email account',
+		'icon'=>'bullseye'
+	),
 	'node_service_google' => (object) array(
 		'title'=>'Google account',
 		'icon'=>'bullseye'
 	),
+	'node_service_iplayer' => (object) array(
+		'title'=>'BBC iPlayer',
+		'icon'=>'video-camera'
+	),
 	'node_service_twitter' => (object) array(
 		'title'=>'Twitter account',
 		'icon'=>'bullseye'
+	),
+	'node_service_x10' => (object) array(
+		'title'=>'X10 Controller',
+		'icon'=>'bolt'
 	),
 	'node_emailaddress' => (object) array(
 		'title'=>'Email address',
@@ -151,9 +171,5 @@ $uos->config->types = array(
 	'relationship' => (object) array(
 		'title'=>'Relationship',
 		'icon'=>'expand'
-	),
-	'node_service_x10' => (object) array(
-		'title'=>'X10 Controller',
-		'icon'=>'bolt'
 	)
 );

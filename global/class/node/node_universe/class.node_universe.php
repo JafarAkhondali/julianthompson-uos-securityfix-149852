@@ -50,9 +50,11 @@ class node_universe extends node {
 	}
 	*/
 	// put tagentities in $entity
-	public function tagcontent($entity, $tagentitiesid) {		
+	public function tagcontent($entity, $tagentitiesid, $required=FALSE) {		
 		foreach($tagentitiesid as $tagid) {
 			$relationship = new relationship(array(
+				'required'=> $required,
+				'fieldname'=> '',
 				'parent' => $entity->id,
 				'child' => $tagid
 			));
@@ -62,6 +64,7 @@ class node_universe extends node {
 			$this->add($relationship);
 			$this->trace('inserted relationship');
 		}
+		incrementweight($entity,count($tagentitiesid));
 	}
 	
 	public function removerelationships($entity, $type='ALL') {
@@ -76,6 +79,12 @@ class node_universe extends node {
 			$result->MoveNext();
 		}
 		return $sql;
+	}
+	
+	public function incrementweight($entity,$increment=1) {
+		$sql = sprintf('UPDATE `entity` SET `entity`.`weight` = `entity`.`weight` + %d WHERE `entity`.`id` = %d',$increment,$entity->id);
+		$connection = $this->db_connect();
+		$result = $connection->Execute($sql);
 	}
 	
 
