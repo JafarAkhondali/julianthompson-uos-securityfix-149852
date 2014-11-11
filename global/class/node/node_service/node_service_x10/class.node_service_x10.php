@@ -10,9 +10,13 @@ class node_service_x10 extends node_service {
 
 
 	public function fetchchildren() {
-		$this->addproperty('info','field_text',array('value'=>print_r($response,TRUE)));
+		$this->addproperty('info','field_text',array('value'=>print_r('',TRUE)));
 		$response = $this->sendcommand(FALSE);
-		$this->info->value .= print_r($this->status,TRUE);
+		//$response = $this->sendcommand('pl a off');
+		$this->info->value .= ':this->status'.print_r($this->status,TRUE);
+		//$this->info->value .= ':this->selected'.print_r($this->selected,TRUE);
+			 			 
+		//$this->info->value .= ':response' .  print_r($response,TRUE);
 		if ($response) {
 			foreach($response->status as $code => $status) {
 			
@@ -82,7 +86,7 @@ class node_service_x10 extends node_service {
 	    			usleep(800);
     			}
     			$responses = $this->readresponse(1500000, "End status");
-			return '<pre>'.print_r($responses,TRUE).'</pre>';
+			//return '<pre>'.print_r($responses,TRUE).'</pre>';
     			//$this->close(); 
 			$this->process_responses($responses);
 			$responseobj = new StdClass();
@@ -169,7 +173,9 @@ class node_service_x10 extends node_service {
 					  $housecode = $matches[1];
 						$status = explode(',',$matches[2]);
 						foreach($status as $value) {
-							if (preg_match('@(\d+)=(\d+)@',$value, $keyvalue)) {
+							if (preg_match('@(\d+)=(.*)@',$value, $keyvalue)) {
+								if (!is_numeric($keyvalue[2])) continue;
+							//if (preg_match('@(\d+)=(\d+)@',$value, $keyvalue)) {
 								$devicecode = strtolower($housecode) . $keyvalue[1];
 								if (!$this->status[$devicecode] instanceof StdClass) {
 									$this->status[$devicecode] = new StdClass;
