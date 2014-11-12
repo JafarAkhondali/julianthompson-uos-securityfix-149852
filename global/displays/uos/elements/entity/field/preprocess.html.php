@@ -1,22 +1,29 @@
 <?php
 // field preprocess - /entity/field/preprocess.html.php
 
-if ($entity->visible!==TRUE) {
+// include parent behaviour
+// equivalent of calling parent preprocess method
+include $render->rendererpath . '/elements/entity/preprocess.html.php';
+
+$render->attributes['id'] = $render->instanceid;
+$render->attributes['class'] = $render->classtreestring;
+
+//if ($entity->visible!==TRUE) {
 	//$render->output = 
 	//$render->display->template = FALSE;	
 	//$render->display->wrapper = FALSE;
 	//return;
+	$render->attributes['class'] .= ($entity->visible==TRUE) ? ' uos-visible':' uos-invisible';
+	//$render->attributes['visible'] = FALSE;
 	//$render->finish = TRUE;
 	//return;
+//}
+
+if ($entity->masked) {
+	$entity->value = '[MASKED]';
 }
 
-if (!isset($render->attributes)) $render->attributes = array();
-$render->attributes['id'] = $render->instanceid;
-$render->attributes['class'] = $render->classtreestring;
 
-// include parent behaviour
-// equivalent of calling parent preprocess method
-include $render->rendererpath . '/elements/entity/preprocess.html.php';
 
 //$render->elementdata->displaykey = 'field';
 

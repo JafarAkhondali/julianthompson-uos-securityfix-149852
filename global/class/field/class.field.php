@@ -12,7 +12,9 @@ class field extends entity {
 	public $visible = TRUE;
 	public $usereditable = TRUE;
 	public $displayname = null;
-	public $initialvalue = null;
+	public $defaultvalue = null;
+	public $masked = FALSE;
+	public $modified = FALSE;
 	
 	
 	function __construct($initializer=null) {
@@ -34,9 +36,9 @@ class field extends entity {
 			//}
 		}  
 		
-		if ( (is_null($this->value)) && $this->initialvalue) {
-			$this->setvalue($this->initialvalue);
-		}
+		if (!isset($initializer['value'])) {
+			$this->setvalue($this->defaultvalue,FALSE);
+		} 
   }
   
   function isvalid() {
@@ -44,8 +46,21 @@ class field extends entity {
   	return TRUE;
   }
   
+  function reset() {
+  	$this->value = $this->defaultvalue;
+  	$this->modified = FALSE;
+  }
+  
   function isvalueset() {
   	return !is_null($this->value);
+  }
+  
+  function ismodified() {
+  	return $this->modified;
+  }
+  
+  function isstored() {
+  	return $this->stored;
   }
   
   function getdbfieldtype() {
@@ -155,8 +170,16 @@ class field extends entity {
     return $properties;
   }
   
-  public function setvalue($value) {
+  public function __set($propertyname,$value) {
+    return $this->value = $value;
+  }
+  
+  public function setvalue($value, $setmodified = TRUE) {
   	$this->value = $value;
+  	if ($setmodified) {
+  		$this->modified = TRUE;
+  		if ($this->parent) $this->parent->event_propertymodified($this);
+  	}
   }
   
 	function getindexproperty() {

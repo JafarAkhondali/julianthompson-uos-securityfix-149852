@@ -2,7 +2,7 @@
 
 $render->childcount = count($entity->children);
 
-if (!isset($render->attributes)) $render->attributes = array();
+//if (!isset($render->attributes)) $render->attributes = array();
 
 $render->attributes['id'] = $render->instanceid;
 $render->attributes['class'] = $render->classtreestring;
@@ -21,6 +21,8 @@ $render->elementdata->activedisplay = $render->displaystring;
 $render->elementdata->displays = $render->formatdisplaynames;
 $render->elementdata->displaykey = 'entity';
 //$render->elementdata->typedisplay = $render->entityconfig->class.'.'.$render->displaystring;
+
+
 
 
 if (isset($entity->title->value)) { 

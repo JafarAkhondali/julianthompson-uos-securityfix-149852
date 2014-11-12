@@ -5,7 +5,7 @@ class node_universe extends node {
 
 	public $dbconnection = NULL;
 	public $tags = array();
-  
+  public $path = array();
 
   public function test() {
   	return(file_exists($this->datapath) && $this->db_connect());
@@ -19,7 +19,7 @@ class node_universe extends node {
   }  
 
 	public function add($entity) {
-		$entity->guid = $this->db_unique_guid();	
+		$entity->guid->value = $this->db_unique_guid();	
 		$entity->relocatefiles();
 		return ($this->db_entity_insert($entity))?$entity->guid->value:null;
 	}
@@ -64,7 +64,7 @@ class node_universe extends node {
 			$this->add($relationship);
 			$this->trace('inserted relationship');
 		}
-		incrementweight($entity,count($tagentitiesid));
+		return $this->incrementweight($entity,count($tagentitiesid));
 	}
 	
 	public function removerelationships($entity, $type='ALL') {
@@ -82,63 +82,13 @@ class node_universe extends node {
 	}
 	
 	public function incrementweight($entity,$increment=1) {
-		$sql = sprintf('UPDATE `entity` SET `entity`.`weight` = `entity`.`weight` + %d WHERE `entity`.`id` = %d',$increment,$entity->id);
+		$sql = sprintf('UPDATE `entity` SET `entity`.`weight` = `entity`.`weight` + %d WHERE `entity`.`id` = %d',$increment,$entity->id->value);
 		$connection = $this->db_connect();
 		$result = $connection->Execute($sql);
+		return $sql.print_r($entity,TRUE);
 	}
 	
 
-/*
-	//moved to entity	
-	function db_entity_structure($entity) {
-		$tables = array();
-		
-		$properties = $entity->getproperties();
-		foreach($properties as $property) {
-			if (is_subclass_of($property,'field')) {
-				$auto = ($entity->indexproperty->key==$property->key) ? ' NOT NULL AUTO_INCREMENT':'';
-				$tables[($property->scope)][$property->key] = $property->getdbfieldtype() . $auto;
-			}
-		}
-		$indexscope = $entity->indexproperty->scope;
-		$indexelements = array($indexscope.'_id'=> $entity->indexproperty->getdbfieldtype());
-		
-		foreach($tables as $scope=>$property) {
-			if ($scope!==$indexscope) {
-				$tables[$scope] = array_merge($indexelements, $tables[$scope]);
-			}
-		}
-		return $tables;
-	}
-	
-
-	
-	function db_entity_primary_key($entity) {
-		return $entity->indexproperty->key;
-	}
-
-
-
-	function db_entity_data($entity) {
-		$tables = array();
-		foreach($entity->properties as $property) {
-			if (is_subclass_of($property,'field')) {
-				if ($entity->indexproperty->key!==$property->key) {
-					$tables[($property->scope)][$property->key] = $property->getdbfieldvalue();
-				}
-			}
-		}
-		$indexscope = $entity->indexproperty->scope;
-		$indexelements = array($indexscope.'_id'=> &$entity->properties[$entity->indexproperty->key]->value);
-				
-		foreach($tables as $scope=>$property) {
-			if ($scope!==$indexscope) {
-				$tables[$scope] = array_merge($indexelements, $tables[$scope]);
-			}
-		}
-		return $tables;
-	}
-*/
 	function db_entity_insert($entity) {
 		trace('ENTITY_INSERT','db_entity_insert');
 		$this->db_create_tables($entity);
@@ -414,8 +364,8 @@ class node_universe extends node {
 		}
 
 		//$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship' AND entity.id != 1",implode(' ',$joins));
-		// universe no longer entity 1
-		$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship'",implode(' ',$joins));
+		// universe no longer entity 
+		$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship' ORDER BY `entity`.`weight` DESC",implode(' ',$joins));
 
 		trace($sql);
 		

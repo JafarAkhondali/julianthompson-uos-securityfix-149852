@@ -13,6 +13,8 @@ class entity {
 	public 		$scope = null;
 	public 		$indexproperty = null;
 	public		$uniqueproperties = null;
+	public 		$stored = FALSE;
+	public		$onchange = null; //callback or name
 	
 	function __construct($initializer=null) {
 
@@ -71,7 +73,7 @@ class entity {
   protected function __setpropertyvalue($propertyname,$value) {
     if ($this->propertyexists($propertyname)) {
       //$this->trace('__setpropertyvalue ('.$propertyname.') : '.$value);
-      return $this->properties[$propertyname]->value = $value;
+      return $this->properties[$propertyname]->setvalue($value);
     }
     //$this->{'$'.$propertyname} = $value; 
     //if ($propertyname=='maxlength') { print_r($this); die(); }
@@ -316,13 +318,14 @@ class entity {
 
 
 
-	function ___getdata() {
+	function ___getdata($modified=FALSE) {
 		$tables = array();
 		$properties = $this->getproperties();
 		$indexfield = $this->getindexproperty();
 		
 		foreach($properties as $key=>$property) {
-			if (is_uos_field($property)) {
+			if (is_uos_field($property) && $property->isstored()) {
+				if ($modified && !$property->modified) continue;
 				if ($indexfield->key!==$property->key) {
 								//print_r($key.':'.$property->scope."\n");
 					$tables[($property->scope)][$key] = $property->getdbfieldvalue();
@@ -497,6 +500,37 @@ class entity {
 			$output = file_get_contents($cachefile);
 		}
 		return $output;
+	}
+	
+	
+	// move to magic function in php 5.6
+	function debuginfo() {
+		$outstring = $this->type->value . ($this->isvalid()?' [valid]':' [invalid]') . ($this->ismodified()?'[modified]':'');
+		$outstring .= ' {<br/>';
+		foreach($this->properties as $key=>$field) {
+			$outstring .= '&nbsp; &nbsp; ' . ($field->stored?'<strong>':'');
+			$outstring .= '   '. $key . ' : ';
+			$outstring .= '\'' . $field->value . '\' ('.gettype($field->value).')';
+			if ($field->modified) $outstring .= '[modified]';
+			if ($field->isvalueset()) $outstring .= ' [set]';
+			$outstring .= ($field->isvalid())?'[valid]':'[invalid]';
+			$outstring .= ($field->usereditable)?'[usereditable]':'';
+			$outstring .= ($field->required)?'[required]':'';
+			$outstring .= ($field->isstored()?'</strong>':'');
+			$outstring .= '<br/>';
+		}
+		$outstring .= '}<br/>';
+		return $outstring;
+	}
+	
+	function ismodified() {
+		foreach($this->properties as $key=>$field) {
+			if ($field->ismodified()) return TRUE;
+		}		
+		return FALSE;
+	}
+	
+	function event_propertymodified($property) {
 	}
   
 }		

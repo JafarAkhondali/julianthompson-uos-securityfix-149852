@@ -25,6 +25,29 @@ $uos->config->globaldatabasename = '';
 $uos->config->bindir = PHP_BINDIR;
 
 
+// Messy I know
+$uos->responsecodes = array(
+	100 => 'Continue',
+	200 => 'OK',
+	201 => 'Created',
+	202	=> 'Accepted',
+	205 => 'Reset Content',
+	206 => 'Partial Content',
+	300 => 'Multiple Choices',
+	307 => 'Temporary Redirect',
+	402 => 'Payment Required',
+	403 => 'Forbidden',
+	404 => 'Not Found',
+	405 => 'Method Not Allowed',
+	406 => 'Not Acceptable',
+	500 => 'Internal Server',
+	501 => 'Not Implemented',
+	502 => 'Bad Gateway',
+	503 => 'Service Unavailable',
+	505 => 'HTTP Version Not Supported'
+);
+
+
 // These items are only temporary dummy items to get us started
 
 $uos->config->types = array(

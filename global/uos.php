@@ -8,9 +8,6 @@ if ($uos->request->debugmode==UOS_DEBUGMODE_REQUEST) {
 	die();
 }
 
-register_shutdown_function('universe_shutdown');
-//set_error_handler('handleError');
-
 
 if (!$universe) {
 

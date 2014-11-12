@@ -1,3 +1,4 @@
 <div class="toggle-switch">
-<input class="field-boolean-value" type="checkbox" name="<?php print (string) $entity->key;?>" <?php if ($entity->value) echo "checked";?>/>
+<input type="hidden" name="<?php print (string) $entity->key;?>" value="0" />
+<input class="field-boolean-value" type="checkbox" name="<?php print (string) $entity->key;?>" value="1" <?php if ($entity->value) echo "checked";?>/>
 </div>

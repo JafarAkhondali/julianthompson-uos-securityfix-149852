@@ -803,3 +803,8 @@ div.uos-element form.uos-action-form {
 	padding: 0;
 	margin: 0;
 }
+
+div.uos-invisible {
+	background-color: rgba(0,0,0,0.5);
+	opacity: 0.2;
+}

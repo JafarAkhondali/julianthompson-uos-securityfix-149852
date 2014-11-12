@@ -36,8 +36,16 @@ function uostype_field_boolean_initialize($element) {
 	//.on('switchChange.bootstrapSwitch', function(e,data) {
 	//	alert(data.value);
 	//
-	$switch.on('switch-change.bootstrapSwitch', function (e, data) {
-    var $el = $(data.el)
-      , value = data.value;
-    console.log(e, $el, value);
-});}
+	$switch.on('switchChange.bootstrapSwitch', function(event, state) {
+	  console.log(event); // jQuery event
+	  console.log(state); // true | false
+	  //$(this).prop('checked', false);
+	  if (state) {
+	      $(this).attr('checked','checked');
+	  } else {
+	      $(this).removeAttr('checked');
+	  }
+	  console.log(this); // DOM element
+	});
+
+}

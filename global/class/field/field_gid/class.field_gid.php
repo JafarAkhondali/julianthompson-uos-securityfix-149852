@@ -8,4 +8,8 @@ class field_gid extends field {
   function getdbfieldtype() {
   	return "bigint(20)";
   }
+  
+  //function isvalid() {
+  	//return FALSE;
+  //}
 } 

@@ -33,9 +33,10 @@ uos.displays['entity'].actions = {
 		icon : 'fa-caret-right',	
 		handler: uostype_entity_display_up
 	},	
-	edit : {
+	update : {
 		title : 'Edit',	
-		icon : 'fa-pencil'					
+		icon : 'fa-pencil',
+		handler: uostype_entity_update						
 	},
 	destroy : {
 		title : 'Destroy',			
@@ -81,6 +82,12 @@ function uostype_entity_destroy($element) {
 	uos.post($element,'destroy',{
 		//debugrequest : true
 	});
+}
+
+function uostype_entity_update($element) {
+	uos.post($element,'update',{
+		//debugrequest : true
+	});	
 }
 
 

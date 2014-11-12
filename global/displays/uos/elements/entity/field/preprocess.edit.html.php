@@ -5,6 +5,10 @@
 // equivalent of calling parent preprocess method
 include $render->rendererpath . '/elements/entity/field/preprocess.html.php';
 
+if (!$entity->usereditable) {
+	$render->finish = TRUE;
+}
+
 //$render->attributes['draggable'] = "false";
 
 if (!isset($render->attributes)) $render->attributes = array();

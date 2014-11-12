@@ -1,4 +1,9 @@
 <?php
+error_reporting(0);
+ini_set('display_errors', 0);
+//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+register_shutdown_function('universe_shutdown');
+//set_error_handler('handleError');
 
 include_once "core/const.php";
 include_once "core/globals.php";
@@ -7,8 +12,8 @@ include_once "displays/default/display.php";
 //ini_set('display_errors',1);
 //ini_set('display_startup_errors',1);
 
-//error_reporting(-1);
-//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
+
 
 
 function __autoload($classname='') {
@@ -16,8 +21,8 @@ function __autoload($classname='') {
   if (file_exists($classpath)) {
     require_once $classpath;     
   } else {
-    print_r(debug_backtrace());
-    die('__autoload : missing class file - ' . $classname . '(' .$classpath . ')');
+    //print_r(debug_backtrace());
+    trigger_error('__autoload : missing class file - ' . $classname . '(' .$classpath . ')');
   }
 }
 /*
@@ -479,7 +484,7 @@ function universe_shutdown() {
   global $uos;
   
 	$error = error_get_last();
-	if ( ($error['type'] === E_ALL) || ($error['type'] === E_USER_ERROR) ) {
+	if ( in_array($error['type'], array(E_ERROR, E_USER_ERROR, E_PARSE, E_CORE_ERROR)) ) {
 	  //addoutput('content/',$error);
 	  echo "ERROR type : " . $error['type']. " | Msg : ".$error['message']." | File : ".$error['file']. " | Line : " . $error['line'];
 	  die();

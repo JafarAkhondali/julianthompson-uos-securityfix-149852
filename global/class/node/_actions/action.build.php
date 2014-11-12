@@ -1,8 +1,19 @@
 <?php
-$this->addproperty('title', 'field_text', array('maxlength'=>255,'required'=>TRUE));
-$this->addproperty('created', 'field_datetime', array('locked'=>FALSE,'usereditable'=>TRUE, 'initialvalue'=>'now'));
-$this->addproperty('modified', 'field_datetime', array('locked'=>FALSE,'usereditable'=>TRUE, 'initialvalue'=>'now'));
-//trace($this);
+$this->addproperty('title', 'field_text', array(
+	'maxlength'=>255,
+	'required'=>TRUE, 
+	'stored'=>TRUE
+));
 
-//$outarray[] = $this->newproperty('id',$);
-//$this->setindexproperty('id');  
+$this->addproperty('created', 'field_datetime', array(
+	'locked'=>FALSE,
+	'usereditable'=>FALSE, 
+	'defaultvalue'=>'now', 
+	'stored'=>TRUE
+));
+
+$this->addproperty('modified', 'field_datetime', array(
+	'locked'=>FALSE,'usereditable'=>FALSE, 
+	'defaultvalue'=>'now', 
+	'stored'=>TRUE
+));

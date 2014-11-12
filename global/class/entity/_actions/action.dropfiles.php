@@ -41,7 +41,8 @@ foreach($uos->request->files as $file) {
 		$universe->tagcontent($this,array($matchingfiles[0]->id->value));  
  	} else {
 	  $guid = $universe->add($file);
-		$universe->tagcontent($this, array($file->id->value));
+		$sql = $universe->tagcontent($this, array($file->id->value));
+	  $file->addproperty('sql','field_text', array('value'=>$sql));
 		addoutput('content/', $file); 			
  	}
 
