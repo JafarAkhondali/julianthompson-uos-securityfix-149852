@@ -162,10 +162,14 @@ function rendernew($entity, $rendersettings = NULL) {
 }
 
 
-
-
+// some sort of scope on mime type - objects? not sure yet
 // For PHP without Anonymous functions
-
+// $attributes['foo'] = array('item1','item2','item3');
+// $attributes['goo'] = TRUE;
+// 
+// Renders as :
+//
+// foo="item1 item2 item3" goo=""
 function display_uos_attributestostring($attributes) {
 	$keys = array_keys($attributes);
 	return join(' ', array_map('display_uos_attributestostring_callback',$keys,$attributes));
@@ -173,8 +177,10 @@ function display_uos_attributestostring($attributes) {
 
 function display_uos_attributestostring_callback($key,$value) {
    if (is_bool($value)) {
-      return $value?$value:'';
-   }
+      return $value?$key:'';
+   } elseif (is_array($value)) {
+   	$value = implode(' ',$value);
+   } // else if entity etc?
    return $key.'="'.$value.'"';	
 }
 

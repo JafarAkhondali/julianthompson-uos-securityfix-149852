@@ -12,6 +12,8 @@ $render->attributes['data-uostypetree'] = $render->inheritancestring;
 $render->attributes['data-uostype'] = $render->entitytype;
 $render->attributes['data-accept'] = '';
 $render->attributes['data-display'] = $render->displaystring;
+$render->attributes['arse'] = array('item1','item2','item3');
+$render->attributes['bool'] = TRUE;
 
 if (!isset($render->elementdata)) $render->elementdata = new stdClass();
 $render->elementdata->typetree = $render->entityconfig->classtree;
