@@ -123,6 +123,10 @@ $uos->config->types = array(
 		'title'=>'PDF Document',
 		'icon'=>'file-o'
 	),
+	'node_form' => (object) array(
+		'title'=>'Form',
+		'icon'=>'check-square-o'
+	),
 	'node_person' => (object) array(
 		'title'=>'Person',
 		'icon'=>'user'
