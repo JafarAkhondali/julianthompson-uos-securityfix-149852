@@ -13,5 +13,5 @@ uos.displays['entity.edit.html'].actions = {
 
 function uostype_entity_edit_html_initialize($element) {
 	uostype_entity_initialize($element);
-	uos.log('uostype_entity_edit_html_initialize');
+	//uos.log('uostype_entity_edit_html_initialize');
 }

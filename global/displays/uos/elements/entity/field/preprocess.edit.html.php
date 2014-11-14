@@ -9,12 +9,6 @@ if (!$entity->usereditable) {
 	$render->finish = TRUE;
 }
 
-//$render->attributes['draggable'] = "false";
-
-if (!isset($render->attributes)) $render->attributes = array();
-$render->attributes['id'] = $render->instanceid;
-$render->attributes['class'] = $render->classtreestring;
-
 //$render->attributes['valid'] = ($entity->isvalid()) ? "uos-valid":"uos-invalid";
 $render->attributes['class'] = $render->attributes['class'] . (($entity->isvalid()) ? " uos-valid":" uos-invalid");
 

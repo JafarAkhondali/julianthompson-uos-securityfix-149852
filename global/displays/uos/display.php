@@ -1,10 +1,6 @@
 <?php
 
 function render($entity, $rendersettings = NULL) {
-	return rendernew($entity, $rendersettings);
-}
-
-function rendernew($entity, $rendersettings = NULL) {
 
 	global $uos,$universe;
 	static $renderdepth = 0;
@@ -111,6 +107,36 @@ function rendernew($entity, $rendersettings = NULL) {
 		die();
 	}
 	
+	if (!isset($render->attributes)) $render->attributes = array();
+	if (!isset($render->elementdata)) $render->elementdata = new stdClass();
+	
+	
+  // maybe this is for html only but keep here for now
+	$render->attributes['id'] = $render->instanceid;
+
+	$render->attributes['class'] = array(
+			'uos-element',
+			'uos-uninitialized'		
+	);
+
+	
+	$render->attributes['class'] = array_merge($render->attributes['class'], array_reverse($render->entityconfig->classtree));
+
+	//$render->attributes['classnew'] = $render->attributes['class'] + array_reverse($render->entityconfig->classtree);
+	
+	$render->attributes['classnew'] = array_reverse(array_map( 
+        function($item) { return "uos-type-".$item; }, 
+        $render->entityconfig->classtree 
+	)); 	 
+	
+	
+	
+	array();//array_map($render->entityconfig->classtree, function(&$item) { return 'uose-'.$item; });
+	
+	// PHP 5.3 and beyond!
+		 // or $item = '-'.$item;
+	
+		
 	try {
 	
 		//echo $render->display->preprocess;
@@ -313,11 +339,6 @@ function renderdisabled($entity, $rendermask=NULL) {
 	$render->classtreestring = 'uos-element uos-uninitialized '.implode(' ', array_reverse($render->classtree));
 	
 	$render->inheritancestring = implode(',', $render->classtree);
- 
-	$render->attributes = array(
-		'id' => $render->instanceid,
-		'class' => $render->classtreestring
-	);
 	
 	$render->elementdata = new stdClass();	
 	$render->elementdata->typetree = $render->classtree;
@@ -327,7 +348,18 @@ function renderdisabled($entity, $rendermask=NULL) {
 	$render->elementdata->format = $render->format;
 	$render->elementdata->activedisplay = $render->formatdisplay;
 	
-
+ 
+  // maybe this is for html only but keep here for now
+	$render->attributes = array(
+		'id' => $render->instanceid,
+		'class' => $render->classtreestring,
+		'classadd' => array(
+			'uos-element',
+			'uos-uninitialized'		
+		)
+	);
+	
+	//$render->attributes['class2'] += implode(' ', array_reverse($render->classtree));
   //extract($rendersettings,EXTR_OVERWRITE);
 
   //need to cater for multiple preprocess from node down

@@ -13,6 +13,8 @@ uos.libraries = {};
 
 uos.displays = [];
 
+uos.displaystest = [];
+
 uos.displays['global'] = {};
 
 uos.settings = {};
@@ -91,7 +93,7 @@ uos.initializeelement = function($element,elementdata) {
 
 	  //var elementdata = uos.getelementdata($element);
 	  
-	  //uos.log('uos-data', elementdata);
+	  //uos.log('uos.initializeelement:setdata', elementdata);
 	  //uos.logging = false;
 		uos.addBehaviours($element);
 		//uos.logging = true;
@@ -129,16 +131,27 @@ uos.initalizeallelements = function($content, elementsdata) {
 		uos.initializeelement($(this),elementdata);	
 	});
 	*/
-	//uos.log('uos.initalizeallelements',elementsdata);
+	/*
+	uos.log('uos.initalizeallelements',$content);
+	
+	for (var key in elementsdata) {
+		var newelementid = '#'+key;
+		$newelement = $content.find(newelementid);	
+		uos.log('uos.intializeallelements',newelementid,($newelement.length>0)?'found':'not found');
+	}
+	
+	*/
 	jQuery.each(elementsdata, function(index,elementdata) {
 		var newelementid = '#'+index;
 		$newelement = $content.find(newelementid);	
 		if ($newelement.length>0) {
+			//uos.log('uos.intializeallelements:found element',newelementid,elementdata);
 		  //$newelement.removeClass('uos-uninitialized').addClass('uos-initialized');
 			uos.initializeelement($newelement,elementdata);	
 			//uos.logging = true;
-			//uos.log('intializeallelements',$newelement.attr('id'),uos.getelementdata($newelement));
 			//uos.logging = false;
+		} else {
+			//uos.log('uos.intializeallelements:didnt find element',newelementid,elementdata);		
 		}
 		//uos.log(index, newelementid, elementdata);
 	});
@@ -213,29 +226,34 @@ uos.addBehaviours = function($element) {
 	var uosdisplay = elementdata.activedisplay;
 	var uostypetree = elementdata.typetree;
 	var uosdisplaykey = elementdata.displaykey;
-	//uos.log('uos.addBehaviors',elementdata);
+	var elementid = $element.attr('id');
+	
   var elementactions = {};
-  //console.log('addBehaviours', elementdata, uos.displays, uosdisplaykey);
-	//for (in= 0; index < a.length; ++index) {
-	//if (uos.displays[uosdisplaykey]) {
-	//	console.log('found : '+uosdisplaykey);
-	//}
-	//for (var utindex = uostypetree.length-1; utindex >=0; utindex--) {
-	for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
-		//uos.log('searching for '+searchtypename)
-	//for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
-		var searchtypename = uostypetree[utindex];
-		var searchdisplay = searchtypename + '.' + uosdisplay;
-		//uos.log('uos.addBehaviours:search',searchdisplay);
-		if(uos.displays[searchdisplay]) {
-			//uos.log('found:',searchdisplay);
-			elementactions = uos.displays[searchdisplay].actions;
-		} else {
-			//uos.log('no actions found:',searchdisplay);		
-		}
+  
+  console.log('addBehaviours', elementid, elementdata, uos.displays, uos.displaystest, uosdisplaykey);
 
-		if(uos.displays[searchtypename]) {
-	  	//console.log('found :',searchtypename,uos.displays[searchtypename]);
+	for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
+	//uos.log('searching for '+searchtypename)
+
+		var searchtypename = uostypetree[utindex];
+		
+		var searchdisplay = searchtypename + '.' + uosdisplay;
+		
+		uos.log('uos.addBehaviours:looking for uos.displays[\''+searchdisplay+'\']');
+		
+		if(uos.displaystest[searchdisplay]) {
+			uos.log('uos.addBehaviours:found displaystest',searchdisplay,uos.displaystest[searchdisplay]);		
+		} else if(uos.displaystest[searchtypename]) {
+			uos.log('uos.addBehaviours:found displaystest',searchtypename,uos.displaystest[searchtypename]);				
+		}
+		
+		if(uos.displays[searchdisplay]) {
+			uos.log('uos.addBehaviours:found actions',searchdisplay,uos.displays[searchdisplay].actions);
+			elementactions = uos.displays[searchdisplay].actions;
+			break;
+		} else if(uos.displays[searchtypename]) {
+			uos.log('uos.addBehaviours:found actions',searchtypename,uos.displays[searchtypename].actions);
+			//elementactions = uos.displays[searchtypename].actions;
 			var currenttype = uos.displays[searchtypename];
 			if (currenttype.actions) {
 				//uos.log('found actions for definition',uostype, searchtypename, currenttype.actions);
@@ -248,11 +266,12 @@ uos.addBehaviours = function($element) {
 						//uos.log('found action definition', aindex, uostype, searchtypename);
 					} 
 				}
-				//uos.log('addBehavioursx', uostype, elementactions);
 			}
-		} else {
-	  	//console.log('not found :',searchtypename,uos.displays[searchtypename]);		
-		}
+		} 
+	}
+	
+	if (jQuery.isEmptyObject(elementactions)) { 
+		uos.log('uos.addBehaviours:actions not found',searchdisplay,searchtypename);		
 	}
 
 	// Clean - remove actions that aren't objects - overridden
@@ -454,13 +473,13 @@ uos.getSelectedActionsold = function() {
 		// if no selection
 		var $selectedElements = uos.getSelectedElements();
 		var elementcount = $selectedElements.length;
-		uos.log('uos.getSelectedActions');			
+		//uos.log('uos.getSelectedActions');			
 		// if no elements selected add global actions
 		if (elementcount > 0) {
 			$selectedElements.each(function(index) {
 				var $element = $(this);
 				var elementdata = uos.getelementdata($element);
-				uos.log('uos.getSelectedActions',$element.attr('id'),elementdata.actions);
+				//uos.log('uos.getSelectedActions',$element.attr('id'),elementdata.actions);
 			});
 		} else {
 			actions = uos.global.actions;
@@ -884,6 +903,7 @@ jQuery.getScript = function( resources, callback ) {
 	var length = resources.length;
 	var handler = function() { counter++; };
 	var deferreds = [];
+	uos.log('jQuery.getScript:loading scripts',resources);
   $.ajaxSetup({ cache: true });	
 	for (var idx = 0 ; idx < length; idx++ ) {
 		deferreds.push(
@@ -1109,31 +1129,42 @@ uos.responsehander = function(event) {
 		};
 	}
 
-	uos.log('uos.post:response',event.target,data);
+	uos.log('uos.responsehander:response',event.target,data);
 	
 	if (data.sourceid) {
-		uos.log('uos.post:sourceid');	
+		//uos.log('uos.responsehander:sourceid');	
 		uos.removeactionstatus(jQuery(data.sourceid));	
 	} else {
-		uos.log('uos.post:nosourceid');
+		//uos.log('uos.responsehander:nosourceid');
 	}
-	
-	var $dialog = jQuery('#dialog');
-	$dialog.empty().append(data.content);
-	
-	if (data.elementdata) {
-		uos.initalizeallelements($dialog, data.elementdata);  	
-	}
-	
-	BootstrapDialog.closeAll();
 
-	$dialog.children().each(function (index) {
-		//BootstrapDialog.alert($(this));//$loadedcontent);
-		BootstrapDialog.show({
-			message : $(this)
-		});//$loadedcontent);
-	});
-	uos.log($dialog,data.elementdata);
+
+	
+	if (data.resources.script) {
+		jQuery.getScript(data.resources.script,function(){
+			//uos.log('uos.responsehander:got scripts',data,$dialog);
+			var $dialog = jQuery('#dialog');
+			$dialog.empty().append(data.content);
+			if (data.elementdata) {
+				uos.log('uos.responsehander:call intializeallelements',data,$dialog);
+				uos.initalizeallelements($dialog, data.elementdata);  	
+			}
+			BootstrapDialog.closeAll();
+			$dialog.children().each(function (index) {
+				//BootstrapDialog.alert($(this));//$loadedcontent);
+				BootstrapDialog.show({
+					message : $(this)
+				});//$loadedcontent);
+			});
+			uos.log($dialog,data.elementdata);
+		});
+	}
+	
+
+	
+
+
+
 
 	/*
 	jQuery.each(data.elementdata, function(index,elementdata) {
@@ -1348,12 +1379,22 @@ uos.getcurrentlocation = function() {
 	}
 };
 
+/*
+uos.getscripts = function(scripts, callback) {
+  var progress = 0;
+  var internalCallback = function () {
+     if (++progress == scripts.length) { callback(); }
+  };
 
-
+  scripts.forEach(function(script) { $.getScript(script, internalCallback); });
+};
+*/
 
 
 jQuery(document).ready(function() {
 //jQuery(window).load(function() {
 	uos.logging = true;
   uos.initialize();
+  
+	uos.log('uos.displays.field_boolean',uos.displays['field_boolean']);
 });

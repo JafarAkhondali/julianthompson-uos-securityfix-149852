@@ -1,3 +1,3 @@
 <?php foreach ($entity as $index => $subentity) : ?>
-	<?php print rendernew($subentity,'html');?>
+	<?php print render($subentity,'html');?>
 <?php endforeach; ?>

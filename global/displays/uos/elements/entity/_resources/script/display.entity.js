@@ -1,3 +1,34 @@
+uos.displaystest['entity'] = Class.extend({
+  init: {
+		title : 'Initialise',	
+		icon : 'fa-wrench',
+		handler : uostype_entity_initialize
+  },
+  reload: {
+		title : 'Reload',
+		icon : 'fa-refresh',
+		handler : uostype_entity_reload	
+	},
+	add : {
+		title : 'Add',		
+		icon : 'fa-plus-circle',
+		handler : uostype_entity_add	
+	},
+	
+	displayup : {
+		title : 'Change Display',	
+		icon : 'fa-caret-left',		
+		handler: uostype_entity_display_down
+	},
+	displaydown : {
+		title : 'Change Display',	
+		icon : 'fa-caret-right',	
+		handler: uostype_entity_display_up
+	}
+});
+
+
+
 uos.displays['entity'] = {};
 
 uos.displays['entity'].extends = null;
@@ -137,21 +168,36 @@ function uostype_entity_processform($element) {
 		event.preventDefault();
 		$form = jQuery(this);
 		var parameters = {};
+		
 		var files = new Array();
+		
 		var action = {};
+		
 		action['action']='unknown';
 		$targetelement = $element;
-		$form.find('input[type=text],input[type=hidden],textarea,select').each(function() {
-			jQuery(this).css('border','1px solid red');
+		
+		
+		$element.find('.uos-element.field').each(function() {
+			$field = jQuery(this);
+			$field.css('border','1px solid red');
+			var elementdata = uos.getelementdata($element); 
+			uos.log('uostype_entity_processform:uos-element.fields',elementdata,elementdata.actions.getvalue);
+			//uos.elementAction($element,'getvalue')
+			//uos.log('uostype_entity_initialize:data',keyname,keyvalue);		
+		});
+		
+		$form.find('input[type=text],input[type=hidden],input[type=checkbox],textarea,select').each(function() {
+			//jQuery(this).css('border','1px solid red');
 			var keyname = jQuery(this).attr('name');
+			
 			var keyvalue = jQuery(this).val();
 			var systemproperties = ['target','action','sourceid'];
 			if (systemproperties.indexOf(keyname)<0) {
 				parameters[keyname] = keyvalue;
-				uos.log('uostype_entity_initialize:param',keyname,keyvalue);
+				uos.log('uostype_entity_processform:param',keyname,keyvalue);
 			} else {
 				action[keyname] = keyvalue;
-				uos.log('uostype_entity_initialize:data',keyname,keyvalue);
+				uos.log('uostype_entity_processform:data',keyname,keyvalue);
 			}
 			
 		});
@@ -167,8 +213,8 @@ function uostype_entity_processform($element) {
 			$targetelement = jQuery(action.sourceid);
 		}
 		
-		uos.log('uostype_entity_initialize:parameters',action, parameters, files);
-		uos.post($targetelement,action.action,parameters,files);
+		uos.log('uostype_entity_processform:parameters',action, parameters, files);
+		//uos.post($targetelement,action.action,parameters,files);
 		//alert('done');
 	});
 }

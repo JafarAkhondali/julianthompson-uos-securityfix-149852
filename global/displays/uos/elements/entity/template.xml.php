@@ -1,2 +1,2 @@
-<?php print rendernew($entity->properties); ?>
-<children><?php print rendernew($entity->children); ?></children>
+<?php print render($entity->properties); ?>
+<children><?php print render($entity->children); ?></children>

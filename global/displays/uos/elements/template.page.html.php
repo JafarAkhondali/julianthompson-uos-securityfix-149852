@@ -44,7 +44,7 @@ $entitytitle = (isset($content->title)) ? $content->title : 'Not known';
 </div>
 
 <div id="container">
-<?php print rendernew($content,'html');?>
+<?php print render($content,'html');?>
 </div>
 
 <div id="dialog">

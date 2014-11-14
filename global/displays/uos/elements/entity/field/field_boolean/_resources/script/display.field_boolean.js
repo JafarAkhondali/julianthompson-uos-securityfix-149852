@@ -1,6 +1,6 @@
 uos.displays['field_boolean'] = {};
 
-uos.displays['field_boolean'].extends = null;
+uos.displays['field_boolean'].extends = uos.displays['field'] ;
 
 uos.displays['field_boolean'].actions = {
 

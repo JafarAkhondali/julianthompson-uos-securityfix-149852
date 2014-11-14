@@ -8,16 +8,10 @@ include $render->rendererpath . '/elements/entity/preprocess.html.php';
 $render->attributes['id'] = $render->instanceid;
 $render->attributes['class'] = $render->classtreestring;
 
-//if ($entity->visible!==TRUE) {
-	//$render->output = 
-	//$render->display->template = FALSE;	
-	//$render->display->wrapper = FALSE;
-	//return;
-	$render->attributes['class'] .= ($entity->visible==TRUE) ? ' uos-visible':' uos-invisible';
-	//$render->attributes['visible'] = FALSE;
-	//$render->finish = TRUE;
-	//return;
-//}
+$render->attributes['class'] .= ($entity->visible==TRUE) ? ' uos-visible':' uos-invisible';
+
+$render->elementdata->fieldinfo = 'display key set in file';
+$render->elementdata->displaykey = 'field';
 
 if ($entity->masked) {
 	$entity->value = '[MASKED]';

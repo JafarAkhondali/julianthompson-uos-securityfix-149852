@@ -9,9 +9,21 @@ uos.displays['field'].actions = {
 		icon : 'fa-wrench',
 		handler : uostype_field_initialize
 	},
+	getvalue : {
+		title : 'Get value',	
+		icon : 'fa-wrench',
+		handler : uostype_field_getvalue
+	},
 };
 
-function uostype_field_initialize($element,data) {
+function uostype_field_initialize($element) {
 	//$element.css('border','1px solid green');
-	//uos.log('uostype_field_initialize',$element.attr('id'),data);
+	
+  var elementdata = uos.getelementdata($element); 
+	//uos.log('uostype_field_initialize',$element.attr('id'),elementdata);
 }		
+
+
+function uostype_field_getvalue($element) {
+	return "GETVALUE WORKED";
+}

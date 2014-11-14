@@ -1,3 +1,3 @@
-<?php print rendernew($entity->title,'html');?>
-<?php print rendernew($entity->created,'html');?>
-<?php print rendernew($entity->body,'html');?>
+<?php print render($entity->title,'html');?>
+<?php print render($entity->created,'html');?>
+<?php print render($entity->body,'html');?>

@@ -18,7 +18,7 @@
 </div>
 
 <div id="container">
-<?php print rendernew($entity,'html');?>
+<?php print render($entity,'html');?>
 </div>
 
 <div id="dialog">

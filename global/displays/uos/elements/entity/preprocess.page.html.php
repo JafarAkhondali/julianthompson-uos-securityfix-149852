@@ -1,8 +1,7 @@
 <?php
 $render->title = ucfirst($render->entityconfig->title);
 $render->wrapperelement = 'html';
-if (!isset($render->attributes)) $render->attributes = array();
-if (!isset($render->elementdata)) $render->elementdata = new stdClass();
+
 
 addoutputunique('elementdata/'.$render->instanceid, $render->elementdata);
 
