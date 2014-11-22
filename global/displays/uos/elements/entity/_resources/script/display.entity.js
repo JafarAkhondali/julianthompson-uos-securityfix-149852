@@ -1,94 +1,85 @@
-uos.displaystest['entity'] = Class.extend({
-  init: {
-		title : 'Initialise',	
-		icon : 'fa-wrench',
-		handler : uostype_entity_initialize
-  },
-  reload: {
-		title : 'Reload',
-		icon : 'fa-refresh',
-		handler : uostype_entity_reload	
-	},
-	add : {
-		title : 'Add',		
-		icon : 'fa-plus-circle',
-		handler : uostype_entity_add	
-	},
-	
-	displayup : {
-		title : 'Change Display',	
-		icon : 'fa-caret-left',		
-		handler: uostype_entity_display_down
-	},
-	displaydown : {
-		title : 'Change Display',	
-		icon : 'fa-caret-right',	
-		handler: uostype_entity_display_up
-	}
-});
 
 
 
 uos.displays['entity'] = {};
 
+uos.displays['entity'].title = 'Entity';
+
 uos.displays['entity'].extends = null;
 
-uos.displays['entity'].actions = {
+uos.displays['entity'].actions = {};
 
-	init : {
+
+uos.displays['entity'].actions.init = {
 		title : 'Initialise',	
 		icon : 'fa-wrench',
 		handler : uostype_entity_initialize
-	},
+};
+
 	
-	reload : {
+uos.displays['entity'].actions.reload = {
 		title : 'Reload',
 		icon : 'fa-refresh',
 		handler : uostype_entity_reload	
-	},
+};
+
 	
-	add : {
+uos.displays['entity'].actions.add = {
 		title : 'Add',		
 		icon : 'fa-plus-circle',
 		handler : uostype_entity_add	
-	},
+};
+
 	
-	displayup : {
+uos.displays['entity'].actions.displayup = {
 		title : 'Change Display',	
 		icon : 'fa-caret-left',		
 		handler: uostype_entity_display_down
-	},
+};
+
 	
-	displaydown : {
+uos.displays['entity'].actions.displaydown = {
 		title : 'Change Display',	
 		icon : 'fa-caret-right',	
 		handler: uostype_entity_display_up
-	},	
-	update : {
+};
+
+	
+uos.displays['entity'].actions.update = {
 		title : 'Edit',	
 		icon : 'fa-pencil',
 		handler: uostype_entity_update						
-	},
-	destroy : {
+};
+
+
+uos.displays['entity'].actions.destroy = {
 		title : 'Destroy',			
 		icon : 'fa-trash-o',
 		handler: uostype_entity_destroy				
-	},
-	save : {
+};
+
+
+uos.displays['entity'].actions.save = {
 		title : 'Save',		
 		icon : 'fa-check'					
-	},
-	threed : {
+};
+
+
+uos.displays['entity'].actions.threed = {
 		title : '3D display',
 		icon : 'fa-globe',
 		handler : uos_three
-	},
-	test : {
+};
+
+	
+uos.displays['entity'].actions.test = {
 		title : 'Test',
 		icon : 'fa-globe',
 		handler : uostype_entity_testaction
-	},
 };
+
+
+console.log('Included display \'entity\'',uos.displays['entity']);
 
 
 function uostype_entity_add($element) {
@@ -160,7 +151,7 @@ function uostype_entity_initialize($element) {
 	
 
 	uostype_entity_processform($element);
-	//uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
+	uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
 }		
 
 function uostype_entity_processform($element) {
@@ -175,17 +166,29 @@ function uostype_entity_processform($element) {
 		
 		action['action']='unknown';
 		$targetelement = $element;
-		
+		//console.log('here');		
 		
 		$element.find('.uos-element.field').each(function() {
 			$field = jQuery(this);
 			$field.css('border','1px solid red');
-			var elementdata = uos.getelementdata($element); 
-			uos.log('uostype_entity_processform:uos-element.fields',elementdata,elementdata.actions.getvalue);
-			//uos.elementAction($element,'getvalue')
+			var elementdata = uos.getelementdata($field); 
+			var fieldvalue = uos.elementAction($field,'getvalue');
+			var keyname = elementdata.fieldkey;
+			//console.log($field,fieldvalue)
+			if (fieldvalue!=undefined) {
+			
+				var systemproperties = ['target','action','sourceid'];
+				if (systemproperties.indexOf(keyname)<0) {
+					parameters[keyname] = fieldvalue;
+					uos.log('uostype_entity_processform:param',elementdata.fieldkey,elementdata,fieldvalue);
+				} else {
+					action[keyname] = fieldvalue;
+					uos.log('uostype_entity_processform:data',elementdata.fieldkey,fieldvalue);
+				}
+			}
 			//uos.log('uostype_entity_initialize:data',keyname,keyvalue);		
 		});
-		
+		/*
 		$form.find('input[type=text],input[type=hidden],input[type=checkbox],textarea,select').each(function() {
 			//jQuery(this).css('border','1px solid red');
 			var keyname = jQuery(this).attr('name');
@@ -201,12 +204,12 @@ function uostype_entity_processform($element) {
 			}
 			
 		});
-		
+		*/
 		$form.find('input[type=file]').each(function() {
 			var keyname = jQuery(this).attr('name');
 			files = this.files;
 			//var keyvalue = jQuery(this).val();	
-			uos.log(this,jQuery(this));	
+			//uos.log(this,jQuery(this));	
 		});
 		
 		if (action['sourceid']) {
@@ -214,7 +217,7 @@ function uostype_entity_processform($element) {
 		}
 		
 		uos.log('uostype_entity_processform:parameters',action, parameters, files);
-		//uos.post($targetelement,action.action,parameters,files);
+	uos.post($targetelement,action.action,parameters,files);
 		//alert('done');
 	});
 }
@@ -243,7 +246,7 @@ function uostype_entity_event_click($element,event) {
 			uos.selectElement($element,isMetaHeld());
 		}
 	}
-	uos.updateSelectedCount();
+	uos.updateSelectedInfo();
 	//uos.selectElement($element,isMetaHeld());
 }
 
@@ -251,7 +254,7 @@ function uostype_entity_event_click($element,event) {
 
 function uostype_entity_event_header_click($element, event) {
 	var elementdata = uos.getelementdata($element);
-	console.log(elementdata);
+	//console.log(elementdata);
 	event.preventDefault();
 	event.stopPropagation();	
 	window.location = elementdata.clicktarget;
@@ -269,7 +272,7 @@ function uostype_entity_event_dragstart(event) {
 	//}
   $element.trigger('click');
   uos.selectElement($element,true);
-  uos.updateSelectedCount();
+  uos.updateSelectedInfo();
   
 	jQuery('body').addClass('uos-dragging-entity');	
 	

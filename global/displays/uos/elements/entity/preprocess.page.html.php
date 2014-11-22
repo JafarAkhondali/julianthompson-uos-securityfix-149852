@@ -65,7 +65,6 @@ addoutputunique('resources/style/', UOS_LIBRARIES_URL . "font-awesome/css/font-a
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.uos.js");
 
 //throw new Exception('Division by zero.');
-addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.base.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.uos.three.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/libraries/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js");
 //addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/node_device/_resources/script/jquery.node_device.js");

@@ -15,6 +15,8 @@ uos.displays = [];
 
 uos.displaystest = [];
 
+uos.displaystest2 = [];
+
 uos.displays['global'] = {};
 
 uos.settings = {};
@@ -95,16 +97,22 @@ uos.initializeelement = function($element,elementdata) {
 	  
 	  //uos.log('uos.initializeelement:setdata', elementdata);
 	  //uos.logging = false;
-		uos.addBehaviours($element);
+		uos.attachdisplayobject($element);
 		//uos.logging = true;
 		
-		if (elementdata.actions.init) {
-			if (elementdata.actions.init.handler) elementdata.actions.init.handler($element);
+		if (elementdata.displayobject) {
+			if (elementdata.displayobject.actions.init && elementdata.displayobject.actions.init.handler) {
+				//uos.log('uos.initializeelement:displayobject.actions.init:FOUND');
+				elementdata.displayobject.actions.init.handler($element);
+				$element.removeClass('uos-uninitialized');
+				$element.addClass('uos-initialized');
+				return true;
+			}
 		}
 	}	
+	uos.log('uos.initializeelement:displayobject.actions.init: NOT FOUND',$element);	
+	return false;
 
-	$element.removeClass('uos-uninitialized');
-	$element.addClass('uos-initialized');
 	
 	//uos.logging = false;
 	//uos.log('uos.initializeelement',$element.attr('id'),uos.getelementdata($element));
@@ -191,8 +199,9 @@ uos.loadcontent = function($element,path) {
 			//uos.loadstyles(data.resources.style);
 			
 			
+			var scripts = uos.unloadedScripts(data.resources.script);
 			// when scripts are loaded
-			jQuery.getScript(data.resources.script,function(){
+			jQuery.getScript(scripts,function(){
 			//$.when.apply(scriptloads).done(function(){
 				//uos.log('loadedscript',data.elementdata);
 				//uos.log(uos);
@@ -217,10 +226,49 @@ uos.loadcontent = function($element,path) {
 			});			
 		});	
   }, 500);
-
 }
 
-uos.addBehaviours = function($element) {
+
+uos.unloadedScripts = function(scripts) {
+	var unloaded = [];
+	//console.log('uos.unloadedScripts',scripts);
+	for (index = 0; index < scripts.length; ++index) {
+		var script = scripts[index];
+		if ($('script[src="'+script+'"]').length<1) {
+			console.log('uos.unloadedScripts : Unloaded script',script);
+			unloaded.push(script);
+		}
+	}
+	return unloaded;
+}
+
+
+uos.clone = function(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
+uos.extenddisplay = function(obj) {
+	//console.log(typeof o);
+  newobj = {};
+	newobj = uos.clone(obj);
+	newobj.extends = (obj);
+  newobj.actions = {};
+	//newobj.title = uos.clone(obj.title);
+	
+	for (var key in obj.actions){
+		newobj.actions[key] = uos.clone(obj.actions[key]);
+	}
+  //newobj.actions = uos.clone(obj.actions);
+  
+	return newobj;
+}
+
+uos.attachdisplayobject = function($element) {
   var elementdata = uos.getelementdata($element);
 	var uostype = elementdata.type;
 	var uosdisplay = elementdata.activedisplay;
@@ -230,62 +278,27 @@ uos.addBehaviours = function($element) {
 	
   var elementactions = {};
   
-  console.log('addBehaviours', elementid, elementdata, uos.displays, uos.displaystest, uosdisplaykey);
-
+  //console.log('uos.attachdisplayobject', elementid, elementdata, uos.displays, uos.displaystest, uosdisplaykey);
+	
 	for (var utindex = 0; utindex < uostypetree.length; ++utindex) {
-	//uos.log('searching for '+searchtypename)
-
+	
 		var searchtypename = uostypetree[utindex];
-		
 		var searchdisplay = searchtypename + '.' + uosdisplay;
-		
-		uos.log('uos.addBehaviours:looking for uos.displays[\''+searchdisplay+'\']');
-		
-		if(uos.displaystest[searchdisplay]) {
-			uos.log('uos.addBehaviours:found displaystest',searchdisplay,uos.displaystest[searchdisplay]);		
-		} else if(uos.displaystest[searchtypename]) {
-			uos.log('uos.addBehaviours:found displaystest',searchtypename,uos.displaystest[searchtypename]);				
-		}
-		
+		//uos.log('uos.attachdisplayobject:searching for displayobjects',searchdisplay,searchtypename);	
 		if(uos.displays[searchdisplay]) {
-			uos.log('uos.addBehaviours:found actions',searchdisplay,uos.displays[searchdisplay].actions);
-			elementactions = uos.displays[searchdisplay].actions;
-			break;
+			elementdata.displayobject = uos.displays[searchdisplay];
+			elementdata.displayused = searchdisplay;
+			//elementdata.actions = uos.displays[searchdisplay].actions;
+			return true;
 		} else if(uos.displays[searchtypename]) {
-			uos.log('uos.addBehaviours:found actions',searchtypename,uos.displays[searchtypename].actions);
-			//elementactions = uos.displays[searchtypename].actions;
-			var currenttype = uos.displays[searchtypename];
-			if (currenttype.actions) {
-				//uos.log('found actions for definition',uostype, searchtypename, currenttype.actions);
-				for(var aindex in currenttype.actions) {
-					// if we haven't defined the action already (overwritten)
-					//console.log(elementactions);
-					//elementactions['g'] = 'yes';
-					if (!elementactions[aindex]) {
-						elementactions[aindex] = currenttype.actions[aindex];
-						//uos.log('found action definition', aindex, uostype, searchtypename);
-					} 
-				}
-			}
-		} 
-	}
-	
-	if (jQuery.isEmptyObject(elementactions)) { 
-		uos.log('uos.addBehaviours:actions not found',searchdisplay,searchtypename);		
-	}
-
-	// Clean - remove actions that aren't objects - overridden
-	
-	for(var aindex in elementactions) {
-		if (!elementactions[aindex]) {
-			delete elementactions[aindex];
+			elementdata.displayobject = uos.displays[searchtypename];
+			elementdata.displayused = searchtypename;
+			//elementdata.actions = uos.displays[searchtypename].actions;
+			return true;
 		}
 	}
-	
-	elementdata.actions = elementactions;
-	//jQuery.data($element,'uosActions',elementactions);
-	//$element.data('actions',);
-	//uos.log('addBehaviours.finished', uostype, elementactions);
+	uos.log('uos.attachdisplayobject: [NOT FOUND]',searchdisplay,searchtypename);	
+	return false;
 };
 
 
@@ -318,18 +331,18 @@ uos.getAllChildEntities = function($element) {
 uos.selectElement = function($element, multiple) {
 	uos.log($element.attr('title') + ' selected');
 	$element.addClass('selected');
-	//uos.updateSelectedCount();
+	//uos.updateSelectedInfo();
 };
 
 uos.deselectElement = function($element) {
 	$element.removeClass('selected');
 	uos.log('ds');
-	//uos.updateSelectedCount();
+	//uos.updateSelectedInfo();
 };
 
 uos.deselectAllElements = function() {
 	jQuery(UOS_ELEMENT_CLASS+'.selected').removeClass('selected');
-	uos.updateSelectedCount();	
+	uos.updateSelectedInfo();	
 };
 
 uos.getAllElements = function() {
@@ -344,7 +357,7 @@ uos.getSelectedElements = function() {
 	return jQuery(UOS_ELEMENT_CLASS+'.selected');
 };
 
-uos.updateSelectedCount = function() {
+uos.updateSelectedInfo = function() {
 	var $selectedelements = uos.getSelectedElements();
 	var selectedtypes = uos.getSelectedTypes();
 	
@@ -361,7 +374,7 @@ uos.updateSelectedCount = function() {
 		$firstelement = $selectedelements.first();
 		$elementdata = uos.getelementdata($firstelement);	
 		if (count==1) {	
-			uos.log('updateSelectedCount',$elementdata,selectedtypes);
+			uos.log('updateSelectedInfo',$elementdata,selectedtypes);
 			jQuery('#uos-entity-title').text($firstelement.attr('title'));	
 			jQuery('#uos-entity-type').text($elementdata.typeinfo.title);	
 			jQuery('#uos-entity-icon').addClass('fa-'+$elementdata.typeinfo.icon);	
@@ -374,7 +387,7 @@ uos.updateSelectedCount = function() {
 			}
 		}	
 	}
-	uos.log('updateSelectedCount', count);
+	uos.log('updateSelectedInfo', count);
 	jQuery('#universe-selected-count').text(count);	
 	uos.buildToolbar();
 };
@@ -502,12 +515,12 @@ uos.getSelectedActions = function() {
 			$selectedElements.each(function(index) {
 				var $element = $(this);
 				var elementdata = uos.getelementdata($element);
-				console.log('uos.getSelectedActions',$element.attr('id'),elementdata,elementdata.actions);
-				if (elementdata && elementdata.actions) {
+				console.log('uos.getSelectedActions',$element.attr('id'),elementdata,elementdata.displayobject.actions);
+				if (elementdata && elementdata.displayobject.actions) {
 					if (actions==null) {
-						actions = elementdata.actions;
+						actions = elementdata.displayobject.actions;
 					} else {
-						actions = uos.getActionIntersection(actions, elementdata.actions);
+						actions = uos.getActionIntersection(actions, elementdata.displayobject.actions);
 					}
 				}
 			});
@@ -529,7 +542,7 @@ uos.getActionIntersection = function(d1,d2) {
 			matches[aindex].handler = null;
 		}
 	}
-	console.log(matches);
+	//console.log(matches);
 	return matches;
 }
 
@@ -588,13 +601,16 @@ uos.toolbarAction = function (action, event) {
 
 uos.elementAction = function ($element,actionname) {
 	var elementdata = uos.getelementdata($element);
-	if (elementdata.actions[actionname] && elementdata.actions[actionname].handler) {
-    var args = []; // empty array
-    // copy all other arguments we want to "pass through" 
-    for(var i = 2; i < arguments.length; i++) {
-        args.push(arguments[i]);
-    }
-    return elementdata.actions[actionname].handler.apply($element, args);
+	//console.log('uos.elementAction',elementdata,actionname,arguments);
+	if (elementdata.displayobject) {
+		if (elementdata.displayobject.actions[actionname] && elementdata.displayobject.actions[actionname].handler) {
+	    var args = [$element]; // empty array
+	    // copy all other arguments we want to "pass through" 
+	    for(var i = 2; i < arguments.length; i++) {
+	        args.push(arguments[i]);
+	    }
+	    return elementdata.displayobject.actions[actionname].handler.apply($element, args);
+		}
 	}
 }
 
@@ -1137,11 +1153,10 @@ uos.responsehander = function(event) {
 	} else {
 		//uos.log('uos.responsehander:nosourceid');
 	}
-
-
 	
 	if (data.resources.script) {
-		jQuery.getScript(data.resources.script,function(){
+		var scripts = uos.unloadedScripts(data.resources.script);
+		jQuery.getScript(scripts,function(){
 			//uos.log('uos.responsehander:got scripts',data,$dialog);
 			var $dialog = jQuery('#dialog');
 			$dialog.empty().append(data.content);
@@ -1398,3 +1413,14 @@ jQuery(document).ready(function() {
   
 	uos.log('uos.displays.field_boolean',uos.displays['field_boolean']);
 });
+
+
+if (typeof Object.create !== 'function') {
+    Object.create = function (o) {
+    		//console.log(typeof o);
+        function F() {}
+        F.prototype = o;
+        console.log('Object.create',new F());
+        return new F();
+    };
+}

@@ -30,6 +30,6 @@ $render->wrapperelement = 'div';
 
 
 //addoutput('elementdata/'.$render->instanceid, $render->elementdata);
-addoutputunique('resources/script/', $render->rendererurl."elements/entity/_resources/script/classextend.js");
+//addoutputunique('resources/script/', $render->rendererurl."elements/entity/_resources/script/classextend.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/entity/_resources/script/display.entity.js");
 addoutputunique('resources/style/', $render->rendererurl."elements/entity/_resources/style/style.html.css");

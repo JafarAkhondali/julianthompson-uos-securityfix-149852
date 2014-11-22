@@ -790,7 +790,7 @@ div.uos-invalid {
 }
 
 div.uos-valid {
-	background-color: rgba(0,255,0,0.2);
+	background-color: rgba(0,255,0,0.08);
 }
 
 
@@ -805,6 +805,10 @@ div.uos-element form.uos-action-form {
 }
 
 div.uos-invisible {
-	background-color: rgba(0,0,0,0.5);
-	opacity: 0.2;
+	xbackground-color: rgba(0,0,0,0.5);
+	opacity: 0.5;
+}
+
+div.uos-element.uos-valid.uos-modified {
+	background-color: rgba(0,255,0,0.6);
 }
