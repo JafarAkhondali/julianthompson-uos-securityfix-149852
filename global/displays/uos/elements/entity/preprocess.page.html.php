@@ -63,6 +63,8 @@ addoutputunique('resources/style/', UOS_LIBRARIES_URL . "font-awesome/css/font-a
 // Core UOS
 //addoutputunique('resources/script/', $render->activerendererurl."resources/script/classextend.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.uos.js");
+addoutputunique('resources/style/', $render->rendererurl."elements/_resources/style/style.uos.css");
+addoutputunique('resources/style/', $render->rendererurl."elements/_resources/style/style.uos-icons.css");
 
 //throw new Exception('Division by zero.');
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.uos.three.js");
@@ -70,8 +72,6 @@ addoutputunique('resources/script/', $render->rendererurl."elements/_resources/l
 //addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/node_device/_resources/script/jquery.node_device.js");
 addoutputunique('resources/script/', "https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false");
 
-addoutputunique('resources/style/', $render->rendererurl."elements/_resources/style/style.uos.css");
-
-addoutputunique('resources/style/', $render->rendererurl."elements/_resources/style/style.uos.css");
-
 addoutputunique('resources/style/', "http://fonts.googleapis.com/css?family=Shadows+Into+Light+Two");
+
+

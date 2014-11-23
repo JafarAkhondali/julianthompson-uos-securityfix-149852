@@ -23,7 +23,7 @@ $entitytitle = (isset($content->title)) ? $content->title : 'Not known';
 	<div id="universetoolbar-status" class="universetoolbar uos-element-active">
 		<div class="uos-element" id="uos-status-icon">
 			<div class="field-icon">
-				<span class="fa-stack fa-lg">
+				<span class="fa-stack">
 				  <i class="fa fa-<?php print $render->entityconfig->icon;?> fa-stack-1x" id="uos-entity-icon"></i>
 				</span>
 			</div>

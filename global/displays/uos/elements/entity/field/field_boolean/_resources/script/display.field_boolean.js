@@ -39,7 +39,7 @@ function uostype_field_boolean_initialize($element) {
 	//$element.find('.btn').button();
 	//$element.css('border','1px solid red');
 	//$element.find('.btn').css('border','1px solid red');
-	$element.find('.value').bind('click', function(event) {
+	$element.find('.uos-field-value-wrapper').bind('click', function(event) {
 		event.stopPropagation();
 	});
 	
@@ -48,6 +48,10 @@ function uostype_field_boolean_initialize($element) {
 	//.on('switchChange.bootstrapSwitch', function(e,data) {
 	//	alert(data.value);
 	//
+	
+	//$switch.bootstrapSwitch('setReadOnly', true);
+	
+	//$switch.prop('disabled', true);
 	$switch.on('switchChange.bootstrapSwitch', function(event, state) {
 	  console.log(event); // jQuery event
 	  console.log(state); // true | false

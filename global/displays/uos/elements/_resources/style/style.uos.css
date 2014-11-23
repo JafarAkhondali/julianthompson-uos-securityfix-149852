@@ -436,16 +436,13 @@ div.uos-element .uos-header .field {
 }
 
 div.uos-element .uos-header .field-title {
-	xposition: absolute;
-	xleft: 80px;
-	xtop: 10px;
 	font-size: 13px;
 	color: rgba(0,0,0,0.7);
 }
 
 div.uos-element .uos-header .field-group {
 	position: absolute;
-	background-color: rgba(255,255,255,0.9);
+	background-color: rgba(255,255,255,0.8);
 	left: 40px;
 	top: 17px;
 	font-size: 12px;
@@ -459,6 +456,20 @@ div.uos-element .uos-header .field-group {
 	-webkit-transition: all 1s;	
 	opacity: 0;
 	display: inline-block;
+	min-width: 200px;
+}
+
+div.uos-element .uos-header .field-group h2 {
+	font-size: 13px;
+	margin: 0;
+	margin-bottom: 0.2em;
+}
+
+div.uos-element .uos-header .field-group h3 {
+	font-size: 11px;
+	font-style: italic;
+	margin: 0;
+	margin-bottom: 0.2em;
 }
 
 div.uos-element:hover > .uos-header .field-group {
@@ -505,7 +516,7 @@ div.uos-element .field-icon {
 	color: white;
 	width: 58px;
 	height: 58px;
-	font-size: 20px;
+	font-size: 30px;
 	background: #7db9e8; /* Old browsers */
 	background: -moz-radial-gradient(center, ellipse cover,  #7db9e8 1%, #1e5799 58%); /* FF3.6+ */
 	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(1%,#7db9e8), color-stop(58%,#1e5799)); /* Chrome,Safari4+ */
@@ -535,7 +546,8 @@ div.uos-element .field-icon .fa-stack {
 
 #universetoolbar .field-icon i,
 div.uos-element .field-icon i {
-	margin: 9px auto 0;
+	xmargin: 9px auto 0;
+	margin: 0.35em auto 0;
 	xfont-size: 30px;
 	color: rgba(0,0,0,0.5);
 	display: block;

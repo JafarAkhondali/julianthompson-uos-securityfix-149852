@@ -1080,8 +1080,6 @@ uos.post = function($element,action,parameters,files) {
   
   postData.append("jsonparameters", jsonparameters);
   
-  uos.log('uos.post',files);
-  
   if (files instanceof FileList) {
   	uos.log('files found');
 		for (var i = 0; i < files.length; i++) {
@@ -1100,8 +1098,10 @@ uos.post = function($element,action,parameters,files) {
   //	postData.append("files", parameters.files);  
   //	delete parameters.files;
   //}
+
+  uos.log('uos.post:request',elementdata,action,postData,parameters);
   
-	uos.log('uos.post:request',elementdata.guid,action,parameters,jsonparameters);
+	//uos.log('uos.post:request',elementdata.guid,action,parameters,jsonparameters);
   
 	var uosrequest = new XMLHttpRequest();
 	

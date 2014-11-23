@@ -149,10 +149,18 @@ function uostype_entity_initialize($element) {
 		event.stopPropagation();
 	});
 	
+	uostype_entity_addheader($element);
 
 	uostype_entity_processform($element);
 	uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
 }		
+
+
+function uostype_entity_addheader($element) {
+  var elementdata = uos.getelementdata($element); 
+	$element.prepend('<div class="uos-header"><div class="field-icon"><i class="uos-entity-icon uos-entity-icon-'+elementdata.displayused+'"></i></div><div class="field-group field-group-info"><h2>'+$element.attr('title')+'</h2><h3>'+elementdata.displayobject.title+' ('+elementdata.guid+')</h3></div></div>');
+}
+
 
 function uostype_entity_processform($element) {
 	$element.find('form').submit(function(event) { 
@@ -177,13 +185,13 @@ function uostype_entity_processform($element) {
 			//console.log($field,fieldvalue)
 			if (fieldvalue!=undefined) {
 			
-				var systemproperties = ['target','action','sourceid'];
+				var systemproperties = ['target','action','sourceid','display'];
 				if (systemproperties.indexOf(keyname)<0) {
 					parameters[keyname] = fieldvalue;
-					uos.log('uostype_entity_processform:param',elementdata.fieldkey,elementdata,fieldvalue);
+					//uos.log('uostype_entity_processform:param',elementdata.fieldkey,elementdata,fieldvalue);
 				} else {
 					action[keyname] = fieldvalue;
-					uos.log('uostype_entity_processform:data',elementdata.fieldkey,fieldvalue);
+					//uos.log('uostype_entity_processform:data',elementdata.fieldkey,fieldvalue);
 				}
 			}
 			//uos.log('uostype_entity_initialize:data',keyname,keyvalue);		

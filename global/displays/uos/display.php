@@ -129,7 +129,9 @@ function render($entity, $rendersettings = NULL) {
         $render->entityconfig->classtree 
 	)); 	 
 	
+	$render->attributes['class'] = array_merge($render->attributes['class'], $render->attributes['classnew']);
 	
+	unset($render->attributes['classnew']);
 	
 	array();//array_map($render->entityconfig->classtree, function(&$item) { return 'uose-'.$item; });
 	

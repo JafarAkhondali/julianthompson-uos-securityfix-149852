@@ -4,6 +4,9 @@
 // include parent behaviour
 include $render->rendererpath . '/elements/entity/field/preprocess.html.php';
 
+
+//$render->attributes['disabled'] = TRUE;
+
 // Add bootstrap switch libraries
 addoutputunique('resources/script/', $render->rendererurl . "elements/_resources/libraries/bootstrap-switch-3.0/dist/js/bootstrap-switch.min.js");
 

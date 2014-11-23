@@ -12,7 +12,7 @@ $styles = $uos->output['resources']['style'];
 <<?php print $render->wrapperelement;?> <?php print display_uos_attributestostring($render->attributes);?>>
 
 <head>
-	<title><?php print $render->title;?></title>
+	<title><?php print $uos->request->universe->title;?> : <?php print $render->title;?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
 	<link rel="icon" type="image/x-icon" href="/global/displays/default/elements/_resources/images/favicon.ico">

@@ -2,7 +2,7 @@
 	<ul id="universe-status">
 		<li class="field-icon-container" id="universe-status-icon">
 			<div class="field-icon">
-				<span class="fa-stack fa-lg">
+				<span class="fa-stack">
 				<i class="fa fa-stack-2x" id="universe-selected-count" class="universe-selected-count">0</i>
 				<!--<i class="fa fa-asterisk fa-stack-1x"></i>-->
 				</span>
