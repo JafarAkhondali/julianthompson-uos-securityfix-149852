@@ -6,10 +6,22 @@
 include $render->rendererpath . '/elements/entity/preprocess.html.php';
 
 $render->attributes['id'] = $render->instanceid;
-$render->attributes['class'] = $render->classtreestring;
+//$render->attributes['class'] = $render->classtreestring;
 
-$render->attributes['class'] .= ($entity->visible==TRUE) ? ' uos-visible':' uos-invisible';
-$render->attributes['class'] .= ($entity->isvalid()) ? ' uos-valid':' uos-invalid';
+$render->attributes['class'][] = ($entity->visible==TRUE) ? 'uos-visible':'uos-invisible';
+$render->attributes['class'][] = ($entity->isvalid()) ? 'uos-valid':'uos-invalid';
+$render->attributes['class'][] = ' display-'.$render->displayformat;
+$render->attributes['class'][] = ' field-key-'.$entity->key;
+
+//$render->attributes['class'] .= ($entity->visible==TRUE) ? ' uos-visible':' uos-invisible';
+//$render->attributes['class'] .= ($entity->isvalid()) ? ' uos-valid':' uos-invalid';
+//$render->attributes['class'] .= ' display-'.$render->displayformat;
+//$render->attributes['class'] .= ' field-key-'.$entity->key;
+
+//$render->attributes['valid'] = ($entity->isvalid()) ? "uos-valid":"uos-invalid";
+//$render->attributes['class'] = $render->attributes['class'] . (($entity->isvalid()) ? " uos-valid":" uos-invalid");
+
+
 
 $render->elementdata->fieldinfo = 'display key set in file';
 $render->elementdata->displaykey = 'field';

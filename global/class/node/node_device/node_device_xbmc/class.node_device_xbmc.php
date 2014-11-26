@@ -1,6 +1,6 @@
 <?php
 # node_device class definition file
-class node_device_xbmc extends node {
+class node_device_xbmc extends node_device {
   
   
 	public function fetchchildren() {
@@ -22,6 +22,25 @@ class node_device_xbmc extends node {
 		}
 		
 		$this->connected->setvalue(TRUE);
+		
+
+		try {
+		   	$response = $rpc->Player->GetActivePlayers();
+		} catch (XBMC_RPC_Exception $e) {
+		    die($e->getMessage());
+		}
+		
+		if (empty($response)) {
+			$this->commands->value .= sprintf('<p>Nothing Playing');	
+		} else {
+			try {
+				$response = $rpc->Player->GetItem(array('playerid'=>$response[0]['playerid']));//,'properties'=>array('label','type')));
+			} catch (XBMC_RPC_Exception $e) {
+			    die($e->getMessage());
+			}
+			$this->commands->value .= sprintf('<p>Playing "%s" %s %s</p>',$response['item']['label'],print_r($response,TRUE),gettype($response));
+		}
+		
 		
 		try {
 		    if ($rpc->isLegacy()) {

@@ -6,7 +6,7 @@ $styles = $uos->output['resources']['style'];
 ?>
 <!-- UniverseOS-->
 <!-- 
-<?php print_r($uos->request);?>
+<?php //print_r($uos->request);?>
 -->
 <?php // return;?>
 <<?php print $render->wrapperelement;?> <?php print display_uos_attributestostring($render->attributes);?>>

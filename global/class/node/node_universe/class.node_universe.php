@@ -301,7 +301,7 @@ class node_universe extends node {
 			unset($tables['entity']);
 			$joins = array();
 			foreach ($tables as $table=>$fields) {
-				$joins[] = "JOIN `$table` ON $table.entity_id = entity.id";
+				$joins[] = "LEFT JOIN `$table` ON $table.entity_id = entity.id";
 			}
 			$sql = 'SELECT * FROM `entity` '.implode(' ',$joins).' WHERE id='.$result->fields['id'].' LIMIT 1';
 			$result = $connection->Execute($sql);
@@ -389,7 +389,7 @@ class node_universe extends node {
 				$joins = array();
 				//print_r($tables);
 				foreach ($tables as $table=>$fields) {
-					$joins[] = "JOIN `$table` ON $table.entity_id = entity.id";
+					$joins[] = "LEFT JOIN `$table` ON $table.entity_id = entity.id";
 				}
 				
 				$sql = 'SELECT * FROM `entity` '.implode(' ',$joins).' WHERE id='.$result->fields['id'].' LIMIT 1';

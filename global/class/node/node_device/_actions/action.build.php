@@ -1,9 +1,11 @@
 <?php
 $this->addproperty('x10key', 'field_number', array(
-	'required' => TRUE
+	'stored'=>TRUE
 ));
 $this->addproperty('x10housecode', 'field_text', array(
-	'required' => TRUE
+	'stored'=>TRUE
 ));
 
-$this->addproperty('status', 'field_boolean');
+$this->addproperty('status', 'field_boolean', array(
+	'stored'=>TRUE
+));

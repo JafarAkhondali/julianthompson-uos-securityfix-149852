@@ -97,7 +97,7 @@ function render($entity, $rendersettings = NULL) {
 		//return print_r($render);
 	//}
 	
-	//if ($renderdepth>10) return "RENDER DEPTH REACHED\n".print_r($render,TRUE)."\n".print_r($uos->output['content'],TRUE);
+	if ($renderdepth>10) return "RENDER DEPTH REACHED\n".print_r($render,TRUE)."\n".print_r($uos->output['content'],TRUE);
 	
 	if (	(isset($uos->request->parameters['debugrender']))  ||
 				(isset($render->debug) && $render->debug) ) {
@@ -137,25 +137,41 @@ function render($entity, $rendersettings = NULL) {
 	
 	// PHP 5.3 and beyond!
 		 // or $item = '-'.$item;
-	
+
+	trace('About to prerender:'. print_r(array(
+		'elementtype'=>$render->elementtype,
+		'display'=>$render->display,
+		'displaystring'=>$render->displaystring,
+		'renderdepth'=>$renderdepth
+	),TRUE) ,array('display'));	
+	//die();
 		
 	try {
 	
 		//echo $render->display->preprocess;
-		
+
 		if (property_exists($render->display,'preprocess')) {
+			trace('Preprocess Start : '.$render->display->preprocess);
+			//trace('including preprocess file :'.$render->display->preprocess . print_r($render,TRUE) ,array('display'));
 			$render->workingpath = dirname($render->display->preprocess);
 			$render->preprocessoutput = getFileOutput($render->display->preprocess,$rendervariables);
 			$render->output = &$render->preprocessoutput;
+			trace('Preprocess Complete');
 		}	
 		
 		if ($render->finish) return $render->output;
 	
+
+	
 		if (property_exists($render->display,'template') && ($render->display->template!==FALSE)) {
+			trace('Template Start : '.$render->display->template);
 			$render->workingpath = dirname($render->display->template);
 			$render->templateoutput = getFileOutput($render->display->template,$rendervariables);
 			$render->output = $render->templateoutput;
+		
+			trace('Template Complete');
 		}
+		
 		
 		if (isset($render->elementdata)) {
 			addoutput('elementdata/'.$render->instanceid, $render->elementdata);
@@ -167,21 +183,33 @@ function render($entity, $rendersettings = NULL) {
 		//echo "here";
 		//print_r($render->output);
 		//die();
+	
 		if (property_exists($render->display,'wrapper') && ($render->display->wrapper!==FALSE)) {
+			trace('Wrapper Start: '.$render->display->wrapper);
 			$render->workingpath = dirname($render->display->wrapper);
 			$render->wrapperoutput = getFileOutput($render->display->wrapper,$rendervariables);
 			$render->output = $render->wrapperoutput;
+			trace('Wrapper Complete');
 		}
 
 		if (property_exists($render->display,'transport')) {
+			trace('Transport Start: '.$render->display->transport);
 			$render->workingpath = dirname($render->display->transport);
 			$render->transportoutput = getFileOutput($render->display->transport,$rendervariables);
 			$render->output = $render->transportoutput;
+			trace('Transport Complete');			
 		}
 	} catch (Exception $e) {
 		$render->templateoutput = 'Unset';
 		$render->output = 'Error : '.$e->getMessage().print_r($uos->request,TRUE).print_r($render,TRUE).':'.$render->displaystring;
 	}
+	
+	trace('Finished render:'. print_r(array(
+		'elementtype'=>$render->elementtype,
+		'display'=>$render->display,
+		'displaystring'=>$render->displaystring,
+		'renderdepth'=>$renderdepth
+	),TRUE) ,array('display'));	
 	
 	$renderdepth--;
 	return $render->output;
@@ -210,6 +238,28 @@ function display_uos_attributestostring_callback($key,$value) {
    	$value = implode(' ',$value);
    } // else if entity etc?
    return $key.'="'.$value.'"';	
+}
+
+function display_uos_make_visual($entity) {
+	// Create the image
+	// Create a 100*30 image
+	$im = imagecreate(500, 200);
+	
+	// White background and blue text
+	$bg = imagecolorallocate($im, 255, 255, 255);
+	$textcolor = imagecolorallocate($im, 0, 0, 255);
+	
+	// Write the string at the top left
+	display_uos_imagecenteredstring($im, 5, 0, 500, 100, 'display_uos_make_visual', $textcolor);
+	display_uos_imagecenteredstring($im, 5, 0, 500, 120, $entity->type, $textcolor);
+	display_uos_imagecenteredstring($im, 5, 0, 500, 140, '('.$entity->guid.')', $textcolor);
+	return $im;
+}
+
+function display_uos_imagecenteredstring ( &$img, $font, $xMin, $xMax, $y, $str, $col ) {
+    $textWidth = imagefontwidth( $font ) * strlen( $str );
+    $xLoc = ( $xMax - $xMin - $textWidth ) / 2 + $xMin + $font;
+    imagestring( $img, $font, $xLoc, $y, $str, $col );
 }
 
 /*

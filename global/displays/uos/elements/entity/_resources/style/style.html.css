@@ -73,10 +73,16 @@ div.uos-element.dragging-target {
 	100% {background-color: rgba(0,0,60,0.7);}	
 }
 
-@-webkit-keyframes throbglow {
+@-webkit-keyframes throbglow-old {
 	0% { box-shadow: 0 0 10px 2px rgba(0,165,241,0.3);background-color: rgba(0,165,241,0.2);}
 	50% { box-shadow: 0 0 40px 10px rgba(0,165,241,0.5);background-color: rgba(0,165,241,0.3);}	
 	100% {box-shadow: 0 0 10px 2px rgba(0,165,241,0.3);background-color: rgba(0,165,241,0.2);}	
+}
+
+@-webkit-keyframes throbglow {
+	0% { box-shadow: 0 0 40px 10px rgba(0,165,241,0.5);background-color: rgba(0,165,241,0.3);}	
+	50% { box-shadow: 0 0 10px 2px rgba(0,165,241,0.3);background-color: rgba(0,165,241,0.2);}
+	100% { box-shadow: 0 0 40px 10px rgba(0,165,241,0.5);background-color: rgba(0,165,241,0.3);}	
 }
 
 div.uos-element.dragging-noaccept {
@@ -105,8 +111,10 @@ div.uos-element.node.selected {
 	xbackground-color: rgba(126,148,185,0.6);
 	background-color: rgba(0,165,241,0.2);
 	box-shadow: 0 0 10px 2px rgba(0,165,241,0.3);
-  -webkit-animation: throbglow 3s ease-in 0s infinite normal;
-  -moz-animation: throbglow 3s ease-in 0s infinite normal;
+  old-webkit-animation: throbglow 3s ease-in 0s infinite normal;
+  old-moz-animation: throbglow 3s ease-in 0s infinite normal;
+  -webkit-animation: throbglow 3s 0s infinite normal;
+  -moz-animation: throbglow 3s 0s infinite normal;
 	color: white;
 }
 

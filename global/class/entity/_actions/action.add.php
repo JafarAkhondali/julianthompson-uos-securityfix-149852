@@ -31,6 +31,33 @@ if (isset($parameters['uploadedfiles'][0])) {
 		$output->title = "Invalid URL (". $parameters['source'] .") : " . $this->title . '?';	
 	}
 
+} else if (isset($parameters['type']) && (!empty($parameters['type']))) {
+
+	$type = $parameters['type'];
+	$typeconfig = $uos->config->types[$type];
+	$output = new $type($parameters);
+	$output->addproperty('target', 'field_text', array('value'=>$this->guid));
+	$output->addproperty('action', 'field_text', array('value'=>'add'));
+	$output->addproperty('display', 'field_text', array('value'=>'uosio'));
+	//$output->removeproperty('type');
+	$output->type->locked=FALSE;
+	//$output->addproperty('type', 'field_text', array('value'=>$parameters['type']));
+	$output->addproperty('sourceid', 'field_text', array('value'=>$parameters['sourceid']));
+	
+	$output->addproperty('info','field_text', array('value'=>implode(',',array_keys($output->invalidproperties()))));
+	
+	if (!$output->isvalid())	{
+		$output->displaystring = 'edit.html';
+	} else {
+		$output->removeproperty('target');
+		$output->removeproperty('action');
+		$output->removeproperty('display');
+		$output->removeproperty('sourceid');
+		$output->removeproperty('info');
+	  $guid = $universe->add($output);
+		//$universe->tagcontent($this, array($file->id->value));		
+	}
+
 } else if (isset($parameters['createtype']) && (!empty($parameters['createtype']))) {
 
 	$type = $parameters['createtype'];
@@ -41,6 +68,7 @@ if (isset($parameters['uploadedfiles'][0])) {
 	$output->addproperty('display', 'field_text', array('value'=>'uosio'));
 	//$output->removeproperty('type');
 	$output->type->locked=FALSE;
+	$output->type->usereditable = TRUE; 
 	//$output->addproperty('type', 'field_text', array('value'=>$parameters['type']));
 	$output->addproperty('sourceid', 'field_text', array('value'=>$parameters['sourceid']));
 	

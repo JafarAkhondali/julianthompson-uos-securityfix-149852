@@ -5,13 +5,13 @@ if (isset($parameters['confirm']) && ($parameters['confirm']==1)) {
 	$message->title = 'Destroyed '.$this->title;
 
 	// do destroy
-	/*
+	
 	if ($this->type->value=='node_universe') {
 		$response->destroy_universe();
 	} else {
 		$response->body = $universe->destroy($this);
 	}
-	*/
+	
 	$message->body = ('<pre>'.$response.'</pre>');
 	addoutput('content/', $message);
 } else {

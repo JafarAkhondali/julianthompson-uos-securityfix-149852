@@ -9,7 +9,4 @@ if (!$entity->usereditable) {
 	$render->finish = TRUE;
 }
 
-//$render->attributes['valid'] = ($entity->isvalid()) ? "uos-valid":"uos-invalid";
-$render->attributes['class'] = $render->attributes['class'] . (($entity->isvalid()) ? " uos-valid":" uos-invalid");
-
 addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/_resources/script/display.field.edit.html.js");

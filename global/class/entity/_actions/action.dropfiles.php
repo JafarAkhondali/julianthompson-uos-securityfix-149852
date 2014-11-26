@@ -16,6 +16,15 @@ $guid = 'unset';
 
 foreach($uos->request->files as $file) {
 
+	if ($file->size->value==0) {
+		$message = new node_message();
+		$message->title = 'File has no size : '.$file->title->value;
+		$message->body = sprintf('size : %s<br/>checksum : %s<br/>Upload limit : %s',$file->size->value, $file->checksum->value, ini_get('post_max_size'));
+		addoutput('content/',$message);
+		break;
+	} 	
+
+
 	$searchobj = array(
  		'where' => array(
 			0 => array(
@@ -36,7 +45,10 @@ foreach($uos->request->files as $file) {
  	$matchingfiles = $universe->db_search($searchobj);
 	//print_r($matchingfiles);die();
 	if (count($matchingfiles)>0) {
-		addoutput('content/', 'Content already in universe ('.$file->title->value.').'); 	
+		$message = new node_message();
+		$message->title = 'Content already in universe'.$this->title;
+		$message->body = sprintf('(%s) matches %s<br/>size : %s<br/>checksum : %s<br/>Upload limit : %s',$file->title->value, $matchingfiles[0]->guid->value, $file->size->value, $file->checksum->value,ini_get('post_max_size'));
+		addoutput('content/',$message); 	
 		//addoutput('notifications/', 'Content already in universe ('.$file->title->value.').'); 	
 		$universe->tagcontent($this,array($matchingfiles[0]->id->value));  
  	} else {

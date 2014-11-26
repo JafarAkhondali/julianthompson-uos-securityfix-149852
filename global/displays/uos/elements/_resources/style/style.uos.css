@@ -46,6 +46,7 @@ div.universetoolbar {
 
 #universetoolbar-actions {
   border-top: 1px solid #6B8093;
+  padding: 0 5px;
 }
 
 
@@ -124,7 +125,7 @@ ul.uos-actions > li {
 
 ul.uos-actions > li {
 	font-size: 35px;
-	padding: 0 15px;
+	padding: 10px;
 }
 
 ul.uos-actions > li:hover {
@@ -158,9 +159,9 @@ body.alt-pressed ul.uos-actions li.alt-keystatus {
 }
 
 #container {
-	margin:10px;
+	xmargin:10px;
 	/* for tool bar */
-	margin-top: 178px;
+	margin-top: 163px;
 }
 
 #universetoolbars h1 {
@@ -362,13 +363,16 @@ div.uos-tags ul li.universe-entity:after {
 }
 
 
+
 div.uos-element.node {
-	border: 1px solid grey;
+	xxborder: 1px solid grey;
 	xxbackground-color: #cccccc;
-	margin-bottom:10px;
+	margin-bottom:35px;
 	min-width:300px;
 	xxbackground-color: #8aa2ca;
 	background-color: rgba(0,0,0,0.2);
+	background-color: transparent;
+	xbackground-color: rgba(0,0,0,0.6);
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -385,6 +389,12 @@ div.uos-element.node {
 	color: rgba(255,255,255,0.6);
 }
 
+
+
+#container > div.uos-element.node > xdiv.uos-element.node {
+	background-color: rgba(0,0,0,0.6);
+}
+
 div.uos-element.node > div.uos-element.node,
 div.uos-element.node > div.uos-element-children > div.uos-element.node {
 	xmargin: 10px;
@@ -399,7 +409,7 @@ div.uos-element.node > div.uos-element-children > h2 {
 }
 
 div.uos-element.node > div.uos-element-children {
-	border: 1px solid rgba(255,255,255,0.2);
+	xborder: 1px solid rgba(255,255,255,0.2);
 	padding: 10px;
 }
 
@@ -409,10 +419,16 @@ div.uos-element.node > div.uos-element-children.empty {
 
 div.uos-element .uos-header {
 	position: absolute;
+	min-width: 50%;
 /*rgba(0,0,0,0.3);*/
 	padding:10px;
 	display: inline-block;
-	display:none;
+	xdisplay:none;
+	xbackground-color: rgba(255,255,255,0.2);
+	xwidth:100%;
+	xmin-height:90px;
+	-webkit-transition: all 1s;	
+	display:block;
 }
 
 #universetoolbar-status div.uos-element .uos-header {
@@ -423,11 +439,12 @@ div.uos-element .uos-header {
 }
 
 div.uos-element:hover > .uos-header {
-	display: inline-block;
+	display: block;
+	xbackground-color: rgba(255,255,255,0.8);
 }
 
 div.uos-element .uos-header .field-group:hover {
-	background-color: rgba(255,255,255,1);
+	xbackground-color: rgba(255,255,255,1);
 }
 
 div.uos-element .uos-header .field {
@@ -446,10 +463,10 @@ div.uos-element .uos-header .field-group {
 	left: 40px;
 	top: 17px;
 	font-size: 12px;
-	width: 2px;
+	width: auto;
 	xmax-height: 30px;
 	padding: 5px 15px 5px 0;
-	border-radius: 0;
+	border-radius: 12px;
 	overflow: hidden;
 	color: rgba(0,0,0,0.5);
 	z-index:10;
@@ -457,6 +474,7 @@ div.uos-element .uos-header .field-group {
 	opacity: 0;
 	display: inline-block;
 	min-width: 200px;
+	padding: 5px 15px 5px 35px;
 }
 
 div.uos-element .uos-header .field-group h2 {
@@ -474,7 +492,7 @@ div.uos-element .uos-header .field-group h3 {
 
 div.uos-element:hover > .uos-header .field-group {
 	padding: 5px 15px 5px 35px;
-	border-radius: 12px;
+	background-color: rgba(255,255,255,1);
 	width: auto;
 	max-height: none;
 	opacity: 1;
@@ -527,6 +545,11 @@ div.uos-element .field-icon {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7db9e8', endColorstr='#1e5799',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
+#universetoolbar-status div.uos-element i.uos-entity-icon {
+	font-size: 23px;
+	margin: 0.45em auto 0;	
+}
+
 div.uos-element .field-icon i {
 	color: white;
 }
@@ -577,6 +600,10 @@ ul.array li {
 div.node div.field {
 	border-bottom:1px dotted rgba(255,255,255,0.2);
 	padding: 10px;
+}
+
+div.node div.field:last-child {
+	border-bottom: none;
 }
 
 .xxx {
@@ -795,13 +822,14 @@ div.uos-element.node_message.display-note-html > .field > .separator {
 
 div.bootstrap-dialog-message div.uos-element.node {
 	color: black;
+	box-shadow: none;
 }
 
 div.uos-invalid {
 	background-color: rgba(255,0,0,0.2);
 }
 
-div.uos-valid {
+div.uos-element form.uos-action-form div.uos-valid {
 	background-color: rgba(0,255,0,0.08);
 }
 
@@ -823,4 +851,76 @@ div.uos-invisible {
 
 div.uos-element.uos-valid.uos-modified {
 	background-color: rgba(0,255,0,0.6);
+}
+
+div.uos-element.node[data-display="teaser.html"] {
+	xbox-shadow: none;
+	background-color: rgba(255,255,255,0.1);
+}
+
+div.uos-element.node[data-display="teaser.html"] div.visual {
+	xbox-shadow: 0 5px 5px 2px rgba(0,0,0,0.2);
+	position: relative;
+	width:100%;
+	min-height: 100px;
+	xpadding: 10px;
+}
+
+div.uos-element.node[data-display="teaser.html"] div.visual > i.uos-entity-icon {
+	position: absolute;
+	top: 10%;
+	font-size: 100px;
+	text-align: center;
+	width:100%;
+}
+
+div.uos-element.node[data-display="teaser.html"] > div.overlay {
+	text-align: center;
+	font-size:14px;
+	line-height: 2em;
+	word-break: break-word;
+}
+
+div.uos-element.node[data-display="teaser.html"] > div.overlay > i.uos-entity-icon {
+	font-size: 90px;
+	xwidth:120px;
+	xheight:110px;
+	xborder-radius: 50%;
+	padding:10px 0;
+	xdisplay: inline-block;
+	display: block;
+	xbackground-color: rgba(51,83,112,0.3);
+	xposition: absolute;
+	xtop: 10px;
+	xright: 10px;
+	xdisplay: none;
+}
+
+div.uos-element.node[data-display="teaser.html"] > div.field {
+	background-color: transparent;
+}
+
+div.uos-element.node[data-display="teaser.html"] div.field > label.key,
+div.uos-element.node[data-display="teaser.html"] div.field > span.separator {
+	display: none;
+}
+
+div.uos-element.node[data-display="teaser.html"] div.field.uos-valid {
+	background-color: transparent;
+}
+
+div.uos-element.node[data-display="teaser.html"] > div.overlay > div.field.field-key-title {
+	font-size:20px;
+	text-align: center;
+	xwidth: 100%;
+	xposition: absolute;
+	xbottom: 0;
+	xleft: 0;
+	xright: 0;
+	xbackground-color: rgba(0,0,0,0.6);
+}
+
+div.uos-element.node[data-display="teaser.html"] > div.wrapper-info > div.field.field-key-title > .field-value {
+	display: block;
+	width: 100%;
 }

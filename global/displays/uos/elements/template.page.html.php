@@ -24,7 +24,7 @@ $entitytitle = (isset($content->title)) ? $content->title : 'Not known';
 		<div class="uos-element" id="uos-status-icon">
 			<div class="field-icon">
 				<span class="fa-stack">
-				  <i class="fa fa-<?php print $render->entityconfig->icon;?> fa-stack-1x" id="uos-entity-icon"></i>
+				  <i class="fa fa-<?php print $render->entityconfig->icon;?> uos-entity-icon" id="uos-entity-icon"></i>
 				</span>
 			</div>
 			<i class="fa fa-stack-2x children-count" id="universe-selected-count">0</i>
@@ -63,3 +63,5 @@ $entitytitle = (isset($content->title)) ? $content->title : 'Not known';
 	<?php //print render($uos->config);?>
 	</div>
 </div>	
+
+<a href="/cache/epsom.universeos.net/trace.log" target="_blank">trace</a>

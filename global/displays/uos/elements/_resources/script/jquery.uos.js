@@ -1154,27 +1154,34 @@ uos.responsehander = function(event) {
 		//uos.log('uos.responsehander:nosourceid');
 	}
 	
-	if (data.resources.script) {
-		var scripts = uos.unloadedScripts(data.resources.script);
-		jQuery.getScript(scripts,function(){
-			//uos.log('uos.responsehander:got scripts',data,$dialog);
-			var $dialog = jQuery('#dialog');
-			$dialog.empty().append(data.content);
-			if (data.elementdata) {
-				uos.log('uos.responsehander:call intializeallelements',data,$dialog);
-				uos.initalizeallelements($dialog, data.elementdata);  	
-			}
-			BootstrapDialog.closeAll();
-			$dialog.children().each(function (index) {
-				//BootstrapDialog.alert($(this));//$loadedcontent);
-				BootstrapDialog.show({
-					message : $(this)
-				});//$loadedcontent);
+	if (data.resources) {
+		if (data.resources.script) {
+			var scripts = uos.unloadedScripts(data.resources.script);
+			jQuery.getScript(scripts,function(){
+				//uos.log('uos.responsehander:got scripts',data,$dialog);
+				var $dialog = jQuery('#dialog');
+				$dialog.empty().append(data.content);
+				if (data.elementdata) {
+					uos.log('uos.responsehander:call intializeallelements',data,$dialog);
+					uos.initalizeallelements($dialog, data.elementdata);  	
+				}
+				BootstrapDialog.closeAll();
+				//return;
+				$dialog.children().each(function (index) {
+				
+					if(this.nodeType == 8) {
+						uos.log('ignored comments');
+					} else {
+						//BootstrapDialog.alert($(this));//$loadedcontent);
+						BootstrapDialog.show({
+							message : $(this)
+						});//$loadedcontent);
+					}
+				});
+				uos.log($dialog,data.elementdata);
 			});
-			uos.log($dialog,data.elementdata);
-		});
+		}
 	}
-	
 
 	
 

@@ -15,7 +15,7 @@ $this->addproperty('guid', 'field_gid', array(
 
 $this->addproperty('type', 'field_text', array(
 	'maxlength'=>100, 
-	'locked'=>TRUE, 
+	'locked'=>FALSE, 
 	'usereditable'=>FALSE, 
 	'required'=>FALSE, 
 	'visible'=>FALSE,

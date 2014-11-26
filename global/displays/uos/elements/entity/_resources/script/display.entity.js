@@ -132,6 +132,8 @@ function uostype_entity_initialize($element) {
 	domelement.addEventListener('dragend', uostype_entity_event_dragend, false);
 	domelement.addEventListener('drop', uostype_entity_event_drop, false);
 
+	uostype_entity_addheader($element);
+
 	// bind some events
 	$elementheader = $element.children('.uos-header');
 	
@@ -149,7 +151,7 @@ function uostype_entity_initialize($element) {
 		event.stopPropagation();
 	});
 	
-	uostype_entity_addheader($element);
+
 
 	uostype_entity_processform($element);
 	uos.log('uostype_entity_initialize',$element.attr('id'),elementdata);
@@ -262,11 +264,10 @@ function uostype_entity_event_click($element,event) {
 
 function uostype_entity_event_header_click($element, event) {
 	var elementdata = uos.getelementdata($element);
-	//console.log(elementdata);
+	uos.log('uostype_entity_event_header_click',$element);
 	event.preventDefault();
 	event.stopPropagation();	
 	window.location = elementdata.clicktarget;
-
 }
 
 
