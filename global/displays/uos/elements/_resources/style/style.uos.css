@@ -367,7 +367,7 @@ div.uos-tags ul li.universe-entity:after {
 div.uos-element.node {
 	xxborder: 1px solid grey;
 	xxbackground-color: #cccccc;
-	margin-bottom:35px;
+	margin:0;
 	min-width:300px;
 	xxbackground-color: #8aa2ca;
 	background-color: rgba(0,0,0,0.2);
@@ -616,49 +616,40 @@ body .growl.growl-default {
 	color: rgba(0,0,0,0.6);
 }
 
-div.node.three-d {
+div.uos-element.uos-type-node.three-d[data-display="teaser.html"] {
 	width:100px;
 	height: 100px;
 	display:block;
-	xoverflow: hidden;
 	background-color: transparent;
 	border: none;
 	border-radius: 0;
-	overflow: hidden;
 	xcolor: rgba(255,255,255,0.6);
 	overflow: visible;
+	background-color: rgba(255,255,255,0.2);
 }
 
-div.node.three-d div.field {
+div.uos-element.uos-type-node.three-d[data-display="teaser.html"] div.field {
 	display: none;
 }
 
-div.node.three-d .uos-header {
-	x-webkit-transform: scale(3.5);
-	display: inline-block;
+div.uos-element.uos-type-node.three-d[data-display="teaser.html"] div.field.field-title {
+	display: block;
+}
+
+div.uos-element.uos-type-node.three-d[data-display="teaser.html"] > div.overlay div.field-icon {
+	display: none;
+}
+
+div.uos-element.uos-type-node.three-d[data-display="teaser.html"] > div.overlay {
+	xposition: absolute;
+	xbottom:0px;
+}
+
+div.uos-element.uos-type-node.three-d[data-display="teaser.html"] > div.overlay > i.uos-entity-icon {
+	display: none;
 }
 
 
-div.node.three-d  .uos-header .field-icon {
-	width: 150px;
-	height: 150px;
-}
-
-div.node.three-d  .uos-header .field-icon i {
-	margin: 56px auto 0;
-	font-size: 100px;
-}
-
-div.node.three-d .uos-header .field-group {
-	font-size: 16px;
-	top: 47px;
-	left: 150px;
-	padding: 10px 25px 10px 35px;
-}
-
-div.node.three-d .uos-header .field-group .field-title {
-	font-size: 20px;
-}
 #universetoolbar-status i.children-count,
 div.node .uos-header i.children-count {
 	border:2px solid white;
@@ -679,14 +670,6 @@ div.node .uos-header i.children-count {
 	left: 35px;
 	top: 30px;
 	position: absolute;
-}
-
-div.node.three-d .uos-header i.children-count {
-	padding: 10px 20px;
-	border-radius: 50%;
-	font-size: 40px;
-	left: 115px;
-	top: 93px;
 }
 
 li.status-refreshing {
@@ -881,6 +864,10 @@ div.uos-element.node[data-display="teaser.html"] > div.overlay {
 	word-break: break-word;
 }
 
+div.uos-element.node[data-display="teaser.html"] > div.overlay > p {
+	margin: 0;
+}
+
 div.uos-element.node[data-display="teaser.html"] > div.overlay > i.uos-entity-icon {
 	font-size: 90px;
 	xwidth:120px;
@@ -923,4 +910,30 @@ div.uos-element.node[data-display="teaser.html"] > div.overlay > div.field.field
 div.uos-element.node[data-display="teaser.html"] > div.wrapper-info > div.field.field-key-title > .field-value {
 	display: block;
 	width: 100%;
+}
+
+div.uos-insert-point {
+	padding: 0px;
+	display:block;
+	margin: 0;
+	height:25px;
+	xborder:1px solid white;
+	overflow: hidden;
+	color: rgba(255,255,255,0);
+	text-align: center;
+	font-size: 10px;
+	-webkit-transition: all 1s;	
+	transition: all 1s;
+	z-index: 200;
+}
+
+div.uos-insert-point.dragging-target {
+	padding: 20px;
+	display:block;
+	margin: 10px 0;
+	height: auto;
+	font-size: 80px;
+	color: rgba(255,255,255,0.4);
+	background-color: rgba(255,255,255,0.1);
+	box-shadow: 0 5px 5px 2px rgba(0,0,0,0.2);
 }

@@ -1,27 +1,27 @@
-uos.displays['node_location'] = {};
+uos.displays['node_location'] = uos.extenddisplay(uos.displays['node']);
 
-uos.displays['node_location'].extends = uos.displays['node'];
+uos.displays['node_location'].title = 'Location';
 
-uos.displays['node_location'].actions = {
-
-	directionsfrom : {
+uos.displays['node_location'].actions.directionsfrom = {
 		title : 'Directions from',
 		icon : 'fa-chevron-circle-left',
 		handler : uostype_node_location_directionsfrom			
-	},
+};
 
-	directionsto : {
+uos.displays['node_location'].actions.directionsto = {
 		title : 'Directions to',
 		icon : 'fa-chevron-circle-right',
 		handler : uostype_node_location_directionsto	
-	},
+};
 	
-	init : {
+uos.displays['node_location'].actions.init = {
 		title : 'Initialize',
 		icon : 'fa-wrench',
 		handler : uostype_node_location_initialize					
-	},
 };
+
+
+console.log('Included display \'node_location\'',uos.displays['node_location']);
 
 
 function uostype_node_location_initialize($element) {
@@ -31,10 +31,11 @@ function uostype_node_location_initialize($element) {
   
   console.log(elementdata); 
   
+  //switch (elementdata.activedisplay) {
+
+  //alert('ccc');
   
-  switch (elementdata.activedisplay) {
-  
-  	case 'map.html' :
+  //	case 'map.html' :
 		  //var domelement = $element.get(0);
 			var $mapelement = $element.find('.map-canvas');
 			var mapelementdom = $mapelement.get(0);
@@ -66,8 +67,8 @@ function uostype_node_location_initialize($element) {
 			$element.data('directionsDisplay',directionsDisplay);
 			$element.data('directionsService',directionsService);
 			//uostype_node_location_calcRoute($element);
-	  break;
-  }
+	  //break;
+  //}
 	uos.log('uostype_node_location_initialize',elementdata);
 }
 

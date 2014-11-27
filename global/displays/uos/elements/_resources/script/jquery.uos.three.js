@@ -7,7 +7,6 @@ function uos_three($element,data) {
 	var objects = [];
 	var targets = { table: [], sphere: [], helix: [], grid: [] };
 
-
 	camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
 	camera.position.z = 3000;
 	scene = new THREE.Scene();
@@ -18,7 +17,7 @@ function uos_three($element,data) {
 	function init() {
 		var $nodes = uos.getAllChildEntities($element);
 		$nodes.each(function (index) {
-			jQuery(this).addClass('element');
+			//jQuery(this).addClass('element');
 			jQuery(this).addClass('three-d');
 			console.log(this);
 			var object = new THREE.CSS3DObject( this ); //??
@@ -114,8 +113,8 @@ function uos_three($element,data) {
 		controls.maxDistance = 6000;
 		controls.addEventListener( 'change', render );
 		
-		//transform( targets.helix, 5000 );
-		transform( targets.sphere, 1000 );
+		transform( targets.helix, 5000 );
+		//transform( targets.sphere, 1000 );
 	}	
 
 

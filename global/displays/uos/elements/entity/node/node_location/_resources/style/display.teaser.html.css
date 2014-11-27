@@ -1,0 +1,25 @@
+/*div.uos-element.uos-type-node-location[data-display="teaser.html"]*/
+
+div.uos-element.uos-type-node_location[data-display="teaser.html"] > div.visual {
+	position: relative;
+  background-color: rgba(182,217,255,1);
+  height:500px;
+}
+
+div.uos-element.uos-type-node_location[data-display="teaser.html"] .map-canvas {
+  height: 500px;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  xborder:15px solid white;
+}
+div.uos-element.uos-type-node_location[data-display="teaser.html"] .map-panel {
+  position: absolute;
+  left: 30px;
+  bottom: 50px;
+  xmargin-left: -180px;
+  z-index: 5;
+  background-color: #fff;
+  background-color: rgba(255,255,255,0.8);
+  padding: 5px;
+}

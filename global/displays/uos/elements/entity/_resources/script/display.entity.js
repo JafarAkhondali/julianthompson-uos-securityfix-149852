@@ -132,20 +132,7 @@ function uostype_entity_initialize($element) {
 	domelement.addEventListener('dragend', uostype_entity_event_dragend, false);
 	domelement.addEventListener('drop', uostype_entity_event_drop, false);
 
-	uostype_entity_addheader($element);
-
-	// bind some events
-	$elementheader = $element.children('.uos-header');
-	
-	if ($elementheader.length>0) {
-		$elementheader.bind('click',function(event) {
-			uostype_entity_event_header_click($element,event);
-		});
-		
-		$elementheader.bind('dblclick',function(event) {
-			uostype_entity_event_header_dblclick($element,event);
-		});
-	}
+	uostype_entity_addheader($element);	
 	
 	$element.find('form').click(function(event) { 
 		event.stopPropagation();
@@ -158,9 +145,26 @@ function uostype_entity_initialize($element) {
 }		
 
 
+
 function uostype_entity_addheader($element) {
   var elementdata = uos.getelementdata($element); 
-	$element.prepend('<div class="uos-header"><div class="field-icon"><i class="uos-entity-icon uos-entity-icon-'+elementdata.displayused+'"></i></div><div class="field-group field-group-info"><h2>'+$element.attr('title')+'</h2><h3>'+elementdata.displayobject.title+' ('+elementdata.guid+')</h3></div></div>');
+	$elementheader = $('<div class="uos-header"><div class="field-icon"><i class="uos-entity-icon uos-entity-icon-'+elementdata.displayused+'"></i></div><div class="field-group field-group-info"><h2>'+$element.attr('title')+'</h2><h3>'+elementdata.displayobject.title+' ('+elementdata.guid+')</h3></div></div>');
+	
+	$element.prepend($elementheader);
+
+	if ($elementheader.length>0) {
+		$elementheader.bind('click',function(event) {
+			uostype_entity_event_header_click($element,event);
+		});
+		
+		$elementheader.bind('dblclick',function(event) {
+			uostype_entity_event_header_dblclick($element,event);
+		});
+		
+		$elementheader.find('.field-icon').bind('click',function(event) {
+			uostype_entity_event_click($element,event);
+		});		
+	}
 }
 
 
