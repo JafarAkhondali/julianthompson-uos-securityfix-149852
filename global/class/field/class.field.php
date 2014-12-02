@@ -15,6 +15,7 @@ class field extends entity {
 	public $defaultvalue = null;
 	public $masked = FALSE;
 	public $modified = FALSE;
+	public $unique = FALSE;
 	
 	
 	function __construct($initializer=null) {
@@ -186,6 +187,12 @@ class field extends entity {
 		//print_r($this->__instanceproperty($this->indexproperty->key));die();
 		return (isset($this->properties[$this->indexproperty])) ? $this->__instanceproperty($this->indexproperty->key) : NULL;
 		//return $this->indexproperty;
+	}
+	
+	public function __clone() {
+		if ($this->unique) {
+			$this->value = 'cloned value';
+		}
 	}
   
 } 

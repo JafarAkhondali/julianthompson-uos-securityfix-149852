@@ -532,5 +532,12 @@ class entity {
 	
 	function event_propertymodified($property) {
 	}
+	
+	public function __clone() {
+		foreach($this->properties as $key=>$property) {
+			$this->properties[$key] = clone $this->properties[$key];
+		}
+		$this->title->value = $this->title->value . ' (Cloned)';
+	}
   
 }		

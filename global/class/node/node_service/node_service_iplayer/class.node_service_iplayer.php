@@ -10,18 +10,20 @@ class node_service_iplayer extends node_service {
 		$commandoutput = array();
 	  $response = exec($command,$commandoutput);
 	  
-	  /*
-	  foreach($tweets as &$tweet) {
-			$this->children[] = new node_message_tweet(array(
-				'body'=> $tweet->text,
-				'messageid'=> $tweet->id,
-				'title'=> $tweet->text,
-				'created'=> $tweet->created_at,
-				'modified'=> $tweet->created_at 
-			));
-		}*/
+	  $programmes = array();
+	  
+	  foreach($commandoutput as $line) {
+	  	if (preg_match("/(\d+):\s*([^,]*),\s*([^,]*),\s*(.*)/",$line,$matches)>0) {
+	  		$programmes[($matches[1])] = array(
+	  			'title'=>$matches[2],
+	  			'channel'=>$matches[3],
+	  			'tags'=>explode(',',$matches[4])
+	  		);
+			}
+		}
 		
-		$this->addproperty('imap','field_text',array('value'=>$response));
+		$this->addproperty('response','field_text',array('value'=>$response));
+		$this->addproperty('programmes','field_text',array('value'=>print_r($programmes,TRUE)));
 	  return $commandoutput;
 	}
 } 

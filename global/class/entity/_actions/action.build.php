@@ -3,14 +3,16 @@
 $this->addproperty('id', 'field_number', array(
 	'visible'=>FALSE, 
 	'usereditable'=>FALSE, 
-	'stored'=>TRUE
+	'stored'=>TRUE,
+	'unique'=>TRUE
 ));
 
 $this->addproperty('guid', 'field_gid', array(
 	'locked'=>TRUE, 
 	'visible'=>FALSE,
 	'usereditable'=>FALSE, 
-	'stored'=>TRUE	
+	'stored'=>TRUE,
+	'unique'=>TRUE
 ));
 
 $this->addproperty('type', 'field_text', array(

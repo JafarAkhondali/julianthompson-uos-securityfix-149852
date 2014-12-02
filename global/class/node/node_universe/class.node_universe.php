@@ -406,5 +406,25 @@ class node_universe extends node {
 		return $entities;	
 	}
 	
+	public function db_describe_table($tablename) {
+		$tablestructure = array();
+		//return $tablename;
+		$result = $this->db_execute('DESCRIBE `%s`',$tablename);
+		//return $result;
+		while ($result && !$result->EOF) {	
+				$tablestructure[] = $result->fields;
+				$result->MoveNext();		
+		}
+		return empty($tablestructure)?null:$tablestructure;
+	} 
+	
+	public function db_execute($query) {
+		$args = func_get_args();
+		$sql = call_user_func_array('sprintf', $args);
+		trace($sql);
+		$connection = $this->db_connect();
+		$connection->SetFetchMode(ADODB_FETCH_ASSOC);
+		return $connection->Execute($sql);
+	}
 
 } 
