@@ -172,7 +172,7 @@ class node_universe extends node {
 	
 	function db_create($universename) {
 		//CREATE DATABASE testDB;
-			print_r($this->dbconnector->value);
+		//print_r($this->dbconnector->value);
 		$databasename = 'uos_'.str_replace(".","_",$universename);
 		$result = $this->db_query("CREATE DATABASE IF NOT EXISTS %s", $databasename);
 		if ($result) {

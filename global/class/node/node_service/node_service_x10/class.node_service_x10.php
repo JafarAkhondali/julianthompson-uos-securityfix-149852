@@ -10,10 +10,10 @@ class node_service_x10 extends node_service {
 
 
 	public function fetchchildren() {
-		$this->addproperty('info','field_text',array('value'=>print_r('',TRUE)));
+		$this->addproperty('info','field_text',array('value'=>''));
 		$response = $this->sendcommand(FALSE);
 		//$response = $this->sendcommand('pl a off');
-		$this->info->value .= ':this->status'.print_r($this->status,TRUE);
+		//$this->info->value .= ':this->status'.print_r($this->status,TRUE);
 		//$this->info->value .= ':this->selected'.print_r($this->selected,TRUE);
 			 			 
 		//$this->info->value .= ':response' .  print_r($response,TRUE);
@@ -76,18 +76,18 @@ class node_service_x10 extends node_service {
 
 	function sendcommand($command) {
 		if ($this->connect()) {
-	  		if (!$command) $command=array();
-	  		if (!is_array($command)) $command = array($command);
-	  		$command[] = 'st';
-	  		$commandimploded = implode(UOS_NEWLINE, $command) . UOS_NEWLINE;
+  		if (!$command) $command=array();
+  		if (!is_array($command)) $command = array($command);
+  		$command[] = 'st';
+  		$commandimploded = implode(UOS_NEWLINE, $command) . UOS_NEWLINE;
 			if (!$this->dummyoutput) {
-				fwrite($this->socket, $commandimploded);
-	    			stream_set_timeout($this->socket, 1);
-	    			usleep(800);
-    			}
-    			$responses = $this->readresponse(1500000, "End status");
+					fwrite($this->socket, $commandimploded);
+    			stream_set_timeout($this->socket, 1);
+    			usleep(800);
+  		}
+  		$responses = $this->readresponse(1500000, "End status");
 			//return '<pre>'.print_r($responses,TRUE).'</pre>';
-    			//$this->close(); 
+  		//$this->close(); 
 			$this->process_responses($responses);
 			$responseobj = new StdClass();
 			$responseobj->command = $command;
