@@ -15,7 +15,7 @@ class node_universe extends node {
   public function db_connect() {
   	if (!$this->dbconnection) {
 			$this->dbconnection = NewADOConnection($this->dbconnector->value);
-			$this->dbconnection->SetFetchMode(ADODB_FETCH_ASSOC);
+			if ($this->dbconnection) $this->dbconnection->SetFetchMode(ADODB_FETCH_ASSOC);
 		}
 		return $this->dbconnection;
   }  
@@ -430,6 +430,14 @@ class node_universe extends node {
 		trace($sql,'Database query');
 		$connection = $this->db_connect();
 		return $connection->Execute($sql);
+	}
+	
+	function isvalid() {
+		// if all fields are valid
+		if (parent::isvalid()) {
+			if ($this->test()) return TRUE;
+		}
+		return FALSE;
 	}
 
 } 

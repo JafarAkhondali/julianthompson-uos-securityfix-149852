@@ -808,8 +808,9 @@ div.bootstrap-dialog-message div.uos-element.node {
 	box-shadow: none;
 }
 
-div.uos-invalid {
-	background-color: rgba(255,0,0,0.2);
+div.uos-invalid,
+div.uos-element.uos-invalid {
+	background-color: rgba(255,0,0,0.1);
 }
 
 div.uos-element form.uos-action-form div.uos-valid {

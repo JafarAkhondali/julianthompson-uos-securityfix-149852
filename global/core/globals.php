@@ -20,14 +20,7 @@ $uos->output['log'] = array();
 $uos->libraries = Array();
 
 
-include_once UOS_GLOBAL_CONFIG;
 
-if (file_exists(UOS_LOCAL_CONFIG)) {
-//Include the configuration file
-	include_once UOS_LOCAL_CONFIG;
-} else {
-	die('No universe Configuration :' . UOS_LOCAL_CONFIG);
-}
 
 //overwrite configuration settings
 $uos->config->logging = TRUE;
@@ -171,35 +164,6 @@ if (isset($argv)) {
 
 $uos->request->debugmode = (isset($uos->request->parameters['debugmode']))?$uos->request->parameters['debugmode']:null;
 
-
-$uos->request->universeconfig = UOS_GLOBAL_DATA . $uos->request->universename.'/config.universe.php';
-
-$universe = FALSE;
-$uos->request->configfound = FALSE;
-
-if (file_exists($uos->request->universeconfig)) {
-	include_once $uos->request->universeconfig;
-
-
-	if (isset($uos->config->universe)) {
-		$uos->request->configfound = TRUE;
-		$uos->config->universe->id = 0;
-		$uos->config->universe->guid = '0000000000000000';
-		$uos->request->universe = $universe = new node_universe($uos->config->universe);
-		$universe->id = 0;
-		//print_r($universe);die();
-		if (!$universe->test()) {
-			die('Bad Universe');
-		}
-		// Data cache folder
-		//define( 'UOS_UNIVERSE_DATA',      			UOS_GLOBAL_DATA . 'cache/');
-
-		// Universe config folder
-		//define( 'UOS_UNIVERSE_CACHE',						UOS_GLOBAL_DATA . 'config/');
-	} 
-}
-
-
 //$uos->request->bindir = PHP_BINDIR;
 
 
@@ -341,8 +305,40 @@ if (!isset($uos->request->session['history'])) {
 
 //print_r($uos->request);die();
 
-trace('Start');
+
+include_once UOS_GLOBAL_CONFIG;
+
+if (file_exists(UOS_LOCAL_CONFIG)) {
+//Include the configuration file
+	include_once UOS_LOCAL_CONFIG;
+	//print_r(UOS_LOCAL_CONFIG);
+}
+//die('xx');
+
+$uos->request->universeconfig = UOS_GLOBAL_DATA . $uos->request->universename.'/config.universe.php';
+
+$universe = FALSE;
+$uos->request->configfound = FALSE;
+
+if (file_exists($uos->request->universeconfig)) {
+	include_once $uos->request->universeconfig;
+
+	if (isset($uos->config->universe)) {
+		$uos->request->configfound = TRUE;
+		$uos->config->universe->id = 0;
+		$uos->config->universe->guid = '0000000000000000';
+		$universe->id = 0;
+		//print_r($universe);die();
+		// Data cache folder
+		//define( 'UOS_UNIVERSE_DATA',      			UOS_GLOBAL_DATA . 'cache/');
+		// Universe config folder
+		//define( 'UOS_UNIVERSE_CACHE',						UOS_GLOBAL_DATA . 'config/');
+	} 
+}
+
+$uos->request->universe = $universe = new node_universe($uos->config->universe);
 	
+trace('Start');
 
 
 

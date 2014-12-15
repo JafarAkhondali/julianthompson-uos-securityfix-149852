@@ -1,5 +1,7 @@
 <?php
 
+include $render->rendererpath . '/elements/preprocess.html.php';
+
 $render->childcount = count($entity->children);
 
 $render->attributes['data-childcount'] = $render->childcount;
@@ -9,15 +11,16 @@ $render->attributes['data-accept'] = '';
 $render->attributes['data-display'] = $render->displaystring;
 
 
-$render->elementdata->typetree = $render->entityconfig->classtree;
-$render->elementdata->type = $render->entityconfig->class;
-$render->elementdata->typeinfo = $render->entityconfig;
-$render->elementdata->activedisplay = $render->displaystring;
-$render->elementdata->displays = $render->formatdisplaynames;
+//$render->elementdata->typetree = $render->entityconfig->classtree;
+//$render->elementdata->type = $render->entityconfig->class;
+//$render->elementdata->typeinfo = $render->entityconfig;
+//$render->elementdata->activedisplay = $render->displaystring;
+//$render->elementdata->displays = $render->formatdisplaynames;
 $render->elementdata->displaykey = 'entity';
 $render->elementdata->guid = (string) $entity->guid;
 //$render->elementdata->typedisplay = $render->entityconfig->class.'.'.$render->displaystring;
 
+$render->attributes['class'][] = ($entity->isvalid()) ? 'uos-valid':'uos-invalid';
 
 if (isset($entity->title->value)) { 
 	$render->title = $entity->title->value;

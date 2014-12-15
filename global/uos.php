@@ -9,15 +9,31 @@ if ($uos->request->debugmode==UOS_DEBUGMODE_REQUEST) {
 }
 
 
-if (!$universe) {
-	trace('No universe found :'.$universe->dbconnector);
+//$universe->dbconnector->masked=FALSE;
+
+if (!$uos->request->configfound) {
+	//trace('No universe found :'.$universe->dbconnector);
 	//redirect('/global/uos.create.php');
-	print('universe not created : '.$uos->request->hostname);
-	$universe = new node_universe();
+	//print('universe not created : '.$uos->request->hostname);
+	$form = new node_form();	
+	$form->title->value = "universe not created : ".$uos->request->hostname;
+	$form->action = 'create';
+	$form->target = 0;
+	$form->displaystring = 'edit.html';
+	addoutput('content/',$form);
+	//$universe = new node_universe();
 	$universe->dbconnector->value  = 'mysql://' . $uos->config->globaldatabaseuser . ':' . $uos->config->globaldatabasepassword . '@' . $uos->config->globaldatabasehost;
 	$universe->db_create($uos->request->universename);
 	
+} else if (!$universe->test()) {
+	$universe->dbconnector->masked=FALSE;
+	//addoutput('content/',$universe);
+	$form = new node_form();	
+	//$form->addproperty('info','field_text', array('value'=>''));
+	$form->title->value = "universe not work : ".$uos->request->hostname;
+	addoutput('content/',$form);
 } else {
+
 	trace('Found universe :'.$universe->dbconnector);
 	if ( (empty($uos->request->targetstring)) || ($uos->request->targetstring=='0000000000000000') ) {
 		$target = $universe;

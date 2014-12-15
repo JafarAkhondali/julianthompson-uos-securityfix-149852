@@ -239,6 +239,7 @@ class entity {
 		//trace(empty($this->actions)?'EMPTYACTONS':'','jmt');
     if (isset($this->actions[$action])) {
       //$response->found = TRUE;
+      $localVariables = compact(array_keys(get_defined_vars()));
       //trace("this->fireevent(".$action.','.print_r($parameters,TRUE). "," . UNIVERSE_EVENT_POST . ")");
       //$this->fireevent(UNIVERSE_EVENT_POST,$action,$parameters);
       //extract($parameters);
@@ -282,6 +283,7 @@ class entity {
       //ob_end_clean();
       //trace('processed action file');      
       //$parameters['actionresult'] = $result;
+      $localVariables = compact(array_keys(get_defined_vars()));
       //$this->fireevent($action,$parameters,UNIVERSE_EVENT_POST);
 
     } else {
