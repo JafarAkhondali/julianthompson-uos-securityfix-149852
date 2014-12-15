@@ -19,13 +19,15 @@ class node_service_twitter extends node_service {
 		//$this->addproperty('testi','field_text',array('value'=>print_r($tweets,TRUE)));
 
 		foreach($tweets as &$tweet) {
-			$this->children[] = new node_message_tweet(array(
+			$tweetnode = new node_message_tweet(array(
 				'body'=> $tweet->text,
 				'messageid'=> $tweet->id,
 				'title'=> '@'.$tweet->user->name . ' ('.$tweet->id .')',
 				'created'=> $tweet->created_at,
 				'modified'=> $tweet->created_at 
 			));
+			$tweetnode->addproperty('imageurl','field_text',array('value'=>$tweet->user->name));
+			$this->children[] = $tweetnode;
 		}	
 	}
 	
@@ -53,17 +55,21 @@ class node_service_twitter extends node_service {
 		$twittersearch = urlencode($twittersearch);
 		$tweets = $twitter->get('search/tweets', array('q' => $twittersearch,'include_entities'=>FALSE));
 		//return $tweets;
+		//return $tweets;
+		
 		foreach($tweets->statuses as &$tweet) {	
 			
 			if ($filter->starttime && strtotime($tweet->created_at)<($filter->starttime)) continue;
-			$children[] = new node_message_tweet(array(
+			$tweetnode = new node_message_tweet(array(
 				'body'=> $tweet->text,
 				'messageid'=> $tweet->id,
 				'title'=> '@'.$tweet->user->name . ' ('.$tweet->id .')',
 				'created'=> $tweet->created_at,
 				'modified'=> $tweet->created_at,
 				'sourceid'=>($this->guid.'['.$tweet->id.']')
-			));			
+			));	
+			$tweetnode->addproperty('imageurl','field_text',array('value'=>$tweet->user->profile_image_url));
+			$children[] = $tweetnode;	
 		}
 		return $children;
 	}
