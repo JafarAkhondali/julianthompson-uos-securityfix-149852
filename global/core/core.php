@@ -444,30 +444,32 @@ function trace($message, $tags=NULL) {
   }
 }
 
-function writetrace($logitem) {
-	global $uos;
-	static $file;
-	if (isset($uos->request->universe)) {
-	  $universecachepath = $uos->request->universe->getcachepath();
-	  
-	  if (!$file) {
 
-	  	if (!file_exists($universecachepath)) {
-				mkdir($universecachepath,0777,TRUE);
-	  	}
-		  $cachetracefile = $universecachepath . 'trace.log'; 
+function writetrace($logitem) {
+
+	global $uos;
+	
+	if (!$uos->tracefile) {
+	
+	  $universecachepath = UOS_GLOBAL_CACHE;
+	  
+	  if (!file_exists($universecachepath)) {
+			mkdir($universecachepath,0777,TRUE);
+	  }
+	  
+		$cachetracefile = $universecachepath . 'trace.log'; 
 		   
-	  	if (file_exists($cachetracefile)) {	
-	  		unlink($cachetracefile);
-	  	}
-	  	
-	  	$file = fopen($cachetracefile, 'a');  
-  	}
-  	fwrite($file, print_r($logitem,TRUE) . "\n");	
-  	//fclose($file);
-		//print_r($universecachepath);die();
+	  if (file_exists($cachetracefile)) {	
+	  	unlink($cachetracefile);
+	  }
+	  $uos->tracefile = fopen($cachetracefile, 'a');
+	  //die($cachetracefile);
 	}
+  fwrite($uos->tracefile, print_r($logitem,TRUE) . "\n");	
+  //fclose($file);
+	//print_r($universecachepath);die();
 }
+
 
 function getcallerinfo() {
   $backtrace = debug_backtrace();

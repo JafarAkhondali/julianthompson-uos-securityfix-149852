@@ -235,10 +235,9 @@ class entity {
     //print_r($this->actions[$action]);
     //print_r(gettype($this));
 		//trace(get_class($this),'jmt');
-		//trace($this->title,'jmt');
+		//trace($action,'callaction');
 		//trace(empty($this->actions)?'EMPTYACTONS':'','jmt');
     if (isset($this->actions[$action])) {
-    
       //$response->found = TRUE;
       //trace("this->fireevent(".$action.','.print_r($parameters,TRUE). "," . UNIVERSE_EVENT_POST . ")");
       //$this->fireevent(UNIVERSE_EVENT_POST,$action,$parameters);
@@ -258,6 +257,7 @@ class entity {
     	foreach($this->actions[$action] as $classname => $actionfile) {
     		$this->scope = $classname;   	
       	$_response->actionfiles[] = $actionfile; 
+      	//trace($actionfile);
       	//if (get_class($this)=='field') { print_r($this->actions);print_r($classtree);print_r($actionfile); }
       	//trace('callaction  : '.$actionfile.' ('.$this->scope.')');  
       	if (file_exists($actionfile)) {
@@ -270,6 +270,7 @@ class entity {
 		      	//die('failed includes');
 		        //$result = 'error';//$e;
 		      }
+		      //break;
 	      }
       }
       //if (get_class($this)=='field') { die; }

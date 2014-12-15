@@ -11,9 +11,10 @@ class node_service_twitter extends node_service {
 		$twitter->ssl_verifypeer = true;
 		
 
-		$tweets = $twitter->get('https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=craigbuckler&count=10');
+		//$tweets = $twitter->get('https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=craigbuckler&count=10');
 		//$tweets = $twitter->get('https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=x_a_i_o&count=10');
 		//$tweets = $twitter->get('statuses/user_timeline', array('screen_name' => 'x_a_i_o', 'exclude_replies' => 'true', 'include_rts' => 'false', 'count' => 10));
+		$tweets = $twitter->get('statuses/user_timeline', array('include_entities'=>FALSE));
 
 		//$this->addproperty('testi','field_text',array('value'=>print_r($tweets,TRUE)));
 
@@ -21,11 +22,50 @@ class node_service_twitter extends node_service {
 			$this->children[] = new node_message_tweet(array(
 				'body'=> $tweet->text,
 				'messageid'=> $tweet->id,
-				'title'=> $tweet->text,
+				'title'=> '@'.$tweet->user->name . ' ('.$tweet->id .')',
 				'created'=> $tweet->created_at,
 				'modified'=> $tweet->created_at 
 			));
 		}	
+	}
+	
+	
+	/* filter objects */
+	/* Tags / Relationships / Child of */
+	/* Field names */
+	
+	public function children($filter) {
+	
+		$children = array();
+	
+		$twitter = $this->gettwitteroauth();
+		
+		$twitter->ssl_verifypeer = true;
+		
+		$twittersearch = implode('+OR+',$filter->tags);
+		
+		if (isset($filter->starttime)) {
+			$twittersearch .= '+since:'.date('Y-d-m',$filterobj->starttime);
+		}
+		//return 'xxxx';
+		//return $twittersearch;
+		
+		$twittersearch = urlencode($twittersearch);
+		$tweets = $twitter->get('search/tweets', array('q' => $twittersearch,'include_entities'=>FALSE));
+		//return $tweets;
+		foreach($tweets->statuses as &$tweet) {	
+			
+			if ($filter->starttime && strtotime($tweet->created_at)<($filter->starttime)) continue;
+			$children[] = new node_message_tweet(array(
+				'body'=> $tweet->text,
+				'messageid'=> $tweet->id,
+				'title'=> '@'.$tweet->user->name . ' ('.$tweet->id .')',
+				'created'=> $tweet->created_at,
+				'modified'=> $tweet->created_at,
+				'sourceid'=>($this->guid.'['.$tweet->id.']')
+			));			
+		}
+		return $children;
 	}
 	
 	private function gettwitteroauth() {

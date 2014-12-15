@@ -113,8 +113,9 @@ function uos_three($element,data) {
 		controls.maxDistance = 6000;
 		controls.addEventListener( 'change', render );
 		
-		transform( targets.helix, 5000 );
-		//transform( targets.sphere, 1000 );
+		//transform( targets.helix, 200 );
+		transform( targets.sphere, 1000 );
+		//transform( targets.grid, 2000 );
 	}	
 
 

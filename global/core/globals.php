@@ -340,6 +340,8 @@ if (!isset($uos->request->session['history'])) {
 //Include the configuration file
 
 //print_r($uos->request);die();
+
+trace('Start');
 	
 
 

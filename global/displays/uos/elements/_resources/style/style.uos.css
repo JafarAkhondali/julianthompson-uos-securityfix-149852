@@ -629,7 +629,7 @@ div.uos-element.uos-type-node.three-d[data-display="teaser.html"] {
 }
 
 div.uos-element.uos-type-node.three-d[data-display="teaser.html"] div.field {
-	display: none;
+	xdisplay: none;
 }
 
 div.uos-element.uos-type-node.three-d[data-display="teaser.html"] div.field.field-title {

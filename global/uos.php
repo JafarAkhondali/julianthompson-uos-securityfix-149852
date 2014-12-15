@@ -10,7 +10,7 @@ if ($uos->request->debugmode==UOS_DEBUGMODE_REQUEST) {
 
 
 if (!$universe) {
-
+	trace('No universe found :'.$universe->dbconnector);
 	//redirect('/global/uos.create.php');
 	print('universe not created : '.$uos->request->hostname);
 	$universe = new node_universe();
@@ -18,7 +18,7 @@ if (!$universe) {
 	$universe->db_create($uos->request->universename);
 	
 } else {
-
+	trace('Found universe :'.$universe->dbconnector);
 	if ( (empty($uos->request->targetstring)) || ($uos->request->targetstring=='0000000000000000') ) {
 		$target = $universe;
 		//$target->id = 1;
@@ -31,6 +31,8 @@ if (!$universe) {
 	}
 	
 	if ($target) {
+	
+		//trace('Found target :'.$universe->dbconnector);
 		/*
 		$children = ($universe->db_select_children((string) $target->id));
 		  foreach($children as $child) {

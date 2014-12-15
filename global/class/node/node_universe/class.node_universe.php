@@ -6,6 +6,7 @@ class node_universe extends node {
 	public $dbconnection = NULL;
 	public $tags = array();
   public $path = array();
+  public $tracefile = NULL;
 
   public function test() {
   	return(file_exists($this->datapath) && $this->db_connect());
@@ -14,6 +15,7 @@ class node_universe extends node {
   public function db_connect() {
   	if (!$this->dbconnection) {
 			$this->dbconnection = NewADOConnection($this->dbconnector->value);
+			$this->dbconnection->SetFetchMode(ADODB_FETCH_ASSOC);
 		}
 		return $this->dbconnection;
   }  
@@ -70,8 +72,9 @@ class node_universe extends node {
 	public function removerelationships($entity, $type='ALL') {
 		$entityid = $entity->id->value;
 		$sql = sprintf('SELECT id,type FROM `relationship` JOIN `entity` ON `relationship`.`entity_id` = `entity`.`id`  WHERE `relationship`.`parent`=%d OR `relationship`.`child`=%d;',$entityid,$entityid);
-		$connection = $this->db_connect();
-		$result = $connection->Execute($sql);
+		//$connection = $this->db_connect();
+		//$result = $connection->Execute($sql);
+		$result = $this->db_query($sql);
 		while($result && !$result->EOF) {
 			//$sql .= "<br>\n" . $result->fields['id'];
 			$tempentity = new relationship($result->fields);
@@ -83,8 +86,9 @@ class node_universe extends node {
 	
 	public function incrementweight($entity,$increment=1) {
 		$sql = sprintf('UPDATE `entity` SET `entity`.`weight` = `entity`.`weight` + %d WHERE `entity`.`id` = %d',$increment,$entity->id->value);
-		$connection = $this->db_connect();
-		$result = $connection->Execute($sql);
+		$result = $this->db_query($sql);
+		//$connection = $this->db_connect();
+		//$result = $connection->Execute($sql);
 		return $sql.print_r($entity,TRUE);
 	}
 	
@@ -97,11 +101,12 @@ class node_universe extends node {
 		foreach($tables as $scope=>$values) {
 			$sql = "INSERT INTO `".$scope."` (`".implode('`,`',array_keys($values))."`) VALUES ('".implode('\',\'',$values)."');\n";
 			//echo $sql;
-			trace($sql);
-			$connection = $this->db_connect();
-			$result = $connection->Execute($sql);
+			//trace($sql);
+			$result = $this->db_query($sql);
+			//$connection = $this->db_connect();
+			//$result = $connection->Execute($sql);
 			if ($result) {
-				$insertid = $connection->Insert_ID();
+				$insertid = $this->dbconnection->Insert_ID();
 				$entity->id->value = $insertid;
 				//echo "RESULT ".$insertid;
 			} elseif ($result===false) {
@@ -149,9 +154,10 @@ class node_universe extends node {
 				$fielddata[] = '`' . $key . '` ' . $value;
 			}
 			$sql = "CREATE TABLE IF NOT EXISTS `".$scope."` ( " . implode(', ',$fielddata) . $primarykeystr . ");";
-			trace($sql);
-			$connection = $this->db_connect();
-			$result = $connection->Execute($sql);
+			//trace($sql);
+			//$connection = $this->db_connect();
+			//$result = $connection->Execute($sql);
+			$result = $this->db_query($sql);
 			//if ($result) echo "Created $scope Table\n";
 			//print_r($result);
 			$primarykeystr = '';
@@ -231,14 +237,6 @@ class node_universe extends node {
 		return (preg_match('/^[0-9]{16}$/', $testvalue)>0);
 	}
 	
-	function db_query() {
-		$args = func_get_args();
-		$sql = call_user_func_array('sprintf',$args);
-		trace($sql,'Database query');
-		$connection = $this->db_connect();
-		return $connection->Execute($sql);
-	}
-
 
 	
 	function guid_to_id($guidmixed) {
@@ -272,22 +270,24 @@ class node_universe extends node {
 		$tables = $connection->MetaTables(); 
 		//print_r($tables)
 		foreach ($tables as $table) {
-			$sql = sprintf('DROP TABLE IF EXISTS %s', $table);
-			$result = $connection->Execute($sql);
+			//$sql = sprintf();
+			//$result = $connection->Execute($sql);
+			$result = $this->db_query('DROP TABLE IF EXISTS %s', $table);
 		}
 	}
 	
 	
 	function db_select_entity($guid) {
 	
-		$connection = $this->db_connect();
-		$connection->SetFetchMode(ADODB_FETCH_ASSOC);
+		//$connection = $this->db_connect();
+		//$connection->SetFetchMode(ADODB_FETCH_ASSOC);
 		
 		$indextype = $this->is_guid($guid)?'guid':'id';
 		$indextype = 'guid';
 
 		$sql = 'SELECT * FROM `entity` WHERE '.$indextype.'="'.$guid.'" LIMIT 1';
-		$result = $connection->Execute($sql);	
+		//$result = $connection->Execute($sql);	
+		$result = $this->db_query($sql);
 		
 		if ($result && !$result->EOF) {
 			
@@ -304,7 +304,8 @@ class node_universe extends node {
 				$joins[] = "LEFT JOIN `$table` ON $table.entity_id = entity.id";
 			}
 			$sql = 'SELECT * FROM `entity` '.implode(' ',$joins).' WHERE id='.$result->fields['id'].' LIMIT 1';
-			$result = $connection->Execute($sql);
+			//$result = $connection->Execute($sql);
+			$result = $this->db_query($sql);
 			if ($result) {			
 				$entity = new $type($result->fields);			
 				//return $result;	
@@ -346,8 +347,10 @@ class node_universe extends node {
 	
 	function db_select_children() {
 		
+		trace('db_select_children');
+		
   	$ids = array_unique(func_get_args());
-		trace($ids,'db_select_children');
+		//trace($ids,'db_select_children');
 		// remove universe id from array
 		if(($key = array_search(0, $ids)) !== false) {
     	unset($ids[$key]);
@@ -367,7 +370,7 @@ class node_universe extends node {
 		// universe no longer entity 
 		$sql = sprintf("SELECT DISTINCT id,type FROM `entity` %s WHERE entity.type !='relationship' ORDER BY `entity`.`weight` DESC",implode(' ',$joins));
 
-		trace($sql);
+		//trace($sql);
 		
 		return $this->db_get_entities($sql);
 
@@ -375,10 +378,11 @@ class node_universe extends node {
 
 	public function db_get_entities($sql) {
 		$entities = array();
-		$connection = $this->db_connect();
-		$connection->SetFetchMode(ADODB_FETCH_ASSOC);
+		//$connection = $this->db_connect();
+		//$connection->SetFetchMode(ADODB_FETCH_ASSOC);
 		
-		$result = $connection->Execute($sql);	
+		//$result = $connection->Execute($sql);	
+		$result = $this->db_query($sql);
 		//return $sql;
 		while ($result && !$result->EOF) {	
 				$type = $result->fields['type'];
@@ -393,8 +397,9 @@ class node_universe extends node {
 				}
 				
 				$sql = 'SELECT * FROM `entity` '.implode(' ',$joins).' WHERE id='.$result->fields['id'].' LIMIT 1';
-				trace($sql);
-				$eresult = $connection->Execute($sql);
+				$eresult = $this->db_query($sql);
+				//trace($sql);
+				//$eresult = $connection->Execute($sql);
 				if ($eresult) {	
 					unset($eresult->fields['entity_id']);		
 					$entity->initialize($eresult->fields);		
@@ -409,7 +414,7 @@ class node_universe extends node {
 	public function db_describe_table($tablename) {
 		$tablestructure = array();
 		//return $tablename;
-		$result = $this->db_execute('DESCRIBE `%s`',$tablename);
+		$result = $this->db_query('DESCRIBE `%s`',$tablename);
 		//return $result;
 		while ($result && !$result->EOF) {	
 				$tablestructure[] = $result->fields;
@@ -418,12 +423,12 @@ class node_universe extends node {
 		return empty($tablestructure)?null:$tablestructure;
 	} 
 	
-	public function db_execute($query) {
+	
+	function db_query() {
 		$args = func_get_args();
-		$sql = call_user_func_array('sprintf', $args);
-		trace($sql);
+		$sql = call_user_func_array('sprintf',$args);
+		trace($sql,'Database query');
 		$connection = $this->db_connect();
-		$connection->SetFetchMode(ADODB_FETCH_ASSOC);
 		return $connection->Execute($sql);
 	}
 
