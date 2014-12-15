@@ -20,7 +20,7 @@ if (!$uos->request->configfound) {
 	$form->action = 'create';
 	$form->target = 0;
 	$form->displaystring = 'edit.html';
-	addoutput('content/',$form);
+	//addoutput('content/',$form);
 	//$universe = new node_universe();
 	$universe->dbconnector->value  = 'mysql://' . $uos->config->globaldatabaseuser . ':' . $uos->config->globaldatabasepassword . '@' . $uos->config->globaldatabasehost;
 	$universe->db_create($uos->request->universename);
@@ -31,7 +31,7 @@ if (!$uos->request->configfound) {
 	$form = new node_form();	
 	//$form->addproperty('info','field_text', array('value'=>''));
 	$form->title->value = "universe not work : ".$uos->request->hostname;
-	addoutput('content/',$form);
+	//addoutput('content/',$form);
 } else {
 
 	trace('Found universe :'.$universe->dbconnector);
