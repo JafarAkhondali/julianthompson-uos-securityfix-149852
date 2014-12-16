@@ -1006,3 +1006,38 @@ function getMaximumFileUploadSize() {
     return min(convertPHPSizeToBytes(ini_get('post_max_size')), convertPHPSizeToBytes(ini_get('upload_max_filesize')));  
 }  
 
+// move to magic function in php 5.6
+function debuginfo($mixeditem) {
+	static $depth = 0;
+	
+	$depth++;
+	
+	$itemtype = gettype($mixeditem);
+	
+	if (empty($mixeditem)) {
+		$output = '[Empty]';
+	} else if (is_string($mixeditem)) {
+		$output = $mixeditem;
+	} else if (is_array($mixeditem)) {
+		$output = '<div style="border:1px solid red; padding:0 20px;">';
+		foreach($mixeditem as $key => $itemchild) {
+			$itemtype = gettype($itemchild);
+			$output .= '<h3>'.$key.' ('.$itemtype.':'.$depth.'):</h3><div style="border:1px solid gray; padding:5px;margin-bottom:5px;">'.debuginfo($itemchild).'</div>';
+		}
+		$output.= '</div>';
+	} else if (is_universe_entity($mixeditem)) {
+		$output = $mixeditem->debuginfo();
+	} else if (is_object($mixeditem)) {
+		$output = '<div style="border:1px solid blue;padding:0 20px;">';
+	  foreach($mixeditem as $key => $itemchild) {
+	  	$itemtype = gettype($itemchild);
+			$output .= '<h3>'.$key.' ('.$itemtype.':'.$depth.'):</h3><div style="border:1px solid gray; padding:5px;margin-bottom:5px;">'.debuginfo($itemchild).'</div>';
+    }
+		$output.= '</div>';
+	} else {
+		$output.= print_r($mixeditem,TRUE);
+	}
+	$depth--;
+	return $output;
+}
+

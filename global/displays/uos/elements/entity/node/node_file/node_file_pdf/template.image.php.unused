@@ -1,5 +1,5 @@
 <?php
-
+	die('xxxx');
 	$childindex = (isset($uos->request->parameters['childindex']))?$uos->request->parameters['childindex']:1;
 
   $childindexpadded = sprintf('%04d', $childindex);
@@ -13,10 +13,15 @@
 	
 
   if (!file_exists($targetpath)) {
+	  umask(0);
 		@mkdir($targetpath,0777,TRUE);
+		if (!file_exists($targetpath)) {
+			 die('Cant make path');
+		}
 		//die('here');
 	}
 	
+	//echo "c";
 
 	
   //$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -o "%spage-%%04d.png" -r144 "%s"; sudo chmod -R 775 "%s"',$targetpath,$filename,$targetpath);	
@@ -28,9 +33,9 @@
 
 	  //execute the command
 		$commandoutput = array();
-	  $response = exec($command,$commandoutput);
-	  //print_r($commandoutput);
-	  //echo $command;die();
+	  //$response = exec($command,$commandoutput);
+	  print_r($commandoutput);
+	  echo $command;die();
 	}  
 
 	$pagefiles = find_files($targetpath, 'page-.*\.png', TRUE);

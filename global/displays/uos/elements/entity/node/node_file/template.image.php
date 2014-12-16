@@ -17,27 +17,38 @@ switch($entity->mime) {
 		$sourcefilename = $entity->filepath->fullpath();
 		
 		$sourcefilefield = $entity->filepath;
-		
 	
 	  if (!file_exists($targetpath)) {
+	  	umask(0);
 			@mkdir($targetpath,0777,TRUE);
-			//die('here');
 		}
-		
-	
-		
 	  //$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -o "%spage-%%04d.png" -r144 "%s"; sudo chmod -R 775 "%s"',$targetpath,$filename,$targetpath);	
 	
 		if (!file_exists($targetpath . $targetfilename)) {
-	  	$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dUseCIEColor=true -dFirstPage=%d -dLastPage=%d -o "%spage-%%04d.png" -r144 "%s"',$childindex,$childindex,addslashes($targetpath),addslashes($sourcefilename));
+
+			if (!file_exists($sourcefilename)) die('No source');
+			if (!file_exists($targetpath)) die('No target');	
+
+			//$im = new imagick('file.pdf[0]');	
+			
+			$command = sprintf('/usr/bin/convert -colorspace sRGB -density 144 -channel rgba -alpha on "%s[%d]" "PNG32:%spage-%04d.png"',addslashes($sourcefilename),$childindex-1,addslashes($targetpath),$childindex);
+				
+	  	//$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dUseCIEColor=true -dFirstPage=%d -dLastPage=%d -o "%spage-%%04d.png" -r144 "%s"',$childindex,$childindex,addslashes($targetpath),addslashes($sourcefilename));
 	  	
-	  	//$command .= sprintf(';sudo chmod -R 775 %s',addslashes($targetpath);
+	  	//$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dUseCIEColor=true -dFirstPage=%d -dLastPage=%d -o "%spage-%%04d.png" -r144 "%s"',$childindex,$childindex,addslashes($targetpath),addslashes($sourcefilename));
+
+	  	//$command = sprintf(UOS_BIN_GS . ' -sDEVICE=pngalpha -dUseCIEColor=true -dFirstPage=%d -dLastPage=%d -o "%spage-%%04d.png" -r144 "%s"',$childindex,$childindex,$targetpath,$sourcefilename);
+
+
+	  	
+	  	//$command .= sprintf('chmod -R 777 "%s"',$targetpath);
 	
 		  //execute the command
 			$commandoutput = array();
-		  $response = exec($command,$commandoutput);
+		  $response = exec($command,$commandoutput,$response);
+		  //$response = exec(escapeshellcmd($command),$commandoutput);
 		  //print_r($commandoutput);
-		  //echo $command;die();
+		  //echo $command;print_r($commandoutput);die();
 		}  
 	
 		$pagefiles = find_files($targetpath, 'page-.*\.png', TRUE);
@@ -68,7 +79,7 @@ switch($entity->mime) {
 			$commandoutput = array();
 		  $response = exec($command,$commandoutput);
 		  //print_r($commandoutput);
-		  echo $command."\n".print_r($response,TRUE);die();
+		  //echo $command."\n".print_r($response,TRUE);die();
 		}
 	  header("Content-type: image/png; charset=utf-8");
 	  //uos_header('Content-Disposition: attachment; filename="test.png"');

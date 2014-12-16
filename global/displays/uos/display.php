@@ -99,11 +99,13 @@ function render($entity, $rendersettings = NULL) {
 	
 	if ($renderdepth>10) return "RENDER DEPTH REACHED\n".print_r($render,TRUE)."\n".print_r($uos->output['content'],TRUE);
 	
-	if (	(isset($uos->request->parameters['debugrender']))  ||
-				(isset($render->debug) && $render->debug) ) {
+	
+	if ($uos->request->debugmode==UOS_DEBUGMODE_RENDER) {
+		echo "DEBUG REQUEST\n";
+		echo "(\$render)\n";
 		//print_r($uos->request);
-		//print_r(get_class($entity));
-		print_r($render);
+		print debuginfo($render);
+		print debuginfo($entity);
 		die();
 	}
 	

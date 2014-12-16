@@ -4,7 +4,9 @@ include_once "./core/core.php";
 
 if ($uos->request->debugmode==UOS_DEBUGMODE_REQUEST) {
 	echo "DEBUG REQUEST\n";
-	print_r($uos->request);
+	echo "(\$uos->request)\n";
+	//print_r($uos->request);
+	print debuginfo($uos->request);
 	die();
 }
 
@@ -37,6 +39,7 @@ if (!$uos->request->configfound) {
 	trace('Found universe :'.$universe->dbconnector);
 	if ( (empty($uos->request->targetstring)) || ($uos->request->targetstring=='0000000000000000') ) {
 		$target = $universe;
+		//die('got
 		//$target->id = 1;
 	} else {
 		//$uos->universe
@@ -66,9 +69,11 @@ if (!$uos->request->configfound) {
 
 if ($uos->request->debugmode==UOS_DEBUGMODE_RESPONSE) {
 	echo "DEBUG RESPONSE\n";
+	echo "(\$uos->output)\n";
 	//print_r($uos);
 	//print_r($uos->request);
-	print_r($uos->output);
+	//print_r($uos->output);
+	print debuginfo($uos->output);
 	die();
 }
 
