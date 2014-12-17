@@ -20,11 +20,12 @@ class node_service_x10 extends node_service {
 		if ($response) {
 			foreach($response->status as $code => $status) {
 			
-				$this->children[] = new node_device(array(
+				$this->children[$code] = new node_device(array(
+					'guid'=>$this->guid->value.'['.$code.']',
 					'title'=>'Untitled Device ('.$code.')',
 					'x10key'=>substr($code,1),
 					'x10housecode'=> substr($code,0,1),
-					'source'=>$this->guid->value.'/'.$code
+					'source'=>$this->guid->value.'['.$code.']'
 				));
 			}
 		}

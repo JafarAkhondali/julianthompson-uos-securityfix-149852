@@ -42,10 +42,25 @@ if (!$uos->request->configfound) {
 		//die('got
 		//$target->id = 1;
 	} else {
+	
+		//look to see if target is child
+		if (preg_match("/^[0-9]{16}$/", $uos->request->targetstring, $matches) > 0) {
+			$target = $universe->db_select_entity($uos->request->targetstring);
+		} else if (preg_match("/^([0-9]{16})\[(.*)\]$/", $uos->request->targetstring, $matches) > 0) {
+			array_shift($matches);
+			list($uos->request->targetstring,$childid) = $matches;
+			//print_r('<br>target:'.$uos->request->targetstring);
+			//print_r('<br>child:'.$childid);
+			$target = $universe->db_select_entity($uos->request->targetstring);
+			$target = $target->getchild($childid);
+			//print_r($matches);
+			//die('xxxxx');
+		}
+		
 		//$uos->universe
 		//$target = fetchentity($uos->request->targetstring);
 		//$target = $uos->universe->db_select_entity($uos->request->targetstring);
-		$target = $universe->db_select_entity($uos->request->targetstring);
+		
 		
 	}
 	

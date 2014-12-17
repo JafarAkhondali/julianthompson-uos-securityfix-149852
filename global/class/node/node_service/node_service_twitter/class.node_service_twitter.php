@@ -20,6 +20,7 @@ class node_service_twitter extends node_service {
 
 		foreach($tweets as &$tweet) {
 			$tweetnode = new node_message_tweet(array(
+				'guid'=>$this->guid->value.'['.$tweet->id.']',
 				'body'=> $tweet->text,
 				'messageid'=> $tweet->id,
 				'title'=> '@'.$tweet->user->name . ' ('.$tweet->id .')',

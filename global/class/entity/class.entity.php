@@ -398,11 +398,18 @@ class entity {
 	
 	public function fetchchildren() {
 		global $universe;
-		$children = $universe->db_select_children((string) $this->id);
-		foreach($children as $child) {
-			$this->children[] = $child;
-		}	
-		return $this->children;
+		if ($this->id->isvalueset()) {
+			$children = $universe->db_select_children((string) $this->id);
+			foreach($children as $child) {
+				$this->children[] = $child;
+			}	
+			return $this->children;
+		}
+	}
+	
+	public function getchild($childid) {
+		$this->fetchchildren();
+		return $this->children[$childid];
 	}
   
   public function __toString() {

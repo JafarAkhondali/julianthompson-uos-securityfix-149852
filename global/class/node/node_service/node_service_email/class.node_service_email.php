@@ -11,7 +11,10 @@ class node_service_email extends node_service {
 		//$password = 'davidwalsh';
 
 	
-
+		if (!function_exists('imap_open')) {
+			die('PHP IMAP not setup');
+		}
+ 
 		/* try to connect */
 		try {
 			$inbox = @imap_open('{'.$this->hostname->value.':993/imap/ssl}INBOX',$this->username->value,$this->password->value);
@@ -44,6 +47,7 @@ class node_service_email extends node_service {
 				//$createddate = strtotime(trim($overview['date']));
 				//$createddate = $overview[0]->date;
 				$emailnode = new node_message_email(array(
+					'guid'=>$this->guid->value.'['.$email_number.']',
 					'created' => $overview[0]->date,
 					'modified' => $overview[0]->date,
 					'messageid' => $email_number,
