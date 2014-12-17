@@ -242,6 +242,14 @@ function display_uos_attributestostring_callback($key,$value) {
    return $key.'="'.$value.'"';	
 }
 
+function display_uos_strip_none_alphanumeric($string) {
+	return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
+}
+
+function display_uos_hypenate_none_alphanumeric($string) {
+	return preg_replace("/[^A-Za-z0-9 ]/", '-', $string);
+}
+
 function display_uos_make_visual($entity) {
 	// Create the image
 	// Create a 100*30 image
