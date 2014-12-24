@@ -298,8 +298,9 @@ function uostype_entity_event_dragstart(event) {
 	}
 	uos.log(downloadurl);
 
-	event.dataTransfer.setData("application/uos",'12345678909876');
+	event.dataTransfer.setData("application/uos",window.location.host+'/'+elementdata.guid);
 	event.dataTransfer.setData("DownloadURL",downloadurl);
+	event.dataTransfer.setData("text/html", "Hello there, <strong>stranger</strong>");
   event.dataTransfer.effectAllowed = 'move';
  
   var draghelper = uos.buildDragHelper();
@@ -437,6 +438,8 @@ function uostype_entity_event_drop(event) {
   event.preventDefault();
   
   var data = event.dataTransfer.getData('text');
+  
+  uos.log('uostype_entity_event_drop', event.dataTransfer);
 
 	switch(uostype_entity_identify_content(event)) {
 

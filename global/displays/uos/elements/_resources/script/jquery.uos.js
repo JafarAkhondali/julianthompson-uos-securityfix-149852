@@ -712,6 +712,10 @@ uos.initialize = function() {
 	
 	$(document).bind('keydown', 'ctrl+c', handleCopy);
 	
+	$(window).bind('online', uos.internetConnected);
+	
+	$(window).bind('offline', uos.internetDisconnected);
+	
   $(window).focus(function() {
       //uos.log('Focus');
   });
@@ -856,6 +860,8 @@ function saveChanges(e){
 		e.stopPropagation();
 		uos.log('Saved');
 }
+
+
 
 
 
@@ -1032,7 +1038,16 @@ if (tests.dnd) {
     readfiles(this.files);
   };
 }
-*/	
+*/
+
+
+uos.internetConnected = function(event) {
+	jQuery('body').removeClass('uos-internet-offline');
+}
+
+uos.internetDisconnected = function(event) {
+	jQuery('body').addClass('uos-internet-offline');
+}
 
 
 uos.post = function($element,action,parameters,files) {
