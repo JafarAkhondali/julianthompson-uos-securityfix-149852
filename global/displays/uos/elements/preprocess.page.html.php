@@ -37,7 +37,10 @@ addoutputunique('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/exampl
 
 
 // Font Awesome CDN
-//addoutputunique('resources/style/', "http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
+addoutputunique('resources/style/', "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css");
+//addoutputunique('resources/style/', "http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css");
+// Font Awesome Local
+//addoutputunique('resources/style/', UOS_LIBRARIES_URL . "font-awesome/css/font-awesome.css");
 
 // Bootstrap
 // <-- Latest compiled and minified CSS -->

@@ -8,7 +8,8 @@ switch ($entity->mime->value) {
 	case "image/svg+xml" :
 		$imagepath = $entity->dataurl() . $entity->filepath->value;//->value;
 	break;
-	
+
+	case "image/vnd.adobe.photoshop" :	
 	case "application/pdf" :
 		$imagepath = '/'.$entity->guid->value . '.image';
 	break;

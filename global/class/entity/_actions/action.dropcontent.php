@@ -1,21 +1,12 @@
 <?php
 
 $contenttypes = (array) $uos->request->parameters['content'];
+print_r($contenttypes);
 
 $typenames = array_keys($contenttypes);
 
 // if link
-if ( isset($contenttypes['text/plain']) && isset($contenttypes['text/uri-list']) ) {
-  //[text/plain] => http://www.wickes.co.uk/Wickes-General-Purpose-OSB3-Board-18x1220x2440mm/p/110517
-  //[text/uri-list] => http://www.wickes.co.uk/Wickes-General-Purpose-OSB3-Board-18x1220x2440mm/p/110517
-	$newcontent = new node_url(array(
-		'title'=> 'Untitled link content ' .implode(':',$typenames), // get webpage title
-		'url' => $contenttypes['text/plain']
-	));
-	$newcontent->fetchtitle();
-	//die('here');
-	
-} elseif (isset($contenttypes['text/html'])) {
+if ( isset($contenttypes['text/plain']) && isset($contenttypes['text/html']) ) {
 	$content = strip_html_attributes($contenttypes['text/html'],'');
 	$domd = new DOMDocument();
 	libxml_use_internal_errors(true);
@@ -30,7 +21,6 @@ if ( isset($contenttypes['text/plain']) && isset($contenttypes['text/uri-list'])
 	foreach($items as $item) {
 		$tags[] = $item->tagName;
 	}
-
 	
 	// if just one tag
 	if (count($tags)==1) {
@@ -39,14 +29,15 @@ if ( isset($contenttypes['text/plain']) && isset($contenttypes['text/uri-list'])
 		
 			case 'img' :
 				$newcontent = new node_file_image(array(
-					'title'=> 'Untitled dropped image content ' .implode(':',$typenames),
+					'title'=> 'Untitled dropped image content ' .implode(':',$typenames) . $items->item(0)->getAttribute('src'),
 					'mime'=>'image/'
 				));
 			break;
 			
 			case 'a' :
 				$newcontent = new node_url(array(
-					'title'=> 'Untitled link content ' .implode(':',$typenames),
+					'title'=> 'Untitled link content ' .implode(':',$typenames) . $items->item(0)->getAttribute('href'),
+					'url'=> $items->item(0)->getAttribute('src')
 				));
 			break;
 			
@@ -63,6 +54,16 @@ if ( isset($contenttypes['text/plain']) && isset($contenttypes['text/uri-list'])
 			'body'=> $contenttypes['text/plain']
 		));
 	}
+
+} elseif ( isset($contenttypes['text/plain']) && isset($contenttypes['text/uri-list']) ) {
+  //[text/plain] => http://www.wickes.co.uk/Wickes-General-Purpose-OSB3-Board-18x1220x2440mm/p/110517
+  //[text/uri-list] => http://www.wickes.co.uk/Wickes-General-Purpose-OSB3-Board-18x1220x2440mm/p/110517
+	$newcontent = new node_url(array(
+		'title'=> 'Untitled link content ' .implode(':',$typenames), // get webpage title
+		'url' => $contenttypes['text/plain']
+	));
+	$newcontent->fetchtitle();
+	//die('here');
 	
 } elseif (isset($contenttypes['urlx'])) {
 
@@ -72,7 +73,8 @@ if ( isset($contenttypes['text/plain']) && isset($contenttypes['text/uri-list'])
 	//	'title'=> 'Untitled dropped text content - ',
 	//));
 }
-
+print debuginfo($newcontent);
+die();
 if ($newcontent) {
   $guid = $universe->add($newcontent);
 	$universe->tagcontent($this, array($newcontent->id->value));

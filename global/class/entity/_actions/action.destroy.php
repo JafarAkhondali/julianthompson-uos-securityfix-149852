@@ -9,11 +9,15 @@ if (isset($parameters['confirm']) && ($parameters['confirm']==1)) {
 	if ($this->type->value=='node_universe') {
 		$response->destroy_universe();
 	} else {
-		$response->body = $universe->destroy($this);
+		try {
+			$response->body = $universe->destroy($this);
+		} catch (Exception $e) {
+			$response = 'arse';
+		}
 	}
 	
-	$message->body = ('<pre>'.$response.'</pre>');
-	addoutput('content/', $message);
+	//$message->body->value = ('<pre>'.$response.'</pre>');
+	addoutput('content/', $response);
 } else {
 	$form = new node_form();
 	$form->title = 'Destroy '.$this->title.'?';

@@ -966,17 +966,30 @@ function getremotefile($remotepath,$targetpath=FALSE) {
 }
 
 function identifyfile($filepath) {
-	$finfo = finfo_open(FILEINFO_MIME_TYPE);
-	$mime = finfo_file($finfo, $filepath);
-	finfo_close($finfo);
-	return array(
-		'mime'=>$mime, 
-		'size'=>filesize($filepath), 
-		'title'=>basename($filepath),
-		'filename'=>basename($filepath),
-		'filepath'=>$filepath,
-		'checksum'=>md5_file($filepath)
-	);	
+	// if it's a url
+	if (filter_var($filepath, FILTER_VALIDATE_URL) !== false) {
+		$headers = get_headers($filepath, 1);	
+		return array(
+			'mime'=>current(explode(";",$headers['Content-Type'],2)), 
+			'size'=>$headers['Content-Length'], 
+			'title'=>basename($filepath),
+			'filename'=>basename($filepath),
+			'filepath'=>$filepath,
+			'checksum'=>md5($filepath)
+		);	
+	} else {
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$mime = finfo_file($finfo, $filepath);
+		finfo_close($finfo);
+		return array(
+			'mime'=>$mime, 
+			'size'=>filesize($filepath), 
+			'title'=>basename($filepath),
+			'filename'=>basename($filepath),
+			'filepath'=>$filepath,
+			'checksum'=>md5_file($filepath)
+		);	
+	}
 }
 
 

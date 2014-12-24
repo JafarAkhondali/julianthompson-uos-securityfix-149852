@@ -108,6 +108,7 @@ define(	'UOS_REQUEST_TYPE_POST',	'post');
 define(	'UOS_ERROR_NOT_FOUND',	NULL);
 
 define( 'UOS_DEBUGMODE_REQUEST', 'request');
+define( 'UOS_DEBUGMODE_TARGET', 'target');
 define( 'UOS_DEBUGMODE_RESPONSE', 'response');
 define( 'UOS_DEBUGMODE_RENDER',  'render');
 

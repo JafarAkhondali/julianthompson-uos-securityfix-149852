@@ -2,6 +2,8 @@
 
 $childindex = (isset($uos->request->parameters['childindex']))?$uos->request->parameters['childindex']:1;
 $targetpath = $entity->cachepath($render->displaystring.'/');
+$childindexpadded = sprintf('%04d', $childindex);
+$sourcefilename = $entity->filepath->fullpath();
 
 switch($entity->mime) {
 
@@ -10,11 +12,11 @@ switch($entity->mime) {
 		//imagepng(display_uos_make_visual($entity));
 
 	
-	  $childindexpadded = sprintf('%04d', $childindex);
+	  
 	
 		$targetfilename = 'page-'.$childindexpadded.'.png';
 	
-		$sourcefilename = $entity->filepath->fullpath();
+
 		
 		$sourcefilefield = $entity->filepath;
 	
@@ -68,22 +70,26 @@ switch($entity->mime) {
  
  case 'image/vnd.adobe.photoshop' :
 		$childindex = (isset($uos->request->parameters['childindex']))?$uos->request->parameters['childindex']:1;
-		$targetfilename = $targetpath.'image.png';		
+		//$targetfilename = $targetpath.'image.png';	
+		$targetfilename = $targetpath.'page-'.$childindexpadded.'image.png';	
 	  if (!file_exists($targetpath)) {
 			@mkdir($targetpath,0777,TRUE);
 			//die('here');
 		} 
-		if (!file_exists($targetpath . $targetfilename)) {
+		//die('photoshop image');
+		if (!file_exists($targetfilename)) {
+			$sourcefilename = $entity->filepath->fullpath();
 			//convert test.psd[0] -colorspace RGB -resize 200x200 -strip test.jpg
-	  	$command = sprintf(UOS_BIN_IM . ' %s[0] -colorspace RGB -resize 200x200 -strip %s',addslashes($sourcefilename), $targetfilename);		
+	  	$command = sprintf(UOS_BIN_IM . ' "%s[%d]" -colorspace RGB -resize 200x200 -strip "%s"', $sourcefilename, $childindex-1,  $targetfilename);		
+			//die($command);
 			$commandoutput = array();
 		  $response = exec($command,$commandoutput);
-		  //print_r($commandoutput);
-		  //echo $command."\n".print_r($response,TRUE);die();
+		  print_r($commandoutput);
+		  echo $command."\n".print_r($response,TRUE);die();
 		}
 	  header("Content-type: image/png; charset=utf-8");
 	  //uos_header('Content-Disposition: attachment; filename="test.png"');
-	  readfile($pagefiles[0]);
+	  readfile($targetfilename);
 		
  break;
  

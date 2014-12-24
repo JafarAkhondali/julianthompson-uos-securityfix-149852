@@ -71,10 +71,18 @@ div.uos-type-node_service_twitter i.uos-entity-icon:before {
 	content: "\f099";
 }
 
+/* node_message_email icon .fa-envelope */
+div.uos-type-node_message i.uos-entity-icon:before {
+	xcontent: "\f0eb";
+}
+
 /* node_message_tweet icon .fa-twitch */
-div.uos-type-node_message_tweet i.uos-entity-icon:before {
+div.uos-type-node_message.uos-type-node_message_tweet i.uos-entity-icon:before {
 	content: "\f1e8";
 }
+
+
+
 
 /* node_service_x10 icon .fa-bolt */
 div.uos-type-node_service_x10 i.uos-entity-icon:before {

@@ -549,5 +549,19 @@ class entity {
 		}
 		$this->title->value = $this->title->value . ' (Cloned)';
 	}
+	
+	public function addparent($entity) {
+		$this->parent = $entity;
+		$this->parent->addchild($this);
+	}
+	
+	public function addchild($entity,$index=NULL) {
+		$entity->parent = $this;
+		if (is_null($index)) {
+			$this->children[]=$entity;
+		} else {
+			$this->children[$index]=$entity;
+		} 
+	}
   
 }		

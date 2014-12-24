@@ -23,15 +23,19 @@ class node_service_twitter extends node_service {
 				'guid'=>$this->guid->value.'['.$tweet->id.']',
 				'body'=> $tweet->text,
 				'messageid'=> $tweet->id,
-				'title'=> '@'.$tweet->user->name . ' ('.$tweet->id .')',
+				'title'=> '@'.$tweet->user->name,
 				'created'=> $tweet->created_at,
 				'modified'=> $tweet->created_at 
 			));
 			$tweetnode->addproperty('imageurl','field_text',array('value'=>$tweet->user->name));
-			$this->children[] = $tweetnode;
+			$this->children[$tweet->id] = $tweetnode;
 		}	
 	}
 	
+	public function getchild($childid) {
+		$this->fetchchildren();
+		return $this->children[$childid];
+	}
 	
 	/* filter objects */
 	/* Tags / Relationships / Child of */

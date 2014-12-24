@@ -133,73 +133,80 @@ class node_device_xbmc extends node_device {
 		}
 		*/
 		
-		// need a better way to find a twitter account
-		$twitterentity = $uos->request->universe->db_select_entity(1519692434878367);
-		if ($twitterentity) {
-			//$this->commands->value .= 'Got twitter entity';
-			
-			$filter = (object) array(
-				'tags'=>$tags,
-				//'tags'=>array('#BBCOne'),
-				'start'=>$starttime			
-			);
-			
-		
-			$tweets = $twitterentity->children($filter);
-			//$this->commands->value .= $tweets;
-			//$this->commands->value .= sprintf('<p>Tags : %s</p><p>%s</p>',print_r($filter,TRUE),print_r($tweets,TRUE));	
-						
-			foreach($tweets as $tweet) {
-					//break;
-					$response = $rpc->GUI->ShowNotification(array(
-						'title'=> $tweet->title->value,
-						'message'=> $tweet->body->value,
-						'displaytime'=>10000,
-						'image'=>$tweet->imageurl->value
-						//$tweet->sourceid, 
-						//'message'=>'XXX',//$tweet->body, 
-						//'displaytime'=>10000,
-						//'image'=>$tweet->user->profile_image_url_https,
-					));
-					//$this->commands->value .= sprintf('<p>%s</p>',print_r($tweets,TRUE));
-					$this->children[] = $tweet;
-				//}
-				//sleep(1);
-				//sleep(10);
+		if (isset($uos->request->parameters['tweets'])) {
+			// need a better way to find a twitter account
+			$twitterentity = $uos->request->universe->db_select_entity(1519692434878367);
+			if ($twitterentity) {
+				//$this->commands->value .= 'Got twitter entity';
 				
+				$filter = (object) array(
+					'tags'=>$tags,
+					//'tags'=>array('#BBCOne'),
+					'start'=>$starttime			
+				);
+				
+			
+				$tweets = $twitterentity->children($filter);
+				//$this->commands->value .= $tweets;
+				//$this->commands->value .= sprintf('<p>Tags : %s</p><p>%s</p>',print_r($filter,TRUE),print_r($tweets,TRUE));	
+							
+				foreach($tweets as $tweet) {
+						//break;
+						$response = $rpc->GUI->ShowNotification(array(
+							'title'=> $tweet->title->value,
+							'message'=> $tweet->body->value,
+							'displaytime'=>10000,
+							'image'=>$tweet->imageurl->value
+							//$tweet->sourceid, 
+							//'message'=>'XXX',//$tweet->body, 
+							//'displaytime'=>10000,
+							//'image'=>$tweet->user->profile_image_url_https,
+						));
+						//$this->commands->value .= sprintf('<p>%s</p>',print_r($tweets,TRUE));
+						$this->children[] = $tweet;
+					//}
+					//sleep(1);
+					sleep(5);
+					
+				}
+				//$this->commands->value .= sprintf('<p>%s</p>',print_r($tweets,TRUE));
+				
+				
+			} else {
+				$this->commands->value .= 'Not got twitter entity';		
 			}
-			//$this->commands->value .= sprintf('<p>%s</p>',print_r($tweets,TRUE));
-			
-			
-		} else {
-			$this->commands->value .= 'Not got twitter entity';		
 		}
 
 		//image
-
-		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/global/displays/default/elements/_resources/images/backdrop-prof.jpg')));
+		if (isset($uos->request->parameters['image'])) {
+			$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/global/displays/default/elements/_resources/images/backdrop-prof.jpg')));
 		
-		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/global/displays/default/elements/_resources/images/uos-logo-144.png')));
-		//'http://developer:fr432ws@epsom.universeos.net/6783826915427419.image')));
-		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/6783826915427419.image')));
-		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/cache/epsom.universeos.net/node_file/3613475726851892/image/page-0001.png')));
-		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/cache/epsom.universeos.net/node_file/6783826915427419/image/page-0001.png')));
+			//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/global/displays/default/elements/_resources/images/uos-logo-144.png')));
+			//'http://developer:fr432ws@epsom.universeos.net/6783826915427419.image')));
+			//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/6783826915427419.image')));
+			//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/cache/epsom.universeos.net/node_file/3613475726851892/image/page-0001.png')));
+			//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://developer:fr432ws@epsom.universeos.net/cache/epsom.universeos.net/node_file/6783826915427419/image/page-0001.png')));
+		}
 		
 		
 		
 		//camera image
-		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://admin:dli1jumper@greenacres.universeos.net:800/image.jpg')));
+		if (isset($uos->request->parameters['cameraimage'])) {
+			$response = $rpc->Player->Open(array('item'=>array('file'=>'http://admin:dli1jumper@greenacres.universeos.net:800/image.jpg')));
+		}
 		
 		
 		
 		//camera video feed
+		if (isset($uos->request->parameters['camerafeed'])) {
 		//http://IPADDRESS/mjpeg.cgi?user=[USERNAME]&password=[PASSWORD]&channel=[CHANNEL]
 		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://admin:dli1jumper@greenacres.universeos.net:800/mjpeg.cgi')));
 		//$response = $rpc->Player->Open(array('item'=>array('file'=>'rtsp://admin:dli1jumper@greenacres.universeos.net:554/play1.sdp')));
 		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://admin:dli1jumper@greenacres.universeos.net:800/videostream.cgi')));
 		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://admin:dli1jumper@greenacres.universeos.net:800/mjpeg.cgi?channel=0&dummy=.mjpg')));
 		
-		//$response = $rpc->Player->Open(array('item'=>array('file'=>'http://admin:dli1jumper@greenacres.universeos.net:800/video.cgi')));
+		$response = $rpc->Player->Open(array('item'=>array('file'=>'http://admin:dli1jumper@greenacres.universeos.net:800/video.cgi')));
+		}
 
 		
 		//youtube
@@ -218,6 +225,17 @@ class node_device_xbmc extends node_device {
 		//42 = QVC
 		//43 = Really
 		//44 = 4Music
+		if (isset($uos->request->parameters['iplayerpid'])) {
+			//		{ "jsonrpc": "2.0", "method": "XBMC.Play", "params": "plugin://plugin.video.iplayer/?pid=b00jz2t4", "id": 1 }
+			$command = sprintf("plugin://plugin.video.iplayer/?resolveURL=True&pid=%s",$uos->request->parameters['iplayerpid']);
+			$this->commands->value .= $command;	
+			try {
+				$response = $rpc->Player->Open(array('item'=>array('file'=>$command)));
+				//$response = $rpc->Player->Open(array('item'=>array('channelid'=>$uos->request->parameters['channel'])));
+		  } catch (XBMC_RPC_Exception $e) {
+		    die($e->getMessage().':'.print_r($uos->request->parameters,TRUE));
+			}		
+		}
 		
 		if (isset($uos->request->parameters['channel']) && is_numeric($uos->request->parameters['channel'])) {
 			try {

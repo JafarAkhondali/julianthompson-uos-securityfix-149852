@@ -9,6 +9,7 @@ $render->attributes['data-uostypetree'] = $render->inheritancestring;
 $render->attributes['data-uostype'] = $render->entitytype;
 $render->attributes['data-accept'] = '';
 $render->attributes['data-display'] = $render->displaystring;
+$render->attributes['data-guid'] = (string) $entity->guid;
 
 
 //$render->elementdata->typetree = $render->entityconfig->classtree;

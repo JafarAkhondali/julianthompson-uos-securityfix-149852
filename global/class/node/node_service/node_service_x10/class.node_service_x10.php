@@ -11,7 +11,10 @@ class node_service_x10 extends node_service {
 
 	public function fetchchildren() {
 		$this->addproperty('info','field_text',array('value'=>''));
+		$this->dummyoutput = empty($this->port->value);
 		$response = $this->sendcommand(FALSE);
+		//$this->info->value .= debuginfo($response);
+		$this->info->value .= $this->dummyoutput;
 		//$response = $this->sendcommand('pl a off');
 		//$this->info->value .= ':this->status'.print_r($this->status,TRUE);
 		//$this->info->value .= ':this->selected'.print_r($this->selected,TRUE);
@@ -31,6 +34,11 @@ class node_service_x10 extends node_service {
 		}
 	}
 	
+	public function getchild($childid) {
+		$this->fetchchildren();
+		return $this->children[$childid];
+	}
+	
 	function connect() {
 		if (!$this->dummyoutput) {
 			if (gettype($this->socket)!='resource') {
@@ -40,7 +48,7 @@ class node_service_x10 extends node_service {
 			}  
 		}	else {
 			$this->info->value = 'Dummy connection';
-			$this->socket = FALSE;
+			$this->socket = TRUE;
 		}
 		return $this->socket;
 	}
@@ -52,7 +60,6 @@ class node_service_x10 extends node_service {
 	
 	
 	function readresponse($length, $end) {
-		
 		if ($this->dummyoutput) {
 			$str = "01/01 20:43:33 Device status\n01/01 20:43:33 House A: 1=1,2=0,3=1\n01/01 20:43:33 House B: 1=0,3=0\n01/01 20:43:33 Security sensor status\n01/01 20:43:33 End status";			
 		} else {

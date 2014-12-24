@@ -26,6 +26,11 @@ class node_file extends node {
 		}
 	}
 	
+	public function getchild($childid) {
+		$this->fetchchildren();
+		return $this->children[$childid];
+	}
+	
 	
 	function getasmime($mimetype, $force=FALSE) {
 		if ($this->mime->value==$mimetype) {

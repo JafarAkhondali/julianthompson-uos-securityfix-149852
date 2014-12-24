@@ -58,7 +58,7 @@ class node_service_email extends node_service {
 				//$emailnode = new node();
 				//$emailnode->title->value = print_r(array_keys($emailnode->properties),TRUE);
 				//$emailnode->created->setvalue($overview['date']);
-				$this->children[] = $emailnode;
+				$this->children[$email_number] = $emailnode;
 				/*
 				// output the email header information 
 				$output.= '<div class="toggler '.($overview[0]->seen ? 'read' : 'unread').'">';
@@ -73,6 +73,11 @@ class node_service_email extends node_service {
 			}
 	
 		}
+	}
+	
+	public function getchild($childid) {
+		$this->fetchchildren();
+		return $this->children[$childid];
 	}
 
 	

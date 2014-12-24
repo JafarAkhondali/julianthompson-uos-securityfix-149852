@@ -272,6 +272,16 @@ function display_uos_imagecenteredstring ( &$img, $font, $xMin, $xMax, $y, $str,
     imagestring( $img, $font, $xLoc, $y, $str, $col );
 }
 
+
+function display_uos_imagecenteredstringttf ( &$im, $font, $fontsize, $xoffset, $yoffset, $str, $textcolor ) {
+	$bbox = imagettfbbox($fontsize, 0, $font, $str);
+	// This is our cordinates for X and Y
+	$x = ($bbox[0] + (imagesx($im) / 2) - ($bbox[4] / 2)) + $xoffset;
+	$y = ($bbox[1] + (imagesy($im) / 2) - ($bbox[5] / 2)) + $yoffset;
+	// Write it
+	imagettftext($im, $fontsize, 0, $x, $y, $textcolor, $font, $str);
+}
+
 /*
 function DISPLAY_attributestostring($attributes) {
 	return join(' ', array_map(function($sKey) use ($attributes) {

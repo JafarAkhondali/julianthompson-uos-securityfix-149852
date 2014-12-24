@@ -38,7 +38,10 @@ addoutputunique('resources/script/', UOS_LIBRARIES_URL . "mrdoob-three.js/exampl
 
 
 // Font Awesome CDN
-//addoutputunique('resources/style/', "http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
+addoutputunique('resources/style/', "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css");
+//addoutputunique('resources/style/', "http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css");
+// Font Awesome Local
+//addoutputunique('resources/style/', UOS_LIBRARIES_URL . "font-awesome/css/font-awesome.css");
 
 // Bootstrap
 // <-- Latest compiled and minified CSS -->
@@ -53,11 +56,6 @@ addoutputunique('resources/style/', UOS_LIBRARIES_URL . "bootstrap3-dialog-maste
 addoutputunique('resources/script/', UOS_LIBRARIES_URL . "bootstrap3-dialog-master/dist/js/bootstrap-dialog.min.js");
 //addoutputunique('resources/script/',"//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css");
 //addoutputunique('resources/style/',"//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js");
-
-
-
-// Font Awesome Local
-addoutputunique('resources/style/', UOS_LIBRARIES_URL . "font-awesome/css/font-awesome.css");
 
 
 // Core UOS
