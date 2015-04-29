@@ -72,6 +72,6 @@ addoutputunique('resources/style/', $render->rendererurl."elements/_resources/st
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/script/jquery.uos.three.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/_resources/libraries/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js");
 //addoutputunique('resources/script/', $render->rendererurl."elements/entity/node/node_device/_resources/script/jquery.node_device.js");
-addoutputunique('resources/script/', "https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false");
+//addoutputunique('resources/script/', "https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false");
 
 addoutputunique('resources/style/', "http://fonts.googleapis.com/css?family=Shadows+Into+Light+Two");

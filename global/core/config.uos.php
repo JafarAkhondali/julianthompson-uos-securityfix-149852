@@ -53,32 +53,25 @@ $uos->responsecodes = array(
 $uos->config->types = array(
 	'unknown' => (object) array(
 		'title'=>'Unknown',
-		'icon'=>'asterisk'
 	),
 	'array' => (object) array(
 		'title'=>'Array',
-		'icon'=>'list'
 	),
 	'string' => (object) array(
 		'title'=>'String',
-		'icon'=>'asterisk'
 	),
 	'double' => (object) array(
 		'title'=>'Double',
-		'icon'=>'asterisk'
 	),
 	'integer' => (object) array(
 		'title'=>'Integer',
-		'icon'=>'asterisk'
 	),
 	'object' => (object) array(
 		'title'=>'Object',
-		'icon'=>'asterisk'
 	),
 	'stdclass' => (object) array(
 		'title'=>'Object (stdclass)',
-		'icon'=>'asterisk'
-	),
+	)/*,
 	'entity' => (object) array(
 		'title'=>'Entity',
 		'icon'=>'asterisk'
@@ -198,5 +191,5 @@ $uos->config->types = array(
 	'relationship' => (object) array(
 		'title'=>'Relationship',
 		'icon'=>'expand'
-	)
+	)*/
 );

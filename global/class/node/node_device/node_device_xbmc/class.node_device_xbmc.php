@@ -1,5 +1,9 @@
 <?php
 # node_device class definition file
+$uos->config->types['node_device_xbmc']->title = 'Media Center';
+$uos->config->types['node_device_xbmc']->titleplural = 'Media Centers';
+$uos->config->types['node_device_xbmc']->description = 'An XBMC / KODI media center';
+
 class node_device_xbmc extends node_device {
   
   

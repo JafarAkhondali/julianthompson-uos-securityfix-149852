@@ -1,5 +1,14 @@
 <?php
 //abstract 
+//#title: Category
+//#title-plural: Categories
+//#description: Universe entity
+//print_r($uos->config->types);die();
+$uos->config->types['entity']->title = 'Entity';
+$uos->config->types['entity']->titleplural = 'Entities';
+$uos->config->types['entity']->description = 'A simple object';
+
+
 class entity {
 	
 	public	 	$attributes = array();
@@ -18,7 +27,7 @@ class entity {
 	
 	function __construct($initializer=null) {
 
-		$this->callaction('build');
+		$this->callactionup('build');
 		// call build object here - create fields
 		$this->initialize($initializer);
   }
@@ -150,13 +159,15 @@ class entity {
   public function getactions() {
   
   	global $uos;
+
 		$entityclass = get_class($this);
-			//trace('looking for actions for : '.$entityclass,'jmt');
-			if (is_null($this->actions)) {		
+		/*
+		//trace('looking for actions for : '.$entityclass,'jmt');
+		if (is_null($this->actions)) {		
 			//trace('finding actions for : '.$entityclass,'jmt');
-				if (!isset($uos->config->types[$entityclass])) {
+			if (!isset($uos->config->types[$entityclass])) {
 					$uos->config->types[$entityclass] = new StdClass();  
-				}
+			}
 			
 			if (!isset($uos->config->types[$entityclass]->actions)) {
 			
@@ -172,13 +183,15 @@ class entity {
 						$actions[$actionname][$class] = $path.$actionfile;
 					}
 				}
-				$uos->config->types[$entityclass]->actions = $actions;
+				//$uos->config->types[$entityclass]->actions = $actions;
 			}
-			$this->actions = &$uos->config->types[$entityclass]->actions;
+			//$this->actions = &$uos->config->types[$entityclass]->actions;
 		}
-	
-    return $this->actions;
+	  */
+    return $uos->config->types[$entityclass]->actions;
   }
+  
+  
   
   
   public function getproperties() {
@@ -227,17 +240,78 @@ class entity {
     return false;
   }
   
+  
+  public function callactionup($action,$parameters=NULL) {
+  	global $uos, $universe;
+    $classes = entity_class_tree($this,TRUE);
+    //print_r($classes);die();
+  	$result = NULL;
+  	$found = FALSE;
+   	//print_r($classes);
+    foreach($classes as $class) {
+    	//print_r($class);
+    	if (isset($uos->config->types[$class]) && isset($uos->config->types[$class]->actions[$action])) {
+    		$this->scope = $class;
+    		$actionfile  = $uos->config->types[$class]->actions[$action]->path;
+    		//print_r($actionfile);
+    		//print($actionfile);
+    		if (file_exists($actionfile)) {
+		      try {
+		        //$result = @include $__actionfile;
+		        @include $actionfile;
+		      } catch (Exception $e) {
+		      	trace('Caught exception : ' . print_r($e,TRUE) ,'action');
+		      	addoutput('content',"Failed action :".$actionfile . ":". print_r($e,TRUE));
+		      	//die('failed includes');
+		        //$result = 'error';//$e;
+		      }
+		      //break;
+		      $found = TRUE;
+	      }
+    	} 
+    }  
+    //die();
+    if ($found) return $result;
+    return UOS_ERROR_NOT_FOUND;
+  }
+  
   public function callaction($action,$parameters=NULL) {
   	global $uos, $universe;
   	$result = NULL;
 		//if (get_class($this)=='node_person') $uos->config->logging = TRUE;
-    $this->getactions();
+    $actions = $this->getactions();
+    
+    
+    $classes = entity_class_tree($this);
+    
+    foreach($classes as $class) {
+    	if (isset($uos->config->types[$class]->actions[$action])) {
+    		$actionfile  = $uos->config->types[$class]->actions[$action]->path;
+    		if (file_exists($actionfile)) {
+		      try {
+		        //$result = @include $__actionfile;
+		        @include $actionfile;
+		      } catch (Exception $e) {
+		      	trace('Caught exception : ' . print_r($e,TRUE) ,'action');
+		      	addoutput('content',"Failed action :".$actionfile . ":". print_r($e,TRUE));
+		      	//die('failed includes');
+		        //$result = 'error';//$e;
+		      }
+		      return $result;
+	      }
+    	}
+    }
+    
+    return UOS_ERROR_NOT_FOUND;
+  }
+    	
+  /*  
     //print_r($this->actions[$action]);
     //print_r(gettype($this));
 		//trace(get_class($this),'jmt');
 		//trace($action,'callaction');
 		//trace(empty($this->actions)?'EMPTYACTONS':'','jmt');
-    if (isset($this->actions[$action])) {
+    if (isset($actions[$action])) {
       //$response->found = TRUE;
       $localVariables = compact(array_keys(get_defined_vars()));
       //trace("this->fireevent(".$action.','.print_r($parameters,TRUE). "," . UNIVERSE_EVENT_POST . ")");
@@ -294,6 +368,8 @@ class entity {
     
     return $result;
   }
+  
+  */
   
   public function trigger($action,$parameters=NULL) {
 		return $this->callaction($action,$parameters);
@@ -517,8 +593,9 @@ class entity {
 	function debuginfo() {
 		$outstring = $this->type->value . ($this->isvalid()?' [valid]':' [invalid]') . ($this->ismodified()?'[modified]':'');
 		$outstring .= ' {<br/>';
+		$outstring .= ' &nbsp; &nbsp;<em>Properties</em> : {<br/>';		
 		foreach($this->properties as $key=>$field) {
-			$outstring .= '&nbsp; &nbsp; ' . ($field->stored?'<strong>':'');
+			$outstring .= '&nbsp; &nbsp;&nbsp; &nbsp;' . ($field->stored?'<strong>':'');
 			$outstring .= '   '. $key . ' : ';
 			$outstring .= '\'' . $field->value . '\' ('.gettype($field->value).')';
 			if ($field->modified) $outstring .= '[modified]';
@@ -529,7 +606,14 @@ class entity {
 			$outstring .= ($field->isstored()?'</strong>':'');
 			$outstring .= '<br/>';
 		}
-		$outstring .= '}<br/>';
+		$outstring .= '&nbsp; &nbsp;}<br/>';
+		$outstring .= ' &nbsp; &nbsp;<em>Actions</em> : {<br/>';
+		//$this->getactions();
+		$actions = $this->getactions();
+		foreach($actions as $key=>$field) {		 
+			$outstring .= '&nbsp; &nbsp;&nbsp; &nbsp;<strong>'.$key.'</strong> : '.print_r($field,TRUE).'<br/>';
+		}
+		$outstring .= '&nbsp; &nbsp;}<br/>';
 		return $outstring;
 	}
 	

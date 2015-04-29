@@ -1,4 +1,4 @@
-uos.displays['field.edit.html'] = uos.extenddisplay(uos.displays['field']);
+uos.displays['field.edit.html'] = uos.extenddisplay('field');
 
 uos.displays['field.edit.html'].actions.init.handler = uostype_field_edit_initialize;
 

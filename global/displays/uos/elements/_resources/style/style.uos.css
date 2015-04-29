@@ -4,6 +4,7 @@ table {
 	font-size: 13px;
 	width:100%;
 }
+
 body {
 	padding: 0;
 	margin: 0;
@@ -124,8 +125,20 @@ ul.uos-actions > li {
 }
 
 ul.uos-actions > li {
+	padding: 10px;
+}
+
+ul.uos-actions > li i.fa {
+	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	font-style: italic;
+}
+
+ul.uos-actions > li i.fa:before {
+	font-family: FontAwesome;
 	font-size: 35px;
 	padding: 10px;
+	font-style: normal;
 }
 
 ul.uos-actions > li:hover {
@@ -829,6 +842,13 @@ div.uos-element form.uos-action-form {
 }
 
 div.uos-invisible {
+	xbackground-color: rgba(0,0,0,0.5);
+	opacity: 0.5;
+	display: none;
+}
+
+
+body.uos-show-invisible div.uos-invisible {
 	xbackground-color: rgba(0,0,0,0.5);
 	opacity: 0.5;
 }

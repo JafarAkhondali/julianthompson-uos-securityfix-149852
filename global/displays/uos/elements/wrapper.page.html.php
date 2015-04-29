@@ -4,6 +4,7 @@
 $scripts = $uos->output['resources']['script'];
 $styles = $uos->output['resources']['style'];
 ?>
+<?php// print_r(get_type_info($entity));?>
 <!-- UniverseOS-->
 <!-- 
 <?php //print_r($uos->request);?>

@@ -1,82 +1,76 @@
-uos.displays['entity'] = {};
-
-uos.displays['entity'].title = 'Entity';
-
-uos.displays['entity'].extends = null;
-
-uos.displays['entity'].actions = {};
+uos.displays['entity.html'] = uos.extenddisplay('entity');
 
 
-uos.displays['entity'].actions.init = {
+uos.displays['entity.html'].actions.init = {
 		title : 'Initialise',	
 		icon : 'fa-wrench',
 		handler : uostype_entity_initialize
 };
 
 	
-uos.displays['entity'].actions.reload = {
+uos.displays['entity.html'].actions.reload = {
 		title : 'Reload',
 		icon : 'fa-refresh',
 		handler : uostype_entity_reload	
 };
 
 	
-uos.displays['entity'].actions.add = {
+uos.displays['entity.html'].actions.add = {
 		title : 'Add',		
 		icon : 'fa-plus-circle',
 		handler : uostype_entity_add	
 };
 
 	
-uos.displays['entity'].actions.displayup = {
+uos.displays['entity.html'].actions.displayup = {
 		title : 'Change Display',	
 		icon : 'fa-caret-left',		
 		handler: uostype_entity_display_down
 };
 
 	
-uos.displays['entity'].actions.displaydown = {
+uos.displays['entity.html'].actions.displaydown = {
 		title : 'Change Display',	
 		icon : 'fa-caret-right',	
 		handler: uostype_entity_display_up
 };
 
 	
-uos.displays['entity'].actions.update = {
+uos.displays['entity.html'].actions.update = {
 		title : 'Edit',	
 		icon : 'fa-pencil',
 		handler: uostype_entity_update						
 };
 
 
-uos.displays['entity'].actions.destroy = {
+uos.displays['entity.html'].actions.destroy = {
 		title : 'Destroy',			
 		icon : 'fa-trash-o',
 		handler: uostype_entity_destroy				
 };
 
 
-uos.displays['entity'].actions.save = {
+uos.displays['entity.html'].actions.save = {
 		title : 'Save',		
 		icon : 'fa-check'					
 };
 
 
-uos.displays['entity'].actions.threed = {
+uos.displays['entity.html'].actions.threed = {
 		title : '3D display',
 		icon : 'fa-globe',
 		handler : uos_three
 };
 
 	
-uos.displays['entity'].actions.test = {
+uos.displays['entity.html'].actions.test = {
 		title : 'Test',
 		icon : 'fa-globe',
 		handler : uostype_entity_testaction
 };
 
 
-console.log('Included display \'entity\'',uos.displays['entity']);
+console.log('Included display \'entity\'',uos.displays['entity.html']);
 
 
 function uostype_entity_add($element) {

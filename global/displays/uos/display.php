@@ -220,6 +220,75 @@ function render($entity, $rendersettings = NULL) {
 }
 
 
+function display_build_type_info($entity,$displayclass,$rebuild=FALSE) {
+	global $uos;
+	//$displayclass = empty($displayclass)?'':'.'.$displayclass;
+	$typedata = get_type_info($entity);
+	$type = $typedata->class;
+	$filename = 'type.'.$entity->type.'.js';
+	//print_r($typedata);
+	//die('here');
+	$targetdirpath = UOS_GLOBAL_CACHE . $uos->request->universename . '/' . $entity->type . '/resources/';
+	$targetfile = UOS_GLOBAL_CACHE . $uos->request->universename . '/' . $entity->type . '/resources/'.$filename;
+	$targeturl = '/cache/' . $uos->request->universename . '/' . $entity->type . '/resources/'.$filename;
+	if (!file_exists($targetfile) || $rebuild) {
+		make_path($targetdirpath);
+		ob_start();
+		// write content
+		//include $filepath;
+		//uos.displays['
+		//uos.displays['node'] = uos.extenddisplay(uos.displays['entity']);
+		$extends = "'element'";
+		$displaykey = 'uos.types[\''.$entity->type . '\']';
+		
+		//echo $displaykey . ' = JSON.parse("'.json_encode($typedata).'")';
+		//OR
+		
+		echo $displaykey . ' = uos.extenddisplay(' . $extends . ");\n\n";
+		echo $displaykey . ".title = '" . $typedata->title . "';\n\n";	
+	  //echo 'ccc'.$type;
+		//echo print_r($uos->config->types[($entity->type->value)]->actions,TRUE);
+		foreach($uos->config->types[($entity->type->value)]->actions as $key=>$action) {
+			echo $displaykey . '.actions.'.$key.' = {'. "\n";
+			foreach($action as $property=>$value) {
+				echo '  '.$property.' : "'.$value.'",'. "\n";
+				//echo '  title : "'.$action->title.'"'. "\n";
+				//echo '  description : "'.$action->description.'"'. "\n";
+			//echo 'handler : "Unknown"'. "\n";
+			}
+			echo '};'. "\n\n";
+		}
+		$content = ob_get_contents();
+		ob_end_clean();
+		//file_put_contents($cacheFile,$content,'a+'); // I added the a+
+		file_put_contents($targetfile, $content);
+		return $targeturl;
+	} else {
+		return $targeturl;		
+	}
+	return null;		
+}
+
+/*
+uos.displays['field'].actions.getvalue = {
+		title : 'Get value',	
+		icon : 'fa-wrench',
+		handler : function($element) {
+			//console.log($element);
+			$valuewrapper = $element.find('span.uos-field-value-wrapper');
+			$inputelement = $valuewrapper.find(':input');
+			if ($inputelement.length>0) {
+				return $inputelement.val();					
+			} else {
+				return $inputelement.html();
+			}
+			uos.log('uos.displays[\'field\'].actions.getvalue',$valuewrapper.html(),$valuewrapper);
+			return $element.find('span.value textarea').val();		
+		}
+};
+*/
+
+
 // some sort of scope on mime type - objects? not sure yet
 // For PHP without Anonymous functions
 // $attributes['foo'] = array('item1','item2','item3');
@@ -243,7 +312,7 @@ function display_uos_attributestostring_callback($key,$value) {
 }
 
 function display_uos_strip_none_alphanumeric($string) {
-	return preg_replace("/[^A-Za-z0-9 ]/", '', $string);
+	return uos_strip_none_alphanumeric($string);
 }
 
 function display_uos_hypenate_none_alphanumeric($string) {

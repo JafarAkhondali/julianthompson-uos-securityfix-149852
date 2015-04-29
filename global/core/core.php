@@ -17,13 +17,120 @@ include_once "displays/default/display.php";
 
 
 function __autoload($classname='') {
+	global $uos;
   $classpath = getclassfile($classname);
   if (file_exists($classpath)) {
-    require_once $classpath;     
+  	//$uos->config->types[$classname] = (object) array();
+  	$uos->config->types[$classname] = (object) array(
+  		'title' => $classname,
+  		'class' => $classname,
+  		'classpath' => $classpath,
+  		'classdir' => dirname($classpath).'/',
+  		'extends' => FALSE,
+  		'actions' => array()
+  	);
+  	//$classconfig->actions = 'xxx';//array();
+    require_once $classpath; 
+		$classconfig->extends = get_parent_class($classname);
+    get_entity_actions($classname);
   } else {
     //print_r(debug_backtrace());
     trigger_error('__autoload : missing class file - ' . $classname . '(' .$classpath . ')');
   }
+}
+
+function deleted__get_type_data($machinename) {
+	global $uos;
+	if (isset($uos->config->types[$machinename])) {
+		die('htere');
+		return $uos->config->types[$machinename];
+	} else {
+	die('hterex');
+  	//$uos->config->types[$classname] = (object) array();
+  	$uos->config->types[$machinename] = (object) array(
+  		'title' => $classname,
+  		'class' => $classname,
+  		'classpath' => $classpath,
+  		'classdir' => dirname($classpath).'/',
+  		'extends' => FALSE,
+  		'actions' => array()
+  	);
+  	//$classconfig->actions = 'xxx';//array();
+    require_once $classpath; 
+		$classconfig->extends = get_parent_class($classname);
+    get_entity_actions($classname);
+		return $uos->config->types['unknown'];	
+	}
+}
+
+
+function &get_type_info($entity) {
+	global $uos;
+
+	$classtree = class_tree($entity);
+	
+	$class = $classtree[0];
+
+	if (!isset($uos->config->types[$class])) {
+		$uos->config->types[$class] = new StdClass();	
+	}
+	$typeconfig = &$uos->config->types[$class];
+	$typeconfig->class = $class;
+	$typeconfig->classtree = $classtree;
+	if (!isset($typeconfig->title)) $typeconfig->title = 'Unknown';
+	if (!isset($typeconfig->icon)) $typeconfig->icon = 'asterisk';
+
+	return $uos->config->types[$class];		
+}
+
+function &get_unknown_type_info() {
+	return $uos->config->types['unknown'];
+}
+
+function class_tree($entity,$reverse=FALSE) {
+	$tree = array();
+	if (is_object($entity)) {
+  	$currentclass = get_class($entity); 
+    do {
+      $tree[] = strtolower($currentclass);
+    } while($currentclass = get_parent_class($currentclass));		
+    //$tree[] = 'object';
+	} else {
+		$tree[] = gettype($entity);	
+	}
+	return ($reverse) ? array_reverse($tree) : $tree;
+}
+
+
+
+
+
+function get_entity_actions($classname) {
+	global $uos;
+	
+	$classtree = entity_class_tree($classname,TRUE);
+	//print_r($classname);print_r($classtree);die();
+	//die($classtree);
+	$actions = array();
+
+	
+	foreach($classtree as $class) {
+		$classconfig = $uos->config->types[$class];
+  	$actionpath = $classconfig->classdir.'_actions/';
+		$actionfiles = file_list($actionpath, 'action\..*\.php');
+		foreach ($actionfiles as $actionfile) {
+		//die('xxxx');
+			$actionname = substr($actionfile,7,-4);
+			$actions[$actionname] = get_file_header_info($actionpath.$actionfile);
+			if (!isset($actions[$actionname]->title)) $actions[$actionname]->title = ucfirst($actionname);
+			$actions[$actionname]->path = $actionpath.$actionfile;
+			$actions[$actionname]->name = $actionname;
+		}
+	}
+	
+  //print_r($actions);die();
+
+	$uos->config->types[$classname]->actions = $actions;
 }
 /*
 function fetch($target) {
@@ -121,6 +228,13 @@ function entity_class_tree($entity,$reverse=FALSE) {
       $classarray[] = $currentclass;
     } while($currentclass = get_parent_class($currentclass));
     return ($reverse) ? array_reverse($classarray) : $classarray;
+	} elseif (is_string($entity)) {
+		$currentclass = $entity;
+  	$classarray = array();    
+    do {
+      $classarray[] = $currentclass;
+    } while($currentclass = get_parent_class($currentclass));	
+    return ($reverse) ? array_reverse($classarray) : $classarray;
 	}
 	
 	return array(gettype($entity));
@@ -174,14 +288,7 @@ function format_match($search,$text) {
 }
 
 
-function get_type_data($machinename) {
-	global $uos;
 
-	if (isset($uos->config->types[$machinename])) {
-		return $uos->config->types[$machinename];
-	}
-	return $uos->config->types['unknown'];
-}
 
 
 function get_instance_id($id) {
@@ -196,19 +303,7 @@ function get_instance_id($id) {
 
 //function render_as($entity, )
 
-function class_tree($entity,$reverse=FALSE) {
-	$tree = array();
-	if (is_object($entity)) {
-  	$currentclass = get_class($entity); 
-    do {
-      $tree[] = strtolower($currentclass);
-    } while($currentclass = get_parent_class($currentclass));		
-    //$tree[] = 'object';
-	} else {
-		$tree[] = gettype($entity);	
-	}
-	return ($reverse) ? array_reverse($tree) : $tree;
-}
+
 
 function class_tree_new($entity,$reverse=FALSE) {
 	$tree = array();
@@ -727,7 +822,7 @@ function get_type_display_files($entity, $rendererpath, $displaystring=NULL) {
 }
 			
 function get_type_displays($entity, $rendererpath) {
-	global $uos;
+	//global $uos;
 
 	$typeconfig = &get_type_info($entity);
 	
@@ -803,31 +898,6 @@ function get_type_displays_old($entity, $rendererpath) {
 		}
 	}
 }
-
-
-function &get_type_info($entity) {
-	global $uos;
-
-	$classtree = class_tree($entity);
-	
-	$class = $classtree[0];
-
-	if (!isset($uos->config->types[$class])) {
-		$uos->config->types[$class] = new StdClass();	
-	}
-	$typeconfig = &$uos->config->types[$class];
-	$typeconfig->class = $class;
-	$typeconfig->classtree = $classtree;
-	if (!isset($typeconfig->title)) $typeconfig->title = 'Unknown';
-	if (!isset($typeconfig->icon)) $typeconfig->icon = 'asterisk';
-
-	return $uos->config->types[$class];		
-}
-
-function &get_unknown_type_info() {
-	return $uos->config->types['unknown'];
-}
-
 
 
 function setIfUnset(&$variable,$value) {
@@ -1054,3 +1124,97 @@ function debuginfo($mixeditem) {
 	return $output;
 }
 
+function make_path($targetpath) {
+  if (!file_exists($targetpath)) {
+  	umask(0);
+		@mkdir($targetpath,0777,TRUE);
+	}
+}
+
+
+function system_extension_mime_types() {
+    # Returns the system MIME type mapping of extensions to MIME types, as defined in /etc/mime.types.
+    $out = array();
+    $file = fopen('/etc/mime.types', 'r');
+    while(($line = fgets($file)) !== false) {
+        $line = trim(preg_replace('/#.*/', '', $line));
+        if(!$line)
+            continue;
+        $parts = preg_split('/\s+/', $line);
+        if(count($parts) == 1)
+            continue;
+        $type = array_shift($parts);
+        foreach($parts as $part)
+            $out[$part] = $type;
+    }
+    fclose($file);
+    return $out;
+}
+
+function system_extension_mime_type($file) {
+    # Returns the system MIME type (as defined in /etc/mime.types) for the filename specified.
+    #
+    # $file - the filename to examine
+    static $types;
+    if(!isset($types))
+        $types = system_extension_mime_types();
+    $ext = pathinfo($file, PATHINFO_EXTENSION);
+    if(!$ext)
+        $ext = $file;
+    $ext = strtolower($ext);
+    return isset($types[$ext]) ? $types[$ext] : null;
+}
+
+function system_mime_type_extensions() {
+    # Returns the system MIME type mapping of MIME types to extensions, as defined in /etc/mime.types (considering the first
+    # extension listed to be canonical).
+    $out = array();
+    $file = fopen('/etc/mime.types', 'r');
+    while(($line = fgets($file)) !== false) {
+        $line = trim(preg_replace('/#.*/', '', $line));
+        if(!$line)
+            continue;
+        $parts = preg_split('/\s+/', $line);
+        if(count($parts) == 1)
+            continue;
+        $type = array_shift($parts);
+        if(!isset($out[$type]))
+            $out[$type] = array_shift($parts);
+    }
+    fclose($file);
+    return $out;
+}
+
+function system_mime_type_extension($type) {
+    # Returns the canonical file extension for the MIME type specified, as defined in /etc/mime.types (considering the first
+    # extension listed to be canonical).
+    #
+    # $type - the MIME type
+    static $exts;
+    if(!isset($exts))
+        $exts = system_mime_type_extensions();
+    return isset($exts[$type]) ? $exts[$type] : null;
+}
+
+
+function uos_strip_none_alphanumeric($string,$replace='') {
+	return preg_replace("/[^A-Za-z0-9]/", $replace, $string);
+}
+
+function get_file_header_info($filename) {
+	$output = new StdClass;
+	$file = fopen($filename, "r");
+	if ($file) {
+		while (!feof($file)) {
+			$line = fgets($file);
+			if (preg_match("|^//#(.*):\s(.*)$|", $line, $match)>0) {
+				$key = uos_strip_none_alphanumeric($match[1]);
+				$output->$key = $match[2];
+			} else {
+				//$output[] = $line;
+			}
+		}
+		fclose($file);
+	}
+	return $output;
+}

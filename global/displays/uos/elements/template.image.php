@@ -1,5 +1,4 @@
 <?php 
-
 if (is_array($entity) && isset($entity['content'])) {
 	$content = $entity['content'];
 	print render($content,'image');

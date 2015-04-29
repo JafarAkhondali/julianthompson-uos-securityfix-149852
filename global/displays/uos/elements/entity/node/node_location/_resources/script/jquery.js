@@ -1,5 +1,5 @@
 uos.displays['node_location'] = uos.extenddisplay(uos.displays['node']);
-
+/*
 uos.displays['node_location'].title = 'Location';
 
 uos.displays['node_location'].actions.directionsfrom = {
@@ -19,6 +19,7 @@ uos.displays['node_location'].actions.init = {
 		icon : 'fa-wrench',
 		handler : uostype_node_location_initialize					
 };
+*/
 
 
 console.log('Included display \'node_location\'',uos.displays['node_location']);
@@ -34,7 +35,7 @@ function uostype_node_location_initialize($element) {
   //switch (elementdata.activedisplay) {
 
   //alert('ccc');
-  
+  if ((typeof google !== 'undefined') && (typeof google.maps !== 'undefined')) {
   //	case 'map.html' :
 		  //var domelement = $element.get(0);
 			var $mapelement = $element.find('.map-canvas');
@@ -69,6 +70,7 @@ function uostype_node_location_initialize($element) {
 			//uostype_node_location_calcRoute($element);
 	  //break;
   //}
+  }
 	uos.log('uostype_node_location_initialize',elementdata);
 }
 

@@ -1,10 +1,13 @@
-uos.displays['array'] = {};
+uos.displays['array'] = uos.extenddisplay('element');
+
+
+//uos.displays['array'] = {};
 
 uos.displays['array'].title = 'List';
 
-uos.displays['array'].extends = null;
+//uos.displays['array'].extends = null;
 
-uos.displays['array'].actions = {};
+//uos.displays['array'].actions = {};
 
 uos.displays['array'].actions.init = {
 		title : 'Initialise',	

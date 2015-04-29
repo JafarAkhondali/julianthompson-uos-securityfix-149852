@@ -1,4 +1,4 @@
-uos.displays['array.teaser.html'] = uos.extenddisplay(uos.displays['array.html']);
+uos.displays['array.teaser.html'] = uos.extenddisplay('array.html');
 
 uos.displays['array.teaser.html'].title = 'Field';
 
@@ -7,7 +7,7 @@ uos.displays['array.teaser.html'].actions.init.handler = function ($element) {
   var elementdata = uos.getelementdata($element); 
   var domelement = $element.get(0);	
 	uostype_array_add_insert_points($element);
-	uostype_entity_addheader($element);
+	//uostype_entity_addheader($element);
 	uos.log('uostype_array_initialize',$element.attr('id'),elementdata);
 }
 

@@ -1,5 +1,10 @@
 <?php
 # node_device class definition file
+$uos->config->types['node_device']->title = 'Device';
+$uos->config->types['node_device']->titleplural = 'Devices';
+$uos->config->types['node_device']->description = 'A device';
+
+
 class node_device extends node {
   
 

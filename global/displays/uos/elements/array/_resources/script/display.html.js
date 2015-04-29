@@ -1,1 +1,1 @@
-uos.displays['array.html'] = uos.extenddisplay(uos.displays['array']);
+uos.displays['array.html'] = uos.extenddisplay('array');

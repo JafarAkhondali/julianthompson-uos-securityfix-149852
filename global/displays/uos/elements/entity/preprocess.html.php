@@ -12,6 +12,15 @@ $render->attributes['data-display'] = $render->displaystring;
 $render->attributes['data-guid'] = (string) $entity->guid;
 
 
+foreach ($render->displaynames as $displayname) {
+	$mimetype = system_extension_mime_type('test.'.$displayname); 
+	$render->elementdata->filetypes[] = (object) array(
+		'mimetype' => $mimetype,
+		'url' => $uos->request->hosturl . (string) $entity->guid . '.' . $displayname
+	);
+}
+
+
 //$render->elementdata->typetree = $render->entityconfig->classtree;
 //$render->elementdata->type = $render->entityconfig->class;
 //$render->elementdata->typeinfo = $render->entityconfig;
@@ -32,4 +41,5 @@ if (isset($entity->title->value)) {
 //addoutput('elementdata/'.$render->instanceid, $render->elementdata);
 //addoutputunique('resources/script/', $render->rendererurl."elements/entity/_resources/script/classextend.js");
 addoutputunique('resources/script/', $render->rendererurl."elements/entity/_resources/script/display.entity.js");
+//addoutputunique('resources/script/', $render->rendererurl."elements/entity/_resources/script/display.entity.html.js");
 addoutputunique('resources/style/', $render->rendererurl."elements/entity/_resources/style/style.html.css");

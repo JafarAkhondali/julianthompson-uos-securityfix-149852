@@ -1,5 +1,6 @@
 <?php
-
+//#title: Add content
+//#description: Add content to this.
 if (isset($parameters['uploadedfiles'][0])) {
 
 	$output = $parameters['uploadedfiles'][0];

@@ -1,4 +1,4 @@
-uos.displays['field'] = uos.extenddisplay(uos.displays['entity']);
+uos.displays['field'] = uos.extenddisplay('entity');
 
 uos.displays['field'].title = 'Field';
 
@@ -30,7 +30,6 @@ console.log('Included display \'field\'',uos.displays['field']);
 
 function uostype_field_initialize($element) {
 	//$element.css('border','1px solid green');
-	
   var elementdata = uos.getelementdata($element); 
 	uos.log('uostype_field_initialize',$element.attr('id'),elementdata);
 }		

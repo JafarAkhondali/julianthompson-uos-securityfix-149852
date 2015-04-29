@@ -1,5 +1,11 @@
 <?php
 # field class definition file
+
+$uos->config->types['field']->title = 'Field';
+$uos->config->types['field']->titleplural = 'Fields';
+$uos->config->types['field']->description = 'A basic mixed field';
+
+
 class field extends entity {
 	public $value = null;  
 	public $parent = null;

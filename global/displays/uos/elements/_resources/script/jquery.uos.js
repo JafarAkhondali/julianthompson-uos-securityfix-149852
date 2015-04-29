@@ -11,6 +11,8 @@ uos.elements = [];
 
 uos.libraries = {};
 
+uos.types = [];
+
 uos.displays = [];
 
 uos.displaystest = [];
@@ -102,7 +104,7 @@ uos.initializeelement = function($element,elementdata) {
 		
 		if (elementdata.displayobject) {
 			if (elementdata.displayobject.actions.init && elementdata.displayobject.actions.init.handler) {
-				//uos.log('uos.initializeelement:displayobject.actions.init:FOUND');
+				uos.log('uos.initializeelement:displayobject.actions.init:FOUND');
 				elementdata.displayobject.actions.init.handler($element);
 				$element.removeClass('uos-uninitialized');
 				$element.addClass('uos-initialized');
@@ -243,30 +245,7 @@ uos.unloadedScripts = function(scripts) {
 }
 
 
-uos.clone = function(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
-}
 
-uos.extenddisplay = function(obj) {
-	//console.log(typeof o);
-  newobj = {};
-	newobj = uos.clone(obj);
-	newobj.extends = (obj);
-  newobj.actions = {};
-	//newobj.title = uos.clone(obj.title);
-	
-	for (var key in obj.actions){
-		newobj.actions[key] = uos.clone(obj.actions[key]);
-	}
-  //newobj.actions = uos.clone(obj.actions);
-  
-	return newobj;
-}
 
 uos.attachdisplayobject = function($element) {
   var elementdata = uos.getelementdata($element);
@@ -463,9 +442,10 @@ uos.buildToolbar = function() {
 	// add relevant actions
 	jQuery.each(actions, function(index,action) {
 		//uos.log('buildToolbar',action);
-		var $control = jQuery('<i></i>');
+		var $control = jQuery('<i>'+action.title+'</i>');
 		$control.attr('title',action.title);
 		$control.addClass('fa');
+		$control.addClass('uos-action-title');
 		$control.click(function (event) {
 			uos.toolbarAction(action,event);
 		});
@@ -1446,3 +1426,50 @@ if (typeof Object.create !== 'function') {
         return new F();
     };
 }
+
+uos.displays['element'] = {};
+
+uos.displays['element'].title = 'Element';
+
+uos.displays['element'].extends = null;
+
+uos.displays['element'].actions = {};
+
+uos.displays['element'].actions.init = {
+		title : 'Initialise',	
+		icon : 'fa-wrench',
+		handler : function($element) {}
+};
+
+uos.clone = function(obj) {
+
+		return jQuery.extend(true, {}, obj);
+				
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
+uos.extenddisplay = function(obj) {
+	//console.log(typeof o);
+	var display = (typeof obj === 'string') ? uos.displays[obj] : obj;
+	
+	if (!display) display = uos.displays['element'];
+  var newdisplay = {};
+	newdisplay = uos.clone(display);
+	newdisplay.extends = display;
+  //newobj.actions = {};
+	//newobj.title = uos.clone(obj.title);
+	
+	for (var key in display.actions){
+		newdisplay.actions[key] = uos.clone(display.actions[key]);
+	}
+  //newobj.actions = uos.clone(obj.actions);
+  
+	return newdisplay;
+	
+}
+

@@ -1,5 +1,10 @@
 <?php
 # node class definition file
+$uos->config->types['node']->title = 'Category';
+$uos->config->types['node']->titleplural = 'Categories';
+$uos->config->types['node']->description = 'A simple category.';
+
+
 class node extends entity {
   
   public function __toString() {

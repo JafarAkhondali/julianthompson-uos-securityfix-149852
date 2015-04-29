@@ -1,4 +1,8 @@
 <?php
+$uos->config->types['node_universe']->title = 'Universe';
+$uos->config->types['node_universe']->titleplural = 'Universes';
+$uos->config->types['node_universe']->description = 'A universe';
+
 include_once UOS_LIBRARIES . "adodb/adodb5/adodb.inc.php";
 # node_universe class definition file
 class node_universe extends node {
