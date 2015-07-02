@@ -141,6 +141,11 @@ ul.uos-actions > li i.fa:before {
 	font-style: normal;
 }
 
+ul.uos-actions > li i.fa > span {
+	position: relative;
+  top: -5px;
+}
+
 ul.uos-actions > li:hover {
 	color: rgba(255,255,255,1);
 }
@@ -962,4 +967,13 @@ div.uos-insert-point.dragging-target {
 body.uos-internet-offline {
     filter: gray; /* IE6-9 */
     -webkit-filter: grayscale(100%); /* Chrome 19+, Safari 6+, Safari 6+ iOS */
+}
+
+
+@media screen and (max-width: 1024px) {
+	ul#universe-actions > li span.action-title {
+		xfloat: none;
+		xdisplay: block;
+		display: none;
+	}
 }

@@ -118,23 +118,6 @@ if ($uos->request->debugmode==UOS_DEBUGMODE_RESPONSE) {
 	die();
 }
 
-
 // shutdown function called here
-
-//print_r($uos->output);die();
-
-// we found something do something otherwise be as silent as a ninja
-if (isset($uos->output)) {
-	try {
-		$uos->response->content = render($uos->output,array(
-		//$uos->response->content = rendernew($uos->output['content'],array(
-			//'debug'	=> TRUE,
-			'displaystring' => $uos->request->displaystring
-		));
-	} catch (Exception $e) {
-		//$uos->response->code = 500;
-	  $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");
-	}
-	echo $uos->response->content;
-}
-//echo '<pre>'.print_r($uos->activerender,TRUE).'</pre>';
+// or this till now
+return renderoutputnew();

@@ -10,14 +10,13 @@ if (isset($parameters['confirm']) && ($parameters['confirm']==1)) {
 		$response->destroy_universe();
 	} else {
 		try {
-			$response->body = $universe->destroy($this);
+			$message->body = $universe->destroy($this);
 		} catch (Exception $e) {
-			$response = 'arse';
+			$message->body = $response = 'arse';
 		}
 	}
+	addoutput('content/', $message);
 	
-	//$message->body->value = ('<pre>'.$response.'</pre>');
-	addoutput('content/', $response);
 } else {
 	$form = new node_form();
 	$form->title = 'Destroy '.$this->title.'?';
@@ -27,8 +26,10 @@ if (isset($parameters['confirm']) && ($parameters['confirm']==1)) {
 	$form->action = 'destroy';
 	$form->target = $this->guid->value;
 	$form->sourceid = $parameters['sourceid'];
+	$form->targetregion = 'elementremove';
 	$form->addproperty('confirm', 'field_boolean', array('value'=>FALSE));
 	$form->addproperty('parameters', 'field_text', array('value'=>print_r($parameters,TRUE), 'usereditable'=>FALSE));
 	$form->displaystring = 'edit.html';
+	//$form->targetregion = 'elementremove';
 	addoutput('content/', $form);
 }

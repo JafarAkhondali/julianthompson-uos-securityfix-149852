@@ -10,14 +10,16 @@ uos.displays['entity'].actions = {};
 uos.displays['entity'].actions.init = {
 		title : 'Initialise',	
 		icon : 'fa-wrench',
-		handler : uostype_entity_initialize
+		handler : uostype_entity_initialize,
+		hidden: true
 };
 
 	
 uos.displays['entity'].actions.reload = {
 		title : 'Reload',
 		icon : 'fa-refresh',
-		handler : uostype_entity_reload	
+		handler : uostype_entity_reload,
+		hidden: true	
 };
 
 	
@@ -84,7 +86,8 @@ function uostype_entity_add($element) {
 	//BootstrapDialog.alert('I want banana!');
 	//var elementdata = uos.getelementdata($element);
 	uos.post($element,'add',{
-		//debugrequest : true
+		targetregion: 'dialog',
+		displaystring: 'html'
 	});
 }
 
@@ -93,18 +96,23 @@ function uostype_entity_testaction($element) {
 	//BootstrapDialog.alert('I want banana!');
 	//var elementdata = uos.getelementdata($element);
 	uos.post($element,'test',{
+		targetregion: 'dialog',
+		displaystring: 'html'
 		//debugrequest : true
 	});
 }
 
 function uostype_entity_destroy($element) {
 	uos.post($element,'destroy',{
-		//debugrequest : true
+		targetregion: 'dialog',
+		displaystring: 'html'
 	});
 }
 
 function uostype_entity_update($element) {
-	uos.post($element,'update',{
+	uos.post($element,'view',{
+		targetregion: 'dialog',
+		displaystring: 'edit.html'
 		//debugrequest : true
 	});	
 }
@@ -228,7 +236,8 @@ function uostype_entity_processform($element) {
 		}
 		
 		uos.log('uostype_entity_processform:parameters',action, parameters, files);
-	uos.post($targetelement,action.action,parameters,files);
+		uos.post($targetelement,action.action,parameters,files);
+		uos.closealldialogs();
 		//alert('done');
 	});
 }
@@ -543,14 +552,25 @@ function uostype_entity_display_change($element, increment) {
 	uos.log('displaychange',elementdata.activedisplay,displays,displayindex,displaycount, newdisplay,elementdata);
   //var $requestelement = jQuery('<div class="uos-request"/>');
   //$requestelement.append('<h1><i class="fa fa-cog fa-spin"></i> Adding files</h1>');
-	uos.loadcontent($element,"/"+elementdata.guid+".view.uosio?display="+newdisplay);
+  
+	uos.post($element,'view',{
+		debugrequest : true,
+		displaystring: newdisplay,
+	});	
+  
+	//uos.loadcontent($element,"/"+elementdata.guid+".view.uosio?display="+newdisplay);
 }
 
 
 function uostype_entity_reload($element) {
 	var elementdata = uos.getelementdata($element);
 	uos.log('uostype_entity_reload',elementdata);
-	uos.loadcontent($element,"/"+elementdata.guid+".view.uosio?display="+elementdata.activedisplay);
+	uos.post($element,'view',{
+		debugrequest : true,
+		displaystring: elementdata.activedisplay,
+	});
+	
+	//uos.loadcontent($element,"/"+elementdata.guid+".view.uosio?display="+elementdata.activedisplay);
 }
 
 function uostype_entity_display_up($element, event) {

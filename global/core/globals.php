@@ -151,9 +151,14 @@ if (isset($argv)) {
 		$uos->request->action = $uos->request->parameters['action'];
 	}
 	
-	if(isset($uos->request->parameters['display'])) {	
-		$uos->request->displaystring = $uos->request->parameters['display'];
+	if(isset($uos->request->parameters['displaystring'])) {	
+		$uos->request->displaystring = $uos->request->parameters['displaystring'];
 	}
+	
+	if(isset($uos->request->parameters['transport'])) {	
+		$uos->request->transport = $uos->request->parameters['transport'];
+	}
+	
 	//print_r($uos->request);print_r($_POST);die();	
 	if($uos->request->urlpath=='global/uos.php') {
 		$uos->request->urlpath = implode('.',array($uos->request->target,$uos->request->action,$uos->request->displaystring));

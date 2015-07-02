@@ -1,27 +1,59 @@
 <?php
 
+
+/*
+function renderoutput($response) {
+
+	global $uos,$universe;
+	// we found something do something otherwise be as silent as a ninja
+	if (isset($uos->output)) {
+	try {
+		$uos->response->content = render($uos->output,array(
+			'displaystring' => $uos->request->displaystring,
+			'transport' => $uos->request->transport
+		));
+	} catch (Exception $e) {
+		//$uos->response->code = 500;
+	  $uos->response->content = ('Caught exception: ' .  $e->getMessage() . "\n");
+	}
+
+	echo $uos->response->content;
+}
+*/
+
+
+
+function renderoutputnew() {
+
+
+	global $uos,$universe;
+	
+	$rendererpath = addtopath(UOS_DISPLAYS, UOS_DEFAULT_DISPLAY);
+
+	$defaulttransportfile = addtopath($rendererpath, 'transport').'transport.default.php';
+	//die($defaulttransportfile);	
+	$transportfile = $defaulttransportfile;
+	if (isset($uos->request->transport)) {
+		$transportfile = addtopath($rendererpath, 'transport').'transport.'.$uos->request->transport.'.php';
+		$transportfile = (file_exists($transportfile)) ? $transportfile : $defaulttransportfile;	
+	}
+	if ($transportfile) {
+		try {
+			$rendervariables = array('uos'=>$uos);
+			echo getFileOutput($transportfile,$rendervariables);
+		} catch (Exception $e) {
+			//$uos->response->code = 500;
+	  	echo ('Caught exception: ' .  $e->getMessage() . "\n");
+		}
+	}
+}
+
+
 function render($entity, $rendersettings = NULL) {
 
 	global $uos,$universe;
 	static $renderdepth = 0;
 	$renderdepth++;
-
-	/*
-	if (is_array($rendersettings) || is_object($rendersettings)) {
-		$render = (object) $rendersettings;
-	} else {
-		$render = new StdClass();	
-		if (is_object($entity) && is_subclass_of($entity,'entity') && !empty($entity->displaymode)) {
-			$render->displaystring = $entity->displaymode;
-			$render->displaymode = $entity->displaymode;
-	//if ($render->displaystring=='slider.html') {
-	//	return print_r($render,TRUE);
-	//}
-		} elseif (is_string($rendersettings) && (!empty($rendersettings))) {
-			$render->displaystring = $rendersettings;
-		}
-	}	
-	*/
 	
 	$render = new StdClass();	
 	
@@ -31,6 +63,7 @@ function render($entity, $rendersettings = NULL) {
 	
 	if (is_array($rendersettings) || is_object($rendersettings)) {
 			$render = (object) ( (array) $render + (array) $rendersettings);
+			//return print_r($rendersettings,TRUE);
 	}	elseif (is_string($rendersettings) && (!empty($rendersettings))) {
 			//$render->displaystring = $rendersettings;
 			setIfUnset($render->displaystring, $rendersettings);
@@ -98,7 +131,8 @@ function render($entity, $rendersettings = NULL) {
 	//}
 	
 	if ($renderdepth>10) return "RENDER DEPTH REACHED\n".print_r($render,TRUE)."\n".print_r($uos->output['content'],TRUE);
-	
+
+
 	
 	if ($uos->request->debugmode==UOS_DEBUGMODE_RENDER) {
 		echo "DEBUG REQUEST\n";
@@ -193,7 +227,7 @@ function render($entity, $rendersettings = NULL) {
 			$render->output = $render->wrapperoutput;
 			trace('Wrapper Complete');
 		}
-
+		/*
 		if (property_exists($render->display,'transport')) {
 			trace('Transport Start: '.$render->display->transport);
 			$render->workingpath = dirname($render->display->transport);
@@ -201,6 +235,10 @@ function render($entity, $rendersettings = NULL) {
 			$render->output = $render->transportoutput;
 			trace('Transport Complete');			
 		}
+		*/
+		
+
+		
 	} catch (Exception $e) {
 		$render->templateoutput = 'Unset';
 		$render->output = 'Error : '.$e->getMessage().print_r($uos->request,TRUE).print_r($render,TRUE).':'.$render->displaystring;

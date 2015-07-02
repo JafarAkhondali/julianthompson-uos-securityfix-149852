@@ -17,6 +17,8 @@ uos.displays = [];
 
 uos.displaystest = [];
 
+uos.dialog = [];
+
 uos.displaystest2 = [];
 
 uos.displays['global'] = {};
@@ -53,6 +55,26 @@ uos.addcontent = function() {
   //$.get(url, function(data) {
   //    $(data).modal();
   //});
+}
+
+uos.closealldialogs = function() {
+	/*
+	console.log('uos.closealldialogs',uos.dialogs);
+	for(var i=0; i>uos.dialogs.length; i++) {
+		alert('cl');
+		uos.dialog[i].close();
+	}
+	uos.dialogs = [];
+	*/
+	BootstrapDialog.closeAll();
+	/*
+	console.log('uos.closealldialogs',uos.dialog);
+	if (uos.dialog) {
+		console.log(uos.dialog);
+		uos.dialog.close();
+		uos.dialog = null;
+	}
+	*/
 }
 
 
@@ -441,19 +463,21 @@ uos.buildToolbar = function() {
 
 	// add relevant actions
 	jQuery.each(actions, function(index,action) {
-		//uos.log('buildToolbar',action);
-		var $control = jQuery('<i>'+action.title+'</i>');
-		$control.attr('title',action.title);
-		$control.addClass('fa');
-		$control.addClass('uos-action-title');
-		$control.click(function (event) {
-			uos.toolbarAction(action,event);
-		});
-		$control.addClass(action.icon);
-		$control = $control.wrap('<li></li>').parent();
-		
-		// append global tools
-		jQuery('#universe-actions').append($control);
+		if (!action.hidden) {
+			//uos.log('buildToolbar',action);
+			var $control = jQuery('<i><span class="action-title">'+action.title+'</span></i>');
+			$control.attr('title',action.title);
+			$control.addClass('fa');
+			$control.addClass('uos-action-title');
+			$control.click(function (event) {
+				uos.toolbarAction(action,event);
+			});
+			$control.addClass(action.icon);
+			$control = $control.wrap('<li></li>').parent();
+			
+			// append global tools
+			jQuery('#universe-actions').append($control);
+		}
 	});
 	jQuery('#universe-actions').append('<li class="km shift-keystatus">Shift</li><li class="km ctrl-keystatus">Ctrl</li><li class="km meta-keystatus">Meta</li><li class="km alt-keystatus">Alt</li>');
 	//jQuery('#universe-actions').append('<li class="status-refreshing"><i class="fa fa-refresh fa-spin"></i></li>');
@@ -1050,8 +1074,28 @@ uos.post = function($element,action,parameters,files) {
   postData.append("target", elementguid);
   
   postData.append("action", action);
+  
+  var targetregion = (parameters.targetregion) ? parameters.targetregion : 'element';
+  
+  postData.append("targetregion", targetregion);
 
-  postData.append("display", 'uosio');
+  postData.append("transport", 'uosio');
+  
+  if (parameters.displaystring) postData.append("displaystring", parameters.displaystring);
+
+  postData.append("_screenwidth", window.screen.width);
+  
+  postData.append("_screenheight", window.screen.height);
+  
+  postData.append("_browserwidth", jQuery(window).width());
+  
+  postData.append("_browserheight", jQuery(window).height());
+
+  postData.append("keyboardmodifier_meta", isMetaHeld());
+
+  postData.append("keyboardmodifier_ctrl", isCtrlHeld());  
+
+  postData.append("keyboardmodifier_shift", isShiftHeld());  
   
   var debugmode = null;
   
@@ -1153,7 +1197,66 @@ uos.responsehander = function(event) {
 		if (data.resources.script) {
 			var scripts = uos.unloadedScripts(data.resources.script);
 			jQuery.getScript(scripts,function(){
-				//uos.log('uos.responsehander:got scripts',data,$dialog);
+			
+				uos.log('uos.responsehander:got scripts',data);
+			
+			  $responsecontent = jQuery(data.content);
+
+				if (data.elementdata) {
+					uos.log('uos.responsehander:call intializeallelements', data, $responsecontent);
+					uos.initalizeallelements($responsecontent, data.elementdata);  	
+				}
+				
+							
+				// process elements				
+				jQuery.each(data.elementdata, function(index,elementdata) {
+					var newelementid = '#'+index;
+					$newelement = $responsecontent.find(newelementid).addBack(newelementid);	
+					if ($newelement.length>0) {
+						//uos.log('uos.loadcontent.preinit',$newelement,newelementid,elementdata);
+						//uos.log('$newelement',$newelement.html());
+						uos.initializeelement($newelement,elementdata);
+					}
+				});		
+				
+				
+				var $newelement = $responsecontent.closest('.uos-element');
+				var newelementdata = uos.getelementdata($newelement); 
+				
+				uos.log($newelement,newelementdata);
+			  
+			  switch(data.targetregion) {
+			  
+			  	case 'dialog' : 
+			  		uos.closealldialogs();
+			  		//$responsecontent.children().each(function (index) {				
+						$dialog = BootstrapDialog.show({
+							message : $newelement,
+							title: $newelement.attr('title'),
+            });
+            
+            uos.dialog = $dialog;
+						console.log('diaaaa',$dialog,uos.dialog);	
+						//});
+					break;
+					
+					case 'element' :
+						$targetelement = jQuery(data.sourceid);	
+						var selected = uos.isSelected($targetelement);
+						$targetelement.replaceWith($newelement);	
+						if (selected) uos.selectElement($newelement);				
+					break;
+					
+					case 'elementremove' :
+						$targetelement.remove();	
+					break;
+			  
+			  }
+			
+				
+				
+				/*
+				
 				var $dialog = jQuery('#dialog');
 				$dialog.empty().append(data.content);
 				if (data.elementdata) {
@@ -1174,6 +1277,8 @@ uos.responsehander = function(event) {
 					}
 				});
 				uos.log($dialog,data.elementdata);
+				
+				*/
 			});
 		}
 	}

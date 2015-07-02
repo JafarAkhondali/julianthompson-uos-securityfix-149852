@@ -1,6 +1,6 @@
 uos.displays['entity.html'] = uos.extenddisplay('entity');
 
-
+/*
 uos.displays['entity.html'].actions.init = {
 		title : 'Initialise',	
 		icon : 'fa-wrench',
@@ -158,7 +158,6 @@ function uostype_entity_addheader($element) {
 	}
 }
 
-
 function uostype_entity_processform($element) {
 	$element.find('form').submit(function(event) { 
 		event.preventDefault();
@@ -193,23 +192,23 @@ function uostype_entity_processform($element) {
 			}
 			//uos.log('uostype_entity_initialize:data',keyname,keyvalue);		
 		});
-		/*
-		$form.find('input[type=text],input[type=hidden],input[type=checkbox],textarea,select').each(function() {
+		
+		//$form.find('input[type=text],input[type=hidden],input[type=checkbox],textarea,select').each(function() {
 			//jQuery(this).css('border','1px solid red');
-			var keyname = jQuery(this).attr('name');
+			//var keyname = jQuery(this).attr('name');
 			
-			var keyvalue = jQuery(this).val();
-			var systemproperties = ['target','action','sourceid'];
-			if (systemproperties.indexOf(keyname)<0) {
-				parameters[keyname] = keyvalue;
-				uos.log('uostype_entity_processform:param',keyname,keyvalue);
-			} else {
-				action[keyname] = keyvalue;
-				uos.log('uostype_entity_processform:data',keyname,keyvalue);
-			}
+			//var keyvalue = jQuery(this).val();
+			//var systemproperties = ['target','action','sourceid'];
+			//if (systemproperties.indexOf(keyname)<0) {
+			//	parameters[keyname] = keyvalue;
+			//	uos.log('uostype_entity_processform:param',keyname,keyvalue);
+			//} else {
+			//	action[keyname] = keyvalue;
+			//	uos.log('uostype_entity_processform:data',keyname,keyvalue);
+			//}
 			
-		});
-		*/
+		//});
+		
 		$form.find('input[type=file]').each(function() {
 			var keyname = jQuery(this).attr('name');
 			files = this.files;
@@ -226,6 +225,7 @@ function uostype_entity_processform($element) {
 		//alert('done');
 	});
 }
+
 
 function uostype_entity_event_click($element,event) {
 
@@ -592,4 +592,4 @@ function loadCSSifnotload(csspath) {
 //    $('<link href="/path/to.css" rel="stylesheet">').appendTo("head");
 
 
-
+*/
