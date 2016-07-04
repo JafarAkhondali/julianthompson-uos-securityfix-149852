@@ -9,4 +9,4 @@ if (!$entity->usereditable) {
 	$render->finish = TRUE;
 }
 
-addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/_resources/script/display.field.edit.html.js");
+addoutputunique('resources/script/', $render->rendererurl."elements/entity/field/_resources/script/display.field.edit.html.js?3");

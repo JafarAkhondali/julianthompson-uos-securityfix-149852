@@ -451,14 +451,14 @@ uos.isChildOfSelected = function($testchild) {
 	return (childrenfound>0);
 }
 	
-uos.buildToolbar = function() {
+uos.buildToolbar = function(actions) {
 	uos.log('Build Toolbar');
 	var toolbar = '';
 	
 	// clear existing actions from toolbar
 	jQuery('#universe-actions').empty();
 	
-	var actions = uos.getSelectedActions();	
+	if (!actions) var actions = uos.getSelectedActions();	
 	uos.log('Build Toolbar',actions);
 
 	// add relevant actions
@@ -763,6 +763,42 @@ uos.checkelementdata  = function() {
 		}
 		//uos.log(index, newelementid, elementdata);
 	});
+}
+
+uos.getSelectedText = function(){
+  var t = '';
+  if(window.getSelection){
+    t = window.getSelection();
+  }else if(document.getSelection){
+    t = document.getSelection();
+  }else if(document.selection){
+    t = document.selection.createRange().text;
+  }
+  return t;
+}
+
+uos.getElementSelection = function(elm) {
+    var start = elm.selectionStart;
+    var end = elm.selectionEnd;
+    return elm.value.substring(start, end);
+}
+
+uos.isTextSelected = function(parentelement) {
+	var selection = uos.getSelectedText();
+	console.log(selection);
+	$selectionparentelement = jQuery(selection.anchorNode.parentElement);
+	//$selectionparentelement.css({'border':'1px solid blue'});
+	//$(parentelement).addClass('poo');
+	if ($(parentelement).is($selectionparentelement)) {
+		$selectionparentelement.css({'border':'1px solid red'});
+	}
+	if(selection && (selection.anchorOffset!=0 && selection.focusOffset!=0)) {
+    	
+    	
+    	
+	} else {
+    	console.log("No selection");
+	}	
 }
 
 
@@ -1101,8 +1137,8 @@ uos.post = function($element,action,parameters,files) {
   
   if (isShiftHeld() && isMetaHeld()) {
   	postData.append("debugrender", '1');  
-  	postData.append("debugmode", 'render');
-	  debugmode = 'render';
+  	postData.append("debugmode", 'target');
+	  debugmode = 'target';
   } else {  
 	  if (isShiftHeld()) {
 	  	postData.append("debugrequest", '1');
@@ -1112,6 +1148,10 @@ uos.post = function($element,action,parameters,files) {
 	  	postData.append("debugresponse", '1');  
 	  	postData.append("debugmode", 'response');
 	  	debugmode = 'response';
+	  } else if (isCtrlHeld()) {
+	  	postData.append("debugresponse", '1');  
+	  	postData.append("debugmode", 'render');
+	  	debugmode = 'render';
 	  }
   }
   

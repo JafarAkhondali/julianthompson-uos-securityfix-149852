@@ -122,6 +122,7 @@ if (isset($parameters['uploadedfiles'][0])) {
 	$output->addproperty('uploadedurl', 'field_text', array('value'=>'unset'));
 	$output->addproperty('confirm', 'field_boolean', array('value'=>0));
 	$output->addproperty('parameters', 'field_text', array('value'=>print_r($parameters,TRUE), 'usereditable'=>FALSE));
+	$output->addproperty('typeslist', 'field_text', array('value'=>print_r($uos->config->types,TRUE), 'usereditable'=>FALSE));
 
 	$output->title = "What do you want to add to '" . $this->title . "' ?";
 	

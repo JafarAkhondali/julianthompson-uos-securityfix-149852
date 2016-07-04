@@ -334,30 +334,48 @@ function uostype_entity_event_dragover(event) {
 
 	var $element = jQuery(this);
 	var elementdata = uos.getelementdata($element);
-	//uos.log(dragContainsFiles(e)?"File":"Node");
-	//uos.log(dragGetPayloadTypes(e));
+	uos.log(dragContainsFiles(event)?"Files":"Node");
+	uos.log(dragGetPayloadTypes(event));
+	
+	var contenttype = uostype_entity_identify_content(event);
+	
   //if (e.stopPropagation) {
   event.stopPropagation(); // Stops some browsers from redirecting.
   
-	//uos.log('uostype_entity_event_dragover',$element.attr('title'),elementdata,event);
-  //}
-	if (!uos.isSelected($element) && !uos.isParentOfSelected($element) && !uos.isChildOfSelected($element)) {
-  //if ($(this)[0] != $(dragSrcEl)[0]) {
+	uos.log('uostype_entity_event_dragover',$element.attr('title'),elementdata,event);
+	
+	uos.log(contenttype);
+	
+	if (contenttype=='Files') {
+	
 	  if (event.preventDefault) {
 	    event.preventDefault(); // Necessary. Allows us to drop.
 	  }
+		
+		event.dataTransfer.dropEffect = 'move';
+		$(this).addClass('dragging-target');
+		return false;
 	
-	  event.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-	  // dummy test - call willAccept(e)
-	  if ($(this).data('type')=='node_file') {
-	  	$(this).addClass('dragging-noaccept');
-	  } else {
-	  //if ($(this)[0] != $(e.target)[0]) {
-	  	//$(this).addClass('dragging-hover-target');
-	  	$(this).addClass('dragging-target');
+	} else {
+	
+		if (!uos.isSelected($element) && !uos.isParentOfSelected($element) && !uos.isChildOfSelected($element)) {
+	  //if ($(this)[0] != $(dragSrcEl)[0]) {
+		  if (event.preventDefault) {
+		    event.preventDefault(); // Necessary. Allows us to drop.
+		  }
+		
+		  event.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+		  // dummy test - call willAccept(e)
+		  if ($(this).data('type')=='node_file') {
+		  	$(this).addClass('dragging-noaccept');
+		  } else {
+		  //if ($(this)[0] != $(e.target)[0]) {
+		  	//$(this).addClass('dragging-hover-target');
+		  	$(this).addClass('dragging-target');
+		  }
+		  //$(this).addClass('dragging-target');
+		  return false;
 	  }
-	  //$(this).addClass('dragging-target');
-	  return false;
   }
 }
 
@@ -367,30 +385,40 @@ function uostype_entity_event_dragenter(event) {
   // this / e.target is the current hover target.
 	var $element = jQuery(this);
 	var elementdata = uos.getelementdata($element);
+	var contenttype = uostype_entity_identify_content(event);
 	
   //uos.log('dragenter',$(this).attr('title'));
   //if (e.stopPropagation) {
   event.stopPropagation(); // Stops some browsers from redirecting.
   //}
 
-	//uos.log(uostype_entity_identify_content(event));
+	uos.log(contenttype);
 	
-	if (!uos.isSelected($element) && !uos.isParentOfSelected($element) && !uos.isChildOfSelected($element)) {
-  //if ($(this)[0] != $(dragSrcEl)[0]) {
-	  //this.classList.add('over');
-	  event.preventDefault();
-	  if (uostype_entity_accept_selection($element)) {
-	  
+	if (contenttype=='Files') {
+	
+		event.preventDefault();
+		$(this).addClass('dragging-target');
+		return true;
+	
+	} else {
+	
+		if (!uos.isSelected($element) && !uos.isParentOfSelected($element) && !uos.isChildOfSelected($element)) {
+	  //if ($(this)[0] != $(dragSrcEl)[0]) {
+		  //this.classList.add('over');
+		  event.preventDefault();
+		  if (uostype_entity_accept_selection($element)) {
+		  
+		  }
+		  // dummy test - call willAccept(e)
+		  if ($(this).data('type')=='node_file') {
+		  	$(this).addClass('dragging-noaccept');
+		  } else {
+		  //if ($(this)[0] != $(e.target)[0]) {
+		  	//$(this).addClass('dragging-hover-target');
+		  	$(this).addClass('dragging-target');
+		  }
+		  return true;
 	  }
-	  // dummy test - call willAccept(e)
-	  if ($(this).data('type')=='node_file') {
-	  	$(this).addClass('dragging-noaccept');
-	  } else {
-	  //if ($(this)[0] != $(e.target)[0]) {
-	  	//$(this).addClass('dragging-hover-target');
-	  	$(this).addClass('dragging-target');
-	  }
-	  return true;
   }
 }
 
@@ -465,6 +493,8 @@ function uostype_entity_event_drop(event) {
 		case 'Files' :
 			//uos.dropfiles($element,event.dataTransfer.files);	
 	    uos.post($element,'dropfiles',{
+	    	targetregion: 'dialog',
+	    	displaystring: 'html',
 	    	content: uos.getSelectedGuids()
 	    },event.dataTransfer.files);
 		break;
@@ -475,7 +505,9 @@ function uostype_entity_event_drop(event) {
 				var titles = uos.getSelectedTitles();
 	    	uos.notification({ title : 'Dropped Node(s)', message: 'Dropped : ' + titles.join(', ') + ' onto ' + $element.attr('title')});
 	    	uos.post($element,'dropentity',{
-	    		content: uos.getSelectedGuids()
+	    		content: uos.getSelectedGuids(),
+	    		targetregion: 'dialog',
+	    		displaystring: 'html'
 	    	});
 	    	uos.log('uostype_entity_event_drop',elementdata.guid);
 	    }  

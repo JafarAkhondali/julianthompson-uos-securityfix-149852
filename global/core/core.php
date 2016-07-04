@@ -7,13 +7,12 @@ register_shutdown_function('universe_shutdown');
 
 include_once "core/const.php";
 include_once "core/globals.php";
+include_once "core/request.php";
+//print debuginfo($uos->output);die();	
 include_once "displays/default/display.php";
 
 //ini_set('display_errors',1);
 //ini_set('display_startup_errors',1);
-
-
-
 
 
 function __autoload($classname='') {
@@ -428,7 +427,16 @@ function addoutputold($path,$content=FALSE,$attributes=array()) {
   $output = &$uos->output->content;
   $outputpath = outputarraypath($path);
 
-  @eval ( $outputpath . '= $content;' );
+  @eval ( $outputpath . ' = $content;' );
+}
+
+function outputclear() {
+  global $uos;
+  
+  if (!isset($content)) return;
+  
+  $output = &$uos->output;
+	$output = array();
 }
 
 function addoutput($path,$content=FALSE,$attributes=array()) {
@@ -438,8 +446,8 @@ function addoutput($path,$content=FALSE,$attributes=array()) {
   
   $output = &$uos->output;
   $outputpath = outputarraypath($path);
-  //print_r($outputpath);die();
-  @eval ( $outputpath . '= $content;' );
+  //print_r($outputpath . ' = $content; ('.gettype(eval($outputpath)).':'.gettype($content).')' );
+  @eval ( $outputpath . ' = $content;' );
 }
 
 function addoutputunique($path,$content=FALSE,$attributes=array()) {

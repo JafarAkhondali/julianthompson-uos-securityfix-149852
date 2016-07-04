@@ -1,7 +1,9 @@
 <?php
 
+addoutput('content/', 'ARSE');
+return;
 
-$tagentityids = $universe->guid_to_id(array($uos->request->parameters['target']));
+//$tagentityids = $universe->guid_to_id(array($uos->request->parameters['target']));
 //$this->children[] = print_r($uos->request->filesd,TRUE);
 
 //foreach($uos->request->files as $file) {
@@ -11,7 +13,8 @@ $tagentityids = $universe->guid_to_id(array($uos->request->parameters['target'])
 //}
 //$this->children = $uos->request->files;
 
-trace($tagentityids,'ANALW');
+//trace($tagentityids,'ANALW');
+/*
 $guid = 'unset';
 
 foreach($uos->request->files as $file) {
@@ -65,7 +68,7 @@ foreach($uos->request->files as $file) {
 
 //$this->title->value = "test".count($uos->request->files);
 
-//addoutput('content', $testthis);
+
 //addoutput('content', $foutput);
 
 //addoutput('contento', 'dropfiles'.$guid.'--');

@@ -14,7 +14,7 @@ class node extends entity {
 	function event_propertymodified($property) {
 		parent::event_propertymodified($property);
 		if ($property->key != 'modified') {
-			$this->modified->setvalue(time());
+			//$this->modified->setvalue(time());
 		}
 	}
 } 

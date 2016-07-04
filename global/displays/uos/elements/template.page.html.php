@@ -1,7 +1,16 @@
 <?php
-if (isset($entity['content'])) {
+if (is_object($entity)) {
+	//print gettype($entity);
+	//print_r($entity);
+	return 'object';
+	die();
+	$content = $entity;
+} elseif(isset($entity['content'])) {
 	$content = $entity['content'];
-} 
+	//print_r($content);
+} else {
+	$content = 'NULL';
+}
 $entitytitle = (isset($content->title)) ? $content->title : 'Not known';
 ?>
 <div id="universetoolbars">

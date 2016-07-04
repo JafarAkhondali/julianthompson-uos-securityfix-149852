@@ -281,19 +281,20 @@ class entity {
 		//if (get_class($this)=='node_person') $uos->config->logging = TRUE;
     $actions = $this->getactions();
     
-    
     $classes = entity_class_tree($this);
     
     foreach($classes as $class) {
+    	addoutput('content/',debuginfo($uos->config->types[$class]));
     	if (isset($uos->config->types[$class]->actions[$action])) {
     		$actionfile  = $uos->config->types[$class]->actions[$action]->path;
     		if (file_exists($actionfile)) {
 		      try {
-		        //$result = @include $__actionfile;
+		        
+    				//$result = @include $__actionfile;
 		        @include $actionfile;
 		      } catch (Exception $e) {
 		      	trace('Caught exception : ' . print_r($e,TRUE) ,'action');
-		      	addoutput('content',"Failed action :".$actionfile . ":". print_r($e,TRUE));
+		      	addoutput('content/',"Failed action :".$actionfile . ":". print_r($e,TRUE));
 		      	//die('failed includes');
 		        //$result = 'error';//$e;
 		      }

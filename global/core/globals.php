@@ -111,7 +111,7 @@ if (isset($argv)) {
 			unset($uos->request->parameters['jsonparameters']);
 		}
 	}
-
+	
 	if(!empty($_FILES)) {
 		$uploadedfiles = diverse_array($_FILES["files"]);
 
@@ -168,6 +168,11 @@ if (isset($argv)) {
 }
 
 $uos->request->debugmode = (isset($uos->request->parameters['debugmode']))?$uos->request->parameters['debugmode']:null;
+
+if ($uos->request->debugmode) {
+
+	$uos->request->parameters['targetregion'] = 'dialog';
+}
 
 //$uos->request->bindir = PHP_BINDIR;
 
@@ -318,7 +323,7 @@ if (file_exists(UOS_LOCAL_CONFIG)) {
 	include_once UOS_LOCAL_CONFIG;
 	//print_r(UOS_LOCAL_CONFIG);
 }
-//die('xx');
+
 
 $uos->request->universeconfig = UOS_GLOBAL_DATA . $uos->request->universename.'/config.universe.php';
 
@@ -340,9 +345,10 @@ if (file_exists($uos->request->universeconfig)) {
 		//define( 'UOS_UNIVERSE_CACHE',						UOS_GLOBAL_DATA . 'config/');
 	} 
 }
-
+//print_r($uos->config);
+//die('xx');
 $uos->request->universe = $universe = new node_universe($uos->config->universe);
-	
+//die('here');
 trace('Start');
 
 
