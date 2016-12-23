@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Compiled source #
 ###################
 *.com
@@ -56,3 +57,19 @@ cache/
 global/libraries/phpmyadmin/phpMyAdmin-2.10.2-english/config.inc.php
 global/admin/*
 !global/admin/test
+=======
+/bootstrap/compiled.php
+/vendor
+/.idea
+/nbproject
+composer.phar
+.env.*.php
+.env.php
+.DS_Store
+Thumbs.db
+*.dat
+
+*.db
+
+*.log
+>>>>>>> 5004d19875ae7f9814421daaa40a5d9b82e2d8d8
